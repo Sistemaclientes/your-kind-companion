@@ -53,7 +53,7 @@ export function DashboardPage() {
     { label: 'Média de desempenho', value: `${stats?.metrics.mediaGeral || 0}/100`, trend: '0', icon: TrendingUp, color: 'emerald' },
   ];
 
-  const recentExams = (stats?.recentResults || []).map((r: any) => ({
+  const recentExams: Array<{ id: number | string; title: string; time: string; students: string }> = (stats?.recentResults || []).map((r: any) => ({
     id: r.prova_id,
     title: r.prova_titulo,
     time: new Date(r.data).toLocaleDateString(),
