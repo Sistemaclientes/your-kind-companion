@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { TopBar } from '@/components/TopBar';
+import { TopBar } from '../components/TopBar';
 import { 
   Users, 
   Search, 
@@ -12,10 +12,10 @@ import {
   ChevronDown,
   ArrowUpDown
 } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { cn } from '../lib/utils';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
-import { api } from '@/lib/api';
+import { api } from '../lib/api';
 
 export function StudentsPage() {
   const navigate = useNavigate();

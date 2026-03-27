@@ -9,8 +9,8 @@ import {
   Sun,
   Moon
 } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { useTheme } from '@/lib/ThemeContext';
+import { cn } from '../lib/utils';
+import { useTheme } from '../lib/ThemeContext';
 
 export function Sidebar() {
   const { theme, toggleTheme } = useTheme();

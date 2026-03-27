@@ -1,5 +1,5 @@
 import React from 'react';
-import { TopBar } from '@/components/TopBar';
+import { TopBar } from '../components/TopBar';
 import { 
   FileText, 
   Users, 
@@ -13,7 +13,7 @@ import {
 } from 'lucide-react';
 
 import { useNavigate } from 'react-router-dom';
-import { cn } from '@/lib/utils';
+import { cn } from '../lib/utils';
 import { motion, useMotionValue, useTransform } from 'motion/react';
 import { 
   ResponsiveContainer, 
@@ -24,7 +24,7 @@ import {
   CartesianGrid, 
   Tooltip as RechartsTooltip
 } from 'recharts';
-import { api } from '@/lib/api';
+import { api } from '../lib/api';
 
 export function DashboardPage() {
   const navigate = useNavigate();

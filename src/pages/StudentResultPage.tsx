@@ -15,7 +15,7 @@ import {
   Award
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { cn } from '@/lib/utils';
+import { cn } from '../lib/utils';
 import { motion } from 'motion/react';
 
 export function StudentResultPage() {
