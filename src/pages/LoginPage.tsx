@@ -1,0 +1,94 @@
+import React from 'react';
+import { Mail, Lock, Eye, LogIn } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+
+export function LoginPage() {
+  const navigate = useNavigate();
+
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    navigate('/admin/dashboard');
+  };
+
+  return (
+    <div className="min-h-screen bg-surface font-sans text-on-surface antialiased flex items-center justify-center p-6 relative overflow-hidden">
+      {/* Premium Background Pattern */}
+      <div className="fixed inset-0 z-[-1] overflow-hidden pointer-events-none">
+        <div className="absolute -top-[10%] -left-[10%] w-[40%] h-[40%] rounded-full bg-primary/10 blur-[120px]"></div>
+        <div className="absolute top-[20%] -right-[5%] w-[30%] h-[50%] rounded-full bg-secondary/10 blur-[100px]"></div>
+        <div className="absolute -bottom-[10%] left-[20%] w-[50%] h-[30%] rounded-full bg-primary/20 blur-[120px]"></div>
+        <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'radial-gradient(#0F8B8D 0.5px, transparent 0.5px)', backgroundSize: '24px 24px' }}></div>
+      </div>
+
+      <div className="w-full max-w-[440px] flex flex-col gap-8">
+        {/* Login Card */}
+        <div className="bg-surface-container p-10 rounded-[24px] shadow-2xl border border-outline transition-all duration-500 hover:shadow-primary/5">
+          <header className="mb-8">
+            <h2 className="text-2xl font-headline font-bold text-on-surface tracking-tight">Bem-vindo de volta</h2>
+            <p className="text-on-surface-variant text-sm mt-1 font-medium">Insira suas credenciais para acessar o painel.</p>
+          </header>
+
+          <form className="space-y-6" onSubmit={handleLogin}>
+            <div className="space-y-2">
+              <label className="block font-sans text-[10px] font-bold uppercase tracking-widest text-on-surface-variant ml-1">E-mail Corporativo</label>
+              <div className="relative group">
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-on-surface-variant group-focus-within:text-primary transition-colors">
+                  <Mail className="w-5 h-5" />
+                </div>
+                <input 
+                  className="block w-full pl-12 pr-4 py-3.5 bg-surface-container-low border border-outline rounded-xl text-on-surface placeholder:text-on-surface-variant/50 focus:border-primary focus:ring-4 focus:ring-primary/10 hover:bg-surface-container-high transition-all outline-none font-medium" 
+                  placeholder="nome@empresa.com" 
+                  type="email"
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <div className="flex justify-between items-center px-1">
+                <label className="block font-sans text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Senha</label>
+                <a className="text-[10px] font-bold uppercase tracking-widest text-primary hover:text-primary-container transition-colors" href="#">Esqueci minha senha</a>
+              </div>
+              <div className="relative group">
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-on-surface-variant group-focus-within:text-primary transition-colors">
+                  <Lock className="w-5 h-5" />
+                </div>
+                <input 
+                  className="block w-full pl-12 pr-12 py-3.5 bg-surface-container-low border border-outline rounded-xl text-on-surface placeholder:text-on-surface-variant/50 focus:border-primary focus:ring-4 focus:ring-primary/10 hover:bg-surface-container-high transition-all outline-none font-medium" 
+                  placeholder="••••••••" 
+                  type="password"
+                  required
+                />
+                <button className="absolute inset-y-0 right-0 pr-4 flex items-center text-on-surface-variant hover:text-on-surface transition-colors" type="button">
+                  <Eye className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+
+            <div className="pt-4">
+              <button 
+                className="w-full btn-primary py-4 px-4 text-sm tracking-wide" 
+                type="submit"
+              >
+                <span>Entrar no Sistema</span>
+                <LogIn className="w-4 h-4" />
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <footer className="flex flex-col items-center gap-6">
+          <p className="text-on-surface-variant text-sm font-medium">
+            Não possui uma conta? <a className="text-primary font-bold hover:underline underline-offset-4" href="#">Solicite uma demonstração</a>
+          </p>
+          <div className="flex gap-8 text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">
+            <a className="hover:text-primary transition-colors" href="#">Termos</a>
+            <a className="hover:text-primary transition-colors" href="#">Privacidade</a>
+            <a className="hover:text-primary transition-colors" href="#">Suporte</a>
+          </div>
+        </footer>
+      </div>
+      <div className="fixed bottom-0 left-0 w-full h-1.5 bg-gradient-to-r from-primary via-primary-container to-secondary opacity-30"></div>
+    </div>
+  );
+}
