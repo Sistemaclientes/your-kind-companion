@@ -3,106 +3,91 @@
 @theme {
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-headline: "Poppins", sans-serif;
-
   --color-primary: #0F8B8D;
   --color-primary-container: #0C7A7C;
   --color-on-primary: #ffffff;
-  
   --color-secondary: #F26500;
   --color-secondary-container: #D95400;
-  
   --color-surface: #F7F9FA;
   --color-surface-container: #FFFFFF;
   --color-surface-container-low: #F7F9FA;
   --color-surface-container-high: #E5E7EB;
   --color-surface-container-lowest: #FFFFFF;
-  
   --color-on-surface: #1F2A44;
   --color-on-surface-variant: #5A5A5A;
-  
   --color-error: #EF4444;
   --color-error-container: #FEE2E2;
-  
   --color-outline: #E5E7EB;
   --color-outline-variant: #E5E7EB;
-
   --color-text-primary: #1F2A44;
   --color-text-secondary: #5A5A5A;
   --color-background-light: #F7F9FA;
   --color-background-dark: #0B0F14;
-
   --color-primary-fixed: #0F8B8D;
   --color-primary-fixed-dim: #0C7A7C;
 }
 
 .dark {
-  --color-primary: #0F8B8D;
-  --color-primary-container: #0C7A7C;
-  --color-on-primary: #ffffff;
-  
-  --color-secondary: #F26500;
-  --color-secondary-container: #D95400;
-  
   --color-surface: #0B0F14;
   --color-surface-container: #111827;
   --color-surface-container-low: #111827;
   --color-surface-container-high: #1F2937;
   --color-surface-container-lowest: #111827;
-  
   --color-on-surface: #E5E7EB;
   --color-on-surface-variant: #9CA3AF;
-  
-  --color-error: #EF4444;
   --color-error-container: #450a0a;
-  
   --color-outline: #1F2937;
   --color-outline-variant: #1F2937;
-  --color-cards-dark: #1E293B;
-
   --color-text-primary: #E5E7EB;
   --color-text-secondary: #9CA3AF;
-  --color-background-light: #0B0F14;
-  --color-background-dark: #111827;
 }
 
-@layer base {
-  body {
-    @apply bg-surface text-on-surface font-sans antialiased transition-colors duration-300;
-  }
-
-  *:focus-visible {
-    @apply outline-none ring-2 ring-primary ring-offset-2 ring-offset-surface;
-  }
+body {
+  background-color: var(--color-surface);
+  color: var(--color-on-surface);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
 }
 
 .btn-primary {
   background: linear-gradient(135deg, #0F8B8D, #0C7A7C);
-  @apply text-white rounded-[12px] font-bold shadow-md flex items-center justify-center gap-2;
+  color: white;
+  border-radius: 12px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
   transition: all 0.25s ease;
 }
 
 .btn-primary:hover {
   transform: scale(1.03);
   box-shadow: 0 8px 20px rgba(0,0,0,0.08);
-  @apply brightness-110;
-}
-
-.btn-primary:active {
-  @apply scale-[0.98];
 }
 
 .card-saas {
-  @apply bg-surface-container p-6 rounded-[16px] border border-outline shadow-sm;
+  background-color: var(--color-surface-container);
+  padding: 1.5rem;
+  border-radius: 16px;
+  border: 1px solid var(--color-outline);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
   transition: all 0.3s ease;
 }
 
 .card-saas:hover {
   transform: translateY(-4px);
-  @apply shadow-xl shadow-primary/5 border-primary/20;
+  box-shadow: 0 20px 25px -5px rgba(15,139,141,0.05);
 }
 
 .input-saas {
-  @apply bg-surface-container border border-outline rounded-[12px] px-4 py-2 text-on-surface outline-none;
+  background-color: var(--color-surface-container);
+  border: 1px solid var(--color-outline);
+  border-radius: 12px;
+  padding: 0.5rem 1rem;
+  color: var(--color-on-surface);
+  outline: none;
   transition: all 0.2s ease;
 }
 
@@ -112,20 +97,18 @@
 }
 
 .sidebar-item-saas {
-  @apply flex items-center gap-3 px-4 py-3 font-headline font-semibold tracking-tight rounded-xl transition-all duration-200;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  font-family: var(--font-headline);
+  font-weight: 600;
+  border-radius: 0.75rem;
+  transition: all 0.2s;
 }
 
 .sidebar-item-saas:hover {
   background: rgba(15, 139, 141, 0.08);
-  @apply text-on-surface;
-}
-
-.btn-icon-saas {
-  @apply transition-all duration-200;
-}
-
-.btn-icon-saas:hover {
-  transform: scale(1.1);
 }
 
 .sidebar-item-active {

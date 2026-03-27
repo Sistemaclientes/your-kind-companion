@@ -17,20 +17,11 @@ import { StudentExamPage } from './pages/StudentExamPage';
 import { StudentResultPage } from './pages/StudentResultPage';
 import { AdminLayout } from './components/AdminLayout';
 
-// Placeholder pages for faithful recreation of the structure
-const PlaceholderPage = ({ title }: { title: string }) => (
-  <div className="pt-20 px-8">
-    <h1 className="text-3xl font-bold font-headline">{title}</h1>
-    <p className="mt-4 text-slate-500">Esta página está em desenvolvimento para a demonstração fiel do layout.</p>
-  </div>
-);
-
 export default function App() {
   return (
     <Router>
       <Routes>
         <Route path="/" element={<LoginPage />} />
-        
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<Navigate to="/admin/dashboard" replace />} />
           <Route path="dashboard" element={<DashboardPage />} />
@@ -39,15 +30,11 @@ export default function App() {
           <Route path="student/:id" element={<StudentDetailsPage />} />
           <Route path="settings" element={<SettingsPage />} />
         </Route>
-
         <Route path="/admin/exams/new" element={<CreateExamPage />} />
         <Route path="/admin/exams/edit/:id" element={<CreateExamPage />} />
-
         <Route path="/student/start" element={<StudentStartPage />} />
         <Route path="/student/exam" element={<StudentExamPage />} />
         <Route path="/student/result" element={<StudentResultPage />} />
-
-        {/* Catch all */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Router>
