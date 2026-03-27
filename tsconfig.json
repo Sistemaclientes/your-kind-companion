@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    "baseUrl": ".",
     "allowImportingTsExtensions": true,
     "allowJs": true,
     "experimentalDecorators": true,
