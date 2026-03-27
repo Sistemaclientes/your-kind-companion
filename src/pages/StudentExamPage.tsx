@@ -13,9 +13,9 @@ import {
   Info
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { cn } from '@/src/lib/utils';
+import { cn } from '../lib/utils';
 import { motion, AnimatePresence } from 'motion/react';
-import { api } from '@/src/lib/api';
+import { api } from '../lib/api';
 
 export function StudentExamPage() {
   const navigate = useNavigate();

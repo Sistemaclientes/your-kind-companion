@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { TopBar } from '@/src/components/TopBar';
+import { TopBar } from '../components/TopBar';
 import { 
   Settings as SettingsIcon, 
   Eye, 
@@ -17,9 +17,9 @@ import {
   Mail,
   Lock
 } from 'lucide-react';
-import { cn } from '@/src/lib/utils';
+import { cn } from '../lib/utils';
 import { motion, AnimatePresence } from 'motion/react';
-import { api } from '@/src/lib/api';
+import { api } from '../lib/api';
 
 export function SettingsPage() {
   const [isSaving, setIsSaving] = useState(false);

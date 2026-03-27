@@ -1,5 +1,5 @@
 import React from 'react';
-import { TopBar } from '@/src/components/TopBar';
+import { TopBar } from '../components/TopBar';
 import { 
   FileText, 
   Plus, 
@@ -20,8 +20,8 @@ import {
   ChevronDown
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { cn } from '@/src/lib/utils';
-import { api } from '@/src/lib/api';
+import { cn } from '../lib/utils';
+import { api } from '../lib/api';
 import { motion, AnimatePresence } from 'motion/react';
 
 export function ExamsPage() {

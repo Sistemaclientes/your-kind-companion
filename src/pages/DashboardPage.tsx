@@ -1,5 +1,5 @@
 import React from 'react';
-import { TopBar } from '@/src/components/TopBar';
+import { TopBar } from '../components/TopBar';
 import { 
   FileText, 
   Users, 
@@ -13,7 +13,7 @@ import {
 } from 'lucide-react';
 
 import { useNavigate } from 'react-router-dom';
-import { cn } from '@/src/lib/utils';
+import { cn } from '../lib/utils';
 import { motion, useMotionValue, useTransform } from 'motion/react';
 import { 
   ResponsiveContainer, 
@@ -24,7 +24,7 @@ import {
   CartesianGrid, 
   Tooltip as RechartsTooltip
 } from 'recharts';
-import { api } from '@/src/lib/api';
+import { api } from '../lib/api';
 
 export function DashboardPage() {
   const navigate = useNavigate();
@@ -53,7 +53,7 @@ export function DashboardPage() {
     { label: 'Média de desempenho', value: `${stats?.metrics.mediaGeral || 0}/100`, trend: '0', icon: TrendingUp, color: 'emerald' },
   ];
 
-  const recentExams = (stats?.recentResults || []).map((r: any) => ({
+  const recentExams: Array<{ id: number | string; title: string; time: string; students: string }> = (stats?.recentResults || []).map((r: any) => ({
     id: r.prova_id,
     title: r.prova_titulo,
     time: new Date(r.data).toLocaleDateString(),
@@ -196,7 +196,7 @@ export function DashboardPage() {
                 <FileText className="w-5 h-5 text-primary" />
               </div>
               <div className="space-y-4">
-                {recentExams.map((exam, i) => (
+                {recentExams.map((exam: { id: number | string; title: string; time: string; students: string }, i: number) => (
                   <div 
                     key={i} 
                     className="flex items-center gap-4 p-3 rounded-xl hover:bg-surface-container-high transition-colors cursor-pointer group"
