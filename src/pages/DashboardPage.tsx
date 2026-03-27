@@ -196,7 +196,7 @@ export function DashboardPage() {
                 <FileText className="w-5 h-5 text-primary" />
               </div>
               <div className="space-y-4">
-                {recentExams.map((exam, i) => (
+                {recentExams.map((exam: { id: number | string; title: string; subtitle: string }, i: number) => (
                   <div 
                     key={i} 
                     className="flex items-center gap-4 p-3 rounded-xl hover:bg-surface-container-high transition-colors cursor-pointer group"
