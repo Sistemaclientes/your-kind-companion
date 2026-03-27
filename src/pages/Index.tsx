@@ -1,19 +1,8 @@
 export default function Index() {
   return (
-    <div style={{
-      minHeight: '100vh',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      backgroundColor: 'var(--color-surface)',
-    }}>
-      <h1 style={{
-        fontSize: '2rem',
-        fontFamily: "'Poppins', sans-serif",
-        fontWeight: 700,
-        color: 'var(--color-on-surface)',
-      }}>
-        Projeto em branco
+    <div className="min-h-screen bg-surface flex items-center justify-center">
+      <h1 className="text-3xl font-bold text-on-surface">
+        Projeto em branco ✅
       </h1>
     </div>
   );
