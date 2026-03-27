@@ -21,9 +21,9 @@ import {
   Tag
 } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { cn } from '@/src/lib/utils';
+import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'motion/react';
-import { api } from '@/src/lib/api';
+import { api } from '@/lib/api';
 import { Question } from '../types';
 
 export function CreateExamPage() {

@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "baseUrl": ".",
     "allowImportingTsExtensions": true,
     "allowJs": true,
     "experimentalDecorators": true,
@@ -16,10 +17,7 @@
     "noEmit": true,
     "paths": {
       "@/*": [
-        "src/*"
-      ],
-      "@/src/*": [
-        "src/*"
+        "./src/*"
       ]
     },
     "skipLibCheck": true,

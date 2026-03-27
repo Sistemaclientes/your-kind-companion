@@ -1,5 +1,5 @@
 import React from 'react';
-import { TopBar } from '@/src/components/TopBar';
+import { TopBar } from '@/components/TopBar';
 import { 
   ArrowLeft, 
   Mail, 
@@ -17,7 +17,7 @@ import {
   XCircle,
   Info
 } from 'lucide-react';
-import { cn } from '@/src/lib/utils';
+import { cn } from '@/lib/utils';
 import { useNavigate, useParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 
