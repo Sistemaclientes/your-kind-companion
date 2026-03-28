@@ -31,14 +31,14 @@ export function Sidebar() {
 
   return (
     <aside className="h-screen w-64 fixed left-0 top-0 bg-surface-container flex flex-col p-4 gap-2 z-50 border-r border-outline">
-      <div className="px-2 py-4 mb-4 flex flex-col items-center gap-3">
-        <img src={logoUplife} alt="UpLife Educacional" className="w-16 h-16 rounded-full object-cover" />
-        <div className="text-center">
-          <p className="text-xs font-bold text-on-surface">
-            Hora: {currentTime.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+      <div className="px-3 py-4 mb-2 flex items-center gap-3">
+        <img src={logoUplife} alt="UpLife Educacional" className="w-11 h-11 rounded-full object-cover shrink-0" />
+        <div>
+          <p className="text-[11px] font-bold text-on-surface leading-tight">
+            {currentTime.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
           </p>
-          <p className="text-xs font-bold text-on-surface">
-            Data: {currentTime.toLocaleDateString('pt-BR')}
+          <p className="text-[10px] font-semibold text-on-surface-variant leading-tight">
+            {currentTime.toLocaleDateString('pt-BR')}
           </p>
         </div>
       </div>
