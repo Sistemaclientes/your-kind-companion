@@ -282,6 +282,67 @@ app.get('/api/dashboard/students', adminMiddleware, (req, res) => {
   }
 });
 
+// Get student details & exam history by email
+app.get('/api/dashboard/students/:email', adminMiddleware, (req, res) => {
+  try {
+    const email = decodeURIComponent(req.params.email);
+    
+    // Get student info
+    const studentInfo = db.prepare(`
+      SELECT email_aluno as email, nome_aluno as nome,
+             COUNT(*) as provas_contagem,
+             AVG(pontuacao) as media_pontuacao,
+             MAX(data) as ultimo_acesso,
+             MIN(data) as primeiro_acesso
+      FROM resultados
+      WHERE email_aluno = ?
+      GROUP BY email_aluno
+    `).get(email) as any;
+
+    if (!studentInfo) {
+      return res.status(404).json({ error: 'Aluno não encontrado' });
+    }
+
+    // Get all exam results for this student
+    const results = db.prepare(`
+      SELECT r.id, r.prova_id, r.pontuacao, r.acertos, r.total, r.data,
+             p.titulo as prova_titulo, p.descricao as prova_descricao
+      FROM resultados r
+      JOIN provas p ON r.prova_id = p.id
+      WHERE r.email_aluno = ?
+      ORDER BY r.data DESC
+    `).all(email) as any[];
+
+    // For each result, get the questions with student answers
+    for (const result of results) {
+      const questions = db.prepare(`
+        SELECT per.id, per.enunciado,
+               ra.alternativa_id as resposta_aluno_id,
+               ra.correto
+        FROM perguntas per
+        LEFT JOIN respostas_aluno ra ON ra.pergunta_id = per.id AND ra.prova_id = ?
+        WHERE per.prova_id = ?
+      `).all(result.prova_id, result.prova_id) as any[];
+
+      for (const q of questions) {
+        q.alternativas = db.prepare(`
+          SELECT id, texto, is_correta FROM alternativas WHERE pergunta_id = ?
+        `).all(q.id);
+      }
+
+      result.perguntas = questions;
+    }
+
+    res.json({
+      student: studentInfo,
+      results
+    });
+  } catch (err) {
+    console.error('Error fetching student details:', err);
+    res.status(500).json({ error: 'Erro ao buscar detalhes do aluno' });
+  }
+});
+
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
