@@ -113,9 +113,31 @@ export function SettingsPage() {
     }
   };
 
+  const handleChangePassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setPasswordMsg(null);
+    if (passwordData.new.length < 6) {
+      setPasswordMsg({ type: 'error', text: 'A nova senha deve ter pelo menos 6 caracteres' });
+      return;
+    }
+    if (passwordData.new !== passwordData.confirm) {
+      setPasswordMsg({ type: 'error', text: 'As senhas não coincidem' });
+      return;
+    }
+    setIsChangingPassword(true);
+    try {
+      await api.put('/admins/change-password', { current_password: passwordData.current, new_password: passwordData.new });
+      setPasswordMsg({ type: 'success', text: 'Senha alterada com sucesso!' });
+      setPasswordData({ current: '', new: '', confirm: '' });
+    } catch (err: any) {
+      setPasswordMsg({ type: 'error', text: err.message || 'Erro ao alterar senha' });
+    } finally {
+      setIsChangingPassword(false);
+    }
+  };
+
   const handleSave = () => {
     setIsSaving(true);
-    // Simulate API call
     setTimeout(() => {
       setIsSaving(false);
       setShowSuccess(true);
