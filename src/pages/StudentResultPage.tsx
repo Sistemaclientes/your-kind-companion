@@ -104,7 +104,9 @@ export function StudentResultPage() {
             {isApproved ? 'Parabéns,' : 'Continue tentando,'} <span className="text-primary">{studentInfo?.nome || 'Estudante'}!</span>
           </h1>
           <p className="text-lg md:text-xl text-on-surface-variant font-medium max-w-2xl mx-auto leading-relaxed">
-            Você concluiu sua avaliação. {isApproved ? 'Seu desempenho foi satisfatório e você pode baixar seu certificado.' : 'Infelizmente você não atingiu a pontuação mínima, mas pode tentar novamente.'}
+            {isApproved 
+              ? 'Você concluiu sua avaliação. Seu desempenho foi satisfatório e você pode baixar seu certificado.\n\nVocê foi Ótimo! Deseja fazer mais uma avaliação? Clique no botão ao lado.'
+              : 'Infelizmente você não atingiu a pontuação mínima, mas pode tentar novamente.'}
           </p>
         </motion.div>
 
