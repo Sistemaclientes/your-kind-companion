@@ -36,7 +36,7 @@ export function CreateExamPage() {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [duration, setDuration] = useState(60);
-  const [category, setCategory] = useState('Engenharia');
+  const [category, setCategory] = useState('Administração');
   const [settings, setSettings] = useState({
     random: true,
     results: true,
