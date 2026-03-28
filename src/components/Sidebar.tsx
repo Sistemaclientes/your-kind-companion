@@ -11,9 +11,17 @@ import {
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { useTheme } from '../lib/ThemeContext';
+import logoUplife from '../assets/logo-uplife.png';
 
 export function Sidebar() {
   const { theme, toggleTheme } = useTheme();
+  const [currentTime, setCurrentTime] = React.useState(new Date());
+
+  React.useEffect(() => {
+    const timer = setInterval(() => setCurrentTime(new Date()), 1000);
+    return () => clearInterval(timer);
+  }, []);
+
   const navItems = [
     { icon: LayoutDashboard, label: 'Dashboard', path: '/admin/dashboard' },
     { icon: FileText, label: 'Provas', path: '/admin/exams' },
