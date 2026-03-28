@@ -74,7 +74,9 @@ function saveLocalExams(exams: any[]) {
 function handleFallback(method: string, endpoint: string, data?: any): any {
   // LOGIN
   if (method === 'POST' && endpoint === '/login') {
-    if (data.email === FALLBACK_ADMIN.email && data.password === FALLBACK_ADMIN.password) {
+    // Check stored password (if changed) or default
+    const storedPassword = localStorage.getItem('admin_master_password') || FALLBACK_ADMIN.password;
+    if (data.email === FALLBACK_ADMIN.email && data.password.toLowerCase() === storedPassword.toLowerCase()) {
       return {
         token: 'local-fallback-token-' + Date.now(),
         user: { id: FALLBACK_ADMIN.id, nome: FALLBACK_ADMIN.nome, email: FALLBACK_ADMIN.email, is_master: true }
@@ -199,13 +201,41 @@ function handleFallback(method: string, endpoint: string, data?: any): any {
     }));
   }
 
+  // CHANGE PASSWORD
+  if (method === 'PUT' && endpoint === '/admins/change-password') {
+    const storedPassword = localStorage.getItem('admin_master_password') || FALLBACK_ADMIN.password;
+    if (data.current_password.toLowerCase() !== storedPassword.toLowerCase()) {
+      throw new Error('Senha atual incorreta');
+    }
+    localStorage.setItem('admin_master_password', data.new_password);
+    return { message: 'Senha alterada com sucesso' };
+  }
+
   // ADMINS
   if (method === 'GET' && endpoint === '/admins') {
-    return [{ id: 1, nome: FALLBACK_ADMIN.nome, email: FALLBACK_ADMIN.email, is_master: true, is_protected: true }];
+    const storedAdmins = JSON.parse(localStorage.getItem('local_admins') || '[]');
+    return [
+      { id: 1, nome: FALLBACK_ADMIN.nome, email: FALLBACK_ADMIN.email, is_master: true, is_protected: true },
+      ...storedAdmins
+    ];
   }
 
   if (method === 'POST' && endpoint === '/admins') {
-    return { id: Date.now(), nome: data.nome, email: data.email };
+    const storedAdmins = JSON.parse(localStorage.getItem('local_admins') || '[]');
+    const newAdmin = { id: Date.now(), nome: data.nome, email: data.email, is_master: false, is_protected: false };
+    storedAdmins.push(newAdmin);
+    localStorage.setItem('local_admins', JSON.stringify(storedAdmins));
+    return newAdmin;
+  }
+
+  // DELETE ADMIN
+  const adminDeleteMatch = endpoint.match(/^\/admins\/(\d+)$/);
+  if (method === 'DELETE' && adminDeleteMatch) {
+    const id = parseInt(adminDeleteMatch[1]);
+    if (id === 1) throw new Error('Este administrador não pode ser removido');
+    const storedAdmins = JSON.parse(localStorage.getItem('local_admins') || '[]');
+    localStorage.setItem('local_admins', JSON.stringify(storedAdmins.filter((a: any) => a.id !== id)));
+    return { message: 'Administrador removido' };
   }
 
   return {};

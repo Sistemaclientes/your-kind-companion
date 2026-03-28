@@ -29,6 +29,9 @@ export function SettingsPage() {
   const [newAdmin, setNewAdmin] = useState({ nome: '', email: '', senha: '' });
   const [isCreatingAdmin, setIsCreatingAdmin] = useState(false);
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
+  const [passwordData, setPasswordData] = useState({ current: '', new: '', confirm: '' });
+  const [isChangingPassword, setIsChangingPassword] = useState(false);
+  const [passwordMsg, setPasswordMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const logoInputRef = React.useRef<HTMLInputElement>(null);
 
   React.useEffect(() => {
