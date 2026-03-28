@@ -25,6 +25,7 @@ export function initDB() {
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       titulo TEXT NOT NULL,
       descricao TEXT,
+      slug TEXT UNIQUE,
       created_by INTEGER,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
       FOREIGN KEY (created_by) REFERENCES admins(id)
