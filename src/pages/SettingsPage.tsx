@@ -15,7 +15,8 @@ import {
   Plus,
   Trash2,
   Mail,
-  Lock
+  Lock,
+  AlertCircle
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { motion, AnimatePresence } from 'motion/react';
