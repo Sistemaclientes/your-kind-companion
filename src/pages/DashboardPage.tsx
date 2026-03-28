@@ -275,21 +275,21 @@ export function DashboardPage() {
         </motion.div>
 
         {/* Students */}
-        <motion.div variants={fadeUp} className="mt-10">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-            <div>
-              <h4 className="text-xl font-bold text-on-surface tracking-tight">Status dos Alunos</h4>
-              <p className="text-sm text-on-surface-variant font-medium mt-0.5">Engajamento individual em tempo real</p>
+        {students.length > 0 && (
+          <motion.div variants={fadeUp} className="mt-10">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+              <div>
+                <h4 className="text-xl font-bold text-on-surface tracking-tight">Status dos Alunos</h4>
+                <p className="text-sm text-on-surface-variant font-medium mt-0.5">Engajamento individual em tempo real</p>
+              </div>
+              <button 
+                className="btn-secondary py-2.5 px-5 text-xs"
+                onClick={() => navigate('/admin/students')}
+              >
+                Ver Todos
+              </button>
             </div>
-            <button 
-              className="btn-secondary py-2.5 px-5 text-xs"
-              onClick={() => navigate('/admin/students')}
-            >
-              Ver Todos
-            </button>
-          </div>
-          
-          {students.length > 0 ? (
+            
             <div className="overflow-hidden -mx-4 px-4 group/marquee">
               <div className="flex gap-5 animate-marquee group-hover/marquee:[animation-play-state:paused] w-max">
                 {[...students, ...students].map((s, i) => (
@@ -315,12 +315,8 @@ export function DashboardPage() {
                 ))}
               </div>
             </div>
-          ) : (
-            <div className="card-saas text-center py-8">
-              <p className="text-on-surface-variant font-medium text-sm">Nenhum aluno cadastrado ainda.</p>
-            </div>
-          )}
-        </motion.div>
+          </motion.div>
+        )}
       </motion.main>
     </>
   );
