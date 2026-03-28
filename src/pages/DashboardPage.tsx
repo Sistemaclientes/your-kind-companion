@@ -31,6 +31,8 @@ export function DashboardPage() {
   const [stats, setStats] = React.useState<any>(null);
   const [loading, setLoading] = React.useState(true);
   const [sliderIndex, setSliderIndex] = React.useState(0);
+  const carouselRef = React.useRef<HTMLDivElement>(null);
+  const [carouselWidth, setCarouselWidth] = React.useState(0);
 
   React.useEffect(() => {
     const fetchStats = async () => {
