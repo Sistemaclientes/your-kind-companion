@@ -261,9 +261,9 @@ export function ExamsPage() {
                       <td className="px-8 py-6">
                         <span className={cn(
                           "px-4 py-1.5 text-[10px] font-bold rounded-xl uppercase tracking-widest shadow-sm",
-                          (exam.status === 'Ativa' || exam.status === 'Ativo') && "bg-green-500/10 text-green-600 dark:text-green-400",
-                          (exam.status === 'Inativa' || exam.status === 'Inativo') && "bg-red-500/10 text-red-600 dark:text-red-400",
-                          (exam.status === 'Pendente' || exam.status === 'Rascunho') && "bg-orange-500/10 text-orange-600 dark:text-orange-400",
+                          (exam.status === 'Ativa' || exam.status === 'Ativo') && "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30",
+                          (exam.status === 'Inativa' || exam.status === 'Inativo') && "bg-red-500/20 text-red-400 border border-red-500/30",
+                          (exam.status === 'Pendente' || exam.status === 'Rascunho') && "bg-orange-500/15 text-orange-400 border border-orange-500/30",
                           exam.status === 'Finalizada' && "bg-surface-container-high text-on-surface-variant",
                         )}>
                           {exam.status}
