@@ -627,9 +627,9 @@ export function CreateExamPage() {
                                   }}
                                 />
                                 {optIdx === q.correct && q.type !== 'list' && (
-                                  <div className="absolute right-5 top-1/2 -translate-y-1/2 flex items-center gap-2 bg-primary/10 px-3 py-1 rounded-lg">
-                                    <CheckSquare className="w-3.5 h-3.5 text-primary" />
-                                    <span className="text-[9px] font-black text-primary uppercase tracking-widest">Gabarito</span>
+                                  <div className="absolute right-2 sm:right-5 top-1/2 -translate-y-1/2 flex items-center gap-1.5 bg-primary/10 px-2 sm:px-3 py-1 rounded-lg">
+                                    <CheckSquare className="w-3 h-3 text-primary" />
+                                    <span className="text-[8px] sm:text-[9px] font-black text-primary uppercase tracking-widest hidden sm:inline">Gabarito</span>
                                   </div>
                                 )}
                               </div>
