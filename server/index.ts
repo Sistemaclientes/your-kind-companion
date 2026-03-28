@@ -6,7 +6,7 @@ import { authService, adminMiddleware, masterMiddleware } from './auth';
 
 const app = express();
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: '5mb' }));
 
 // Initialize database
 initDB();
@@ -15,6 +15,11 @@ initDB();
 
 app.post('/api/login', (req, res) => {
   const { email, password } = req.body;
+  
+  if (!email || !password) {
+    return res.status(400).json({ error: 'Email e senha são obrigatórios' });
+  }
+
   const admin = db.prepare('SELECT * FROM admins WHERE email = ?').get(email) as any;
 
   if (!admin || !authService.comparePassword(password, admin.senha)) {
@@ -27,7 +32,15 @@ app.post('/api/login', (req, res) => {
     is_master: !!admin.is_master
   });
 
-  res.json({ token, user: { id: admin.id, nome: admin.nome, email: admin.email, is_master: !!admin.is_master } });
+  res.json({ 
+    token, 
+    user: { 
+      id: admin.id, 
+      nome: admin.nome, 
+      email: admin.email, 
+      is_master: !!admin.is_master 
+    } 
+  });
 });
 
 // --- Admin Management (Master Only) ---
@@ -35,6 +48,14 @@ app.post('/api/login', (req, res) => {
 app.post('/api/admins', adminMiddleware, masterMiddleware, (req, res) => {
   const { nome, email, senha } = req.body;
   
+  if (!nome || !email || !senha) {
+    return res.status(400).json({ error: 'Nome, email e senha são obrigatórios' });
+  }
+
+  if (senha.length < 6) {
+    return res.status(400).json({ error: 'Senha deve ter pelo menos 6 caracteres' });
+  }
+
   try {
     const hashedPassword = authService.hashPassword(senha);
     const result = db.prepare('INSERT INTO admins (nome, email, senha, is_master) VALUES (?, ?, ?, 0)')
@@ -47,31 +68,54 @@ app.post('/api/admins', adminMiddleware, masterMiddleware, (req, res) => {
 });
 
 app.get('/api/admins', adminMiddleware, masterMiddleware, (req, res) => {
-  const admins = db.prepare('SELECT id, nome, email, is_master FROM admins').all();
+  const admins = db.prepare('SELECT id, nome, email, is_master, is_protected FROM admins').all();
   res.json(admins);
+});
+
+app.delete('/api/admins/:id', adminMiddleware, masterMiddleware, (req: any, res) => {
+  const adminId = parseInt(req.params.id);
+  
+  // Check if admin is protected
+  const admin = db.prepare('SELECT is_protected FROM admins WHERE id = ?').get(adminId) as any;
+  if (!admin) {
+    return res.status(404).json({ error: 'Administrador não encontrado' });
+  }
+  if (admin.is_protected) {
+    return res.status(403).json({ error: 'Este administrador não pode ser removido' });
+  }
+  
+  db.prepare('DELETE FROM admins WHERE id = ?').run(adminId);
+  res.json({ message: 'Administrador removido' });
 });
 
 // --- Exam Management ---
 
 app.post('/api/provas', adminMiddleware, (req: any, res) => {
   const { titulo, descricao, perguntas } = req.body;
+  
+  if (!titulo || !titulo.trim()) {
+    return res.status(400).json({ error: 'Título é obrigatório' });
+  }
+
   const admin_id = req.user.id;
 
   const transaction = db.transaction(() => {
     const info = db.prepare('INSERT INTO provas (titulo, descricao, created_by) VALUES (?, ?, ?)')
-      .run(titulo, descricao, admin_id);
+      .run(titulo.trim(), descricao?.trim() || '', admin_id);
     const provaId = info.lastInsertRowid;
 
     if (perguntas && Array.isArray(perguntas)) {
       for (const q of perguntas) {
+        if (!q.enunciado?.trim()) continue;
         const qInfo = db.prepare('INSERT INTO perguntas (prova_id, enunciado) VALUES (?, ?)')
-          .run(provaId, q.enunciado);
+          .run(provaId, q.enunciado.trim());
         const perguntaId = qInfo.lastInsertRowid;
 
         if (q.alternativas && Array.isArray(q.alternativas)) {
           for (const alt of q.alternativas) {
+            if (!alt.texto?.trim()) continue;
             db.prepare('INSERT INTO alternativas (pergunta_id, texto, is_correta) VALUES (?, ?, ?)')
-              .run(perguntaId, alt.texto, alt.is_correta ? 1 : 0);
+              .run(perguntaId, alt.texto.trim(), alt.is_correta ? 1 : 0);
           }
         }
       }
@@ -90,9 +134,10 @@ app.post('/api/provas', adminMiddleware, (req: any, res) => {
 app.get('/api/provas', (req, res) => {
   const provas = db.prepare(`
     SELECT p.*, a.nome as creator_name,
-    (SELECT COUNT(*) FROM perguntas WHERE prova_id = p.id) as qCount
+    (SELECT COUNT(*) FROM perguntas WHERE prova_id = p.id) as qCount,
+    (SELECT COUNT(DISTINCT email_aluno) FROM resultados WHERE prova_id = p.id) as studentCount
     FROM provas p 
-    JOIN admins a ON p.created_by = a.id
+    LEFT JOIN admins a ON p.created_by = a.id
     ORDER BY p.created_at DESC
   `).all();
   res.json(provas);
@@ -148,9 +193,17 @@ app.post('/api/responder-prova', (req, res) => {
     return res.status(400).json({ error: 'Dados incompletos (nome e e-mail são obrigatórios)' });
   }
 
+  // Sanitize inputs
+  const cleanName = String(nome_aluno).trim().slice(0, 200);
+  const cleanEmail = String(email_aluno).trim().slice(0, 200);
+
   const questions = db.prepare('SELECT id FROM perguntas WHERE prova_id = ?').all(prova_id) as any[];
   let acertosCount = 0;
   const total = questions.length;
+
+  if (total === 0) {
+    return res.status(400).json({ error: 'Prova sem questões' });
+  }
 
   try {
     const transaction = db.transaction(() => {
@@ -161,13 +214,15 @@ app.post('/api/responder-prova', (req, res) => {
         const isCorrect = correctAlt && selectedAltId == correctAlt.id;
         if (isCorrect) acertosCount++;
 
-        db.prepare('INSERT INTO respostas_aluno (prova_id, pergunta_id, alternativa_id, correto) VALUES (?, ?, ?, ?)')
-          .run(prova_id, q.id, selectedAltId || null, isCorrect ? 1 : 0);
+        if (selectedAltId) {
+          db.prepare('INSERT INTO respostas_aluno (prova_id, pergunta_id, alternativa_id, correto) VALUES (?, ?, ?, ?)')
+            .run(prova_id, q.id, selectedAltId, isCorrect ? 1 : 0);
+        }
       }
 
       const pontuacao = Math.round((acertosCount / total) * 100);
       db.prepare('INSERT INTO resultados (prova_id, nome_aluno, email_aluno, pontuacao, acertos, total) VALUES (?, ?, ?, ?, ?, ?)')
-        .run(prova_id, nome_aluno, email_aluno, pontuacao, acertosCount, total);
+        .run(prova_id, cleanName, cleanEmail, pontuacao, acertosCount, total);
 
       return { acertos: acertosCount, total, pontuacao };
     });
