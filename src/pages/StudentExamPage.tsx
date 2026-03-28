@@ -171,12 +171,12 @@ export function StudentExamPage() {
       </header>
 
       {/* Progress Bar */}
-      <div className="h-1.5 w-full bg-outline/30 overflow-hidden">
+      <div className="h-1 w-full bg-outline/30 overflow-hidden">
         <motion.div 
-          className="h-full bg-primary" 
+          className="h-full bg-gradient-to-r from-primary to-[#06B6D4]" 
           initial={{ width: 0 }}
           animate={{ width: `${progress}%` }}
-          transition={{ duration: 0.5 }}
+          transition={{ duration: 0.5, ease: "easeOut" }}
         />
       </div>
 
