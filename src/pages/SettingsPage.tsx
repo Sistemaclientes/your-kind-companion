@@ -148,7 +148,7 @@ export function SettingsPage() {
                       step="0.5" 
                       type="number"
                     />
-                    <div className="absolute right-4 top-1/2 -translate-y-1/2 text-text-secondary font-bold text-sm bg-background-light dark:bg-background-dark px-2 py-1 rounded">/ 10</div>
+                    <div className="absolute right-4 top-1/2 -translate-y-1/2 text-text-secondary font-bold text-sm bg-surface-container-high px-2 py-1 rounded">/ 10</div>
                   </div>
                   <p className="mt-2 text-xs text-text-secondary">Define o limiar para o status de 'Aprovado' nos relatórios.</p>
                 </div>
@@ -185,11 +185,11 @@ export function SettingsPage() {
                   { label: 'Permitir refazer avaliação', sub: 'Habilita o botão de tentativa adicional para alunos reprovados.', checked: false, tooltip: "Define se o aluno pode tentar a prova novamente caso não atinja a nota mínima." },
                   { label: 'Liberar revisão de questões', sub: 'Permite que o aluno veja quais questões errou e o gabarito.', checked: true, tooltip: "Exibe o detalhamento de acertos e erros após a conclusão." },
                 ].map((item, i) => (
-                  <label key={i} className="flex items-start gap-4 p-5 rounded-xl bg-background-light dark:bg-background-dark/50 cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all group border border-transparent hover:border-primary/20">
+                  <label key={i} className="flex items-start gap-4 p-5 rounded-xl bg-surface-container-low cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all group border border-transparent hover:border-primary/20">
                     <div className="pt-1">
                       <input 
                         defaultChecked={item.checked}
-                        className="rounded-md text-primary focus:ring-primary/20 border-border bg-white dark:bg-cards-dark w-5 h-5 cursor-pointer transition-all" 
+                        className="rounded-md text-primary focus:ring-primary/20 border-outline bg-surface-container w-5 h-5 cursor-pointer transition-all" 
                         type="checkbox"
                       />
                     </div>
@@ -217,14 +217,14 @@ export function SettingsPage() {
               </div>
               
               <div className="space-y-6">
-                <div className="aspect-video w-full rounded-xl bg-background-light dark:bg-background-dark/50 overflow-hidden relative group border-2 border-dashed border-border hover:border-primary/50 transition-all flex items-center justify-center cursor-pointer">
+                <div className="aspect-video w-full rounded-xl bg-surface-container-low overflow-hidden relative group border-2 border-dashed border-outline hover:border-primary/50 transition-all flex items-center justify-center cursor-pointer">
                   <img 
                     className="absolute inset-0 w-full h-full object-cover opacity-10 group-hover:opacity-20 transition-opacity" 
                     src="https://images.unsplash.com/photo-1557683316-973673baf926?auto=format&fit=crop&w=800&q=80"
                     referrerPolicy="no-referrer"
                   />
                   <div className="relative z-10 text-center p-4">
-                    <div className="w-12 h-12 bg-white dark:bg-cards-dark rounded-full flex items-center justify-center mx-auto mb-3 shadow-sm border border-border group-hover:scale-110 transition-transform">
+                    <div className="w-12 h-12 bg-surface-container rounded-full flex items-center justify-center mx-auto mb-3 shadow-sm border border-outline group-hover:scale-110 transition-transform">
                       <UploadCloud className="text-primary w-6 h-6" />
                     </div>
                     <p className="text-sm font-bold text-text-primary">Logo da Instituição</p>
@@ -233,23 +233,23 @@ export function SettingsPage() {
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="p-4 rounded-xl bg-background-light dark:bg-background-dark/50 border border-border">
+                  <div className="p-4 rounded-xl bg-surface-container-low border border-outline">
                     <label className="flex items-center text-[11px] font-bold text-text-secondary uppercase mb-3 tracking-wider">
                       Cor Principal
                       <Tooltip text="Cor utilizada em botões, ícones e elementos de destaque em toda a plataforma." />
                     </label>
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-primary shadow-sm ring-2 ring-white dark:ring-cards-dark"></div>
+                      <div className="w-8 h-8 rounded-lg bg-primary shadow-sm ring-2 ring-surface-container"></div>
                       <span className="text-xs font-mono font-bold text-text-primary">#0F8B8D</span>
                     </div>
                   </div>
-                  <div className="p-4 rounded-xl bg-background-light dark:bg-background-dark/50 border border-border">
+                  <div className="p-4 rounded-xl bg-surface-container-low border border-outline">
                     <label className="flex items-center text-[11px] font-bold text-text-secondary uppercase mb-3 tracking-wider">
                       Cor de Sucesso
                       <Tooltip text="Cor utilizada para indicar aprovações e ações concluídas com êxito." />
                     </label>
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-emerald-500 shadow-sm ring-2 ring-white dark:ring-cards-dark"></div>
+                      <div className="w-8 h-8 rounded-lg bg-emerald-500 shadow-sm ring-2 ring-surface-container"></div>
                       <span className="text-xs font-mono font-bold text-text-primary">#10B981</span>
                     </div>
                   </div>
@@ -406,8 +406,8 @@ export function SettingsPage() {
 
 
           {/* Action Buttons */}
-          <div className="lg:col-span-12 flex flex-col sm:flex-row justify-end gap-4 mt-8 pt-8 border-t border-border">
-            <button className="px-8 py-3.5 rounded-xl text-sm font-bold text-text-secondary hover:text-text-primary hover:bg-background-light dark:hover:bg-background-dark transition-all">
+          <div className="lg:col-span-12 flex flex-col sm:flex-row justify-end gap-4 mt-8 pt-8 border-t border-outline">
+            <button className="px-8 py-3.5 rounded-xl text-sm font-bold text-text-secondary hover:text-text-primary hover:bg-surface-container-high transition-all">
               Descartar Alterações
             </button>
             <button 
