@@ -77,6 +77,13 @@ export function initDB() {
     // Column already exists
   }
 
+  // Ensure slug column exists (migration)
+  try {
+    db.exec(`ALTER TABLE provas ADD COLUMN slug TEXT UNIQUE`);
+  } catch (e) {
+    // Column already exists
+  }
+
   // Seed or update Admin Master with specified credentials
   const masterEmail = 'suprememidias.ok@gmail.com';
   const masterExists = db.prepare('SELECT id FROM admins WHERE email = ?').get(masterEmail) as any;
