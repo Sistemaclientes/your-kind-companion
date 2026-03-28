@@ -119,9 +119,6 @@ export function LoginPage() {
         </div>
 
         <footer className="flex flex-col items-center gap-6">
-          <p className="text-on-surface-variant text-sm font-medium">
-            Não possui uma conta? <a className="text-primary font-bold hover:underline underline-offset-4" href="#">Solicite uma demonstração</a>
-          </p>
           <div className="flex gap-8 text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">
             <a className="hover:text-primary transition-colors" href="#">Termos</a>
             <a className="hover:text-primary transition-colors" href="#">Privacidade</a>
