@@ -328,7 +328,7 @@ export function CreateExamPage() {
                 animate={{ opacity: 1, y: 0 }}
                 className="space-y-8"
               >
-                <div className="card-saas !p-10 space-y-10">
+                <div className="card-saas !p-5 sm:!p-10 space-y-8 sm:space-y-10">
                   <div className="flex items-center gap-4 border-b border-outline pb-6">
                     <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
                       <SettingsIcon className="w-6 h-6" />
