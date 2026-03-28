@@ -183,7 +183,7 @@ export function ExamsPage() {
               <div className="relative group">
                 <Filter className="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant w-4 h-4 group-focus-within:text-primary transition-colors" />
                 <select 
-                  className="pl-11 pr-10 py-3 bg-white dark:bg-slate-950 border border-outline rounded-xl text-xs font-bold uppercase tracking-widest text-on-surface focus:border-primary focus:ring-4 focus:ring-primary/10 cursor-pointer appearance-none outline-none transition-all shadow-sm focus:shadow-primary/10"
+                  className="pl-11 pr-10 py-3 bg-surface-container border border-outline rounded-xl text-xs font-bold uppercase tracking-widest text-on-surface focus:border-primary focus:ring-4 focus:ring-primary/10 cursor-pointer appearance-none outline-none transition-all shadow-sm focus:shadow-primary/10"
                   value={categoryFilter}
                   onChange={(e) => setCategoryFilter(e.target.value)}
                 >
@@ -198,7 +198,7 @@ export function ExamsPage() {
               <div className="relative group">
                 <Clock className="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant w-4 h-4 group-focus-within:text-primary transition-colors" />
                 <select 
-                  className="pl-11 pr-10 py-3 bg-white dark:bg-slate-950 border border-outline rounded-xl text-xs font-bold uppercase tracking-widest text-on-surface focus:border-primary focus:ring-4 focus:ring-primary/10 cursor-pointer appearance-none outline-none transition-all shadow-sm focus:shadow-primary/10"
+                  className="pl-11 pr-10 py-3 bg-surface-container border border-outline rounded-xl text-xs font-bold uppercase tracking-widest text-on-surface focus:border-primary focus:ring-4 focus:ring-primary/10 cursor-pointer appearance-none outline-none transition-all shadow-sm focus:shadow-primary/10"
                   value={dateFilter}
                   onChange={(e) => setDateFilter(e.target.value)}
                 >
@@ -212,7 +212,7 @@ export function ExamsPage() {
 
               <div className="relative group">
                 <ArrowUpDown className="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant w-4 h-4 group-focus-within:text-primary transition-colors" />
-                <select className="pl-11 pr-10 py-3 bg-white dark:bg-slate-950 border border-outline rounded-xl text-xs font-bold uppercase tracking-widest text-on-surface focus:border-primary focus:ring-4 focus:ring-primary/10 cursor-pointer appearance-none outline-none transition-all shadow-sm focus:shadow-primary/10">
+                <select className="pl-11 pr-10 py-3 bg-surface-container border border-outline rounded-xl text-xs font-bold uppercase tracking-widest text-on-surface focus:border-primary focus:ring-4 focus:ring-primary/10 cursor-pointer appearance-none outline-none transition-all shadow-sm focus:shadow-primary/10">
                   <option>Ordenar por: Recentes</option>
                   <option>Nome (A-Z)</option>
                   <option>Data de Criação</option>
@@ -220,7 +220,7 @@ export function ExamsPage() {
                 <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-on-surface-variant pointer-events-none" />
               </div>
             </div>
-            <div className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant bg-white dark:bg-slate-950 px-4 py-2 rounded-lg border border-outline shadow-sm">
+            <div className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant bg-surface-container px-4 py-2 rounded-lg border border-outline shadow-sm">
               Exibindo <span className="text-primary">{filteredExams.length}</span> de <span className="text-on-surface">{exams.length}</span> provas
             </div>
           </div>

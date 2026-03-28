@@ -102,7 +102,7 @@ export function StudentsPage() {
             <div className="relative flex-1 max-w-md group">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant group-focus-within:text-primary transition-colors w-4 h-4" />
               <input 
-                className="w-full bg-white dark:bg-slate-950 border border-outline rounded-xl pl-12 pr-4 py-3 text-sm text-on-surface font-medium placeholder:text-on-surface-variant/50 focus:border-primary outline-none transition-all" 
+                className="w-full bg-surface-container border border-outline rounded-xl pl-12 pr-4 py-3 text-sm text-on-surface font-medium placeholder:text-on-surface-variant/50 focus:border-primary outline-none transition-all" 
                 placeholder="Buscar por nome ou e-mail..." 
                 type="text"
                 value={searchQuery}
@@ -178,7 +178,7 @@ export function StudentsPage() {
               <button 
                 onClick={() => goToPage(currentPage - 1)}
                 disabled={currentPage === 1}
-                className="p-2.5 rounded-xl border border-border bg-white dark:bg-slate-900 text-on-surface-variant hover:text-primary disabled:opacity-30 transition-all"
+                className="p-2.5 rounded-xl border border-border bg-surface-container text-on-surface-variant hover:text-primary disabled:opacity-30 transition-all"
               >
                 <ChevronLeft className="w-4 h-4" />
               </button>
@@ -192,7 +192,7 @@ export function StudentsPage() {
                       "w-9 h-9 rounded-xl text-xs font-bold transition-all shadow-sm",
                       currentPage === i + 1 
                         ? "bg-primary text-white" 
-                        : "bg-white dark:bg-slate-900 text-on-surface-variant border border-border"
+                        : "bg-surface-container text-on-surface-variant border border-border"
                     )}
                   >
                     {i + 1}
@@ -203,7 +203,7 @@ export function StudentsPage() {
               <button 
                 onClick={() => goToPage(currentPage + 1)}
                 disabled={currentPage === totalPages}
-                className="p-2.5 rounded-xl border border-border bg-white dark:bg-slate-900 text-on-surface-variant hover:text-primary disabled:opacity-30 transition-all"
+                className="p-2.5 rounded-xl border border-border bg-surface-container text-on-surface-variant hover:text-primary disabled:opacity-30 transition-all"
               >
                 <ChevronRight className="w-4 h-4" />
               </button>

@@ -228,7 +228,7 @@ export function StudentDetailsPage() {
             </div>
 
             <div className="card-saas overflow-hidden">
-              <div className="p-6 border-b border-border flex items-center justify-between bg-white/50 dark:bg-cards-dark/50 backdrop-blur-sm">
+              <div className="p-6 border-b border-border flex items-center justify-between bg-surface-container-low/50 backdrop-blur-sm">
                 <h4 className="text-lg font-bold text-text-primary font-headline tracking-tight">Histórico de Avaliações</h4>
                 <button className="text-primary font-bold text-xs uppercase tracking-widest hover:text-primary-dark transition-colors px-3 py-1.5 rounded-lg hover:bg-primary/5">Ver relatório completo</button>
               </div>
@@ -292,13 +292,13 @@ export function StudentDetailsPage() {
                 initial={{ opacity: 0, scale: 0.95, y: 20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                className="relative w-full max-w-md bg-white dark:bg-cards-dark rounded-[24px] shadow-2xl overflow-hidden flex flex-col border border-border"
+                className="relative w-full max-w-md bg-surface-container rounded-[24px] shadow-2xl overflow-hidden flex flex-col border border-border"
               >
                 <div className="p-8 border-b border-border flex items-center justify-between bg-background-light/50 dark:bg-background-dark/50">
                   <h3 className="text-xl font-bold text-text-primary font-headline tracking-tight">Editar Perfil</h3>
                   <button 
                     onClick={() => setIsEditing(false)}
-                    className="w-10 h-10 rounded-xl bg-white dark:bg-cards-dark border border-border flex items-center justify-center text-text-secondary hover:text-primary hover:border-primary/50 transition-all shadow-sm"
+                    className="w-10 h-10 rounded-xl bg-surface-container border border-border flex items-center justify-center text-text-secondary hover:text-primary hover:border-primary/50 transition-all shadow-sm"
                   >
                     <X className="w-5 h-5" />
                   </button>
@@ -339,7 +339,7 @@ export function StudentDetailsPage() {
                 <div className="p-8 border-t border-border bg-background-light/50 dark:bg-background-dark/50 flex gap-4">
                   <button 
                     onClick={() => setIsEditing(false)}
-                    className="flex-1 py-3.5 border border-border text-text-secondary font-bold rounded-xl hover:bg-white dark:hover:bg-cards-dark hover:text-text-primary transition-all shadow-sm"
+                    className="flex-1 py-3.5 border border-outline text-on-surface-variant font-bold rounded-xl hover:bg-surface-container hover:text-on-surface transition-all shadow-sm"
                   >
                     Cancelar
                   </button>
@@ -370,7 +370,7 @@ export function StudentDetailsPage() {
                 initial={{ opacity: 0, scale: 0.95, y: 20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                className="relative w-full max-w-4xl max-h-[90vh] bg-white dark:bg-cards-dark rounded-[24px] shadow-2xl overflow-hidden flex flex-col border border-border"
+                className="relative w-full max-w-4xl max-h-[90vh] bg-surface-container rounded-[24px] shadow-2xl overflow-hidden flex flex-col border border-border"
               >
                 {/* Modal Header */}
                 <div className="p-8 border-b border-border flex items-center justify-between bg-background-light/50 dark:bg-background-dark/50">
@@ -400,7 +400,7 @@ export function StudentDetailsPage() {
                   </div>
                   <button 
                     onClick={() => setSelectedExam(null)}
-                    className="w-12 h-12 rounded-xl bg-white dark:bg-cards-dark border border-border flex items-center justify-center text-text-secondary hover:text-primary hover:border-primary/50 transition-all shadow-sm"
+                    className="w-12 h-12 rounded-xl bg-surface-container border border-border flex items-center justify-center text-text-secondary hover:text-primary hover:border-primary/50 transition-all shadow-sm"
                   >
                     <X className="w-6 h-6" />
                   </button>
@@ -438,7 +438,7 @@ export function StudentDetailsPage() {
                                         "w-9 h-9 rounded-xl border-2 flex items-center justify-center text-sm font-bold transition-all",
                                         isCorrect && "bg-emerald-500 border-emerald-500 text-white shadow-lg shadow-emerald-500/20",
                                         isStudentAnswer && !isCorrect && "bg-red-500 border-red-500 text-white shadow-lg shadow-red-500/20",
-                                        !isCorrect && !isStudentAnswer && "border-border text-text-secondary bg-white dark:bg-cards-dark"
+                                        !isCorrect && !isStudentAnswer && "border-border text-text-secondary bg-surface-container"
                                       )}>
                                         {String.fromCharCode(65 + optIdx)}
                                       </div>
