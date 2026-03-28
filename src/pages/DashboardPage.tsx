@@ -264,24 +264,13 @@ export function DashboardPage() {
             </button>
           </div>
           
-          <motion.div 
-            ref={carouselRef} 
-            className="overflow-hidden cursor-grab active:cursor-grabbing -mx-4 px-4"
-          >
-            <motion.div 
-              className="flex gap-6"
-              drag="x"
-              dragConstraints={{ right: 0, left: -carouselWidth }}
-              dragElastic={0.1}
-              dragTransition={{ bounceStiffness: 300, bounceDamping: 30 }}
-            >
-              {students.map((s) => (
-                <motion.div 
-                  key={s.id} 
-                  className="min-w-[320px] card-saas flex items-center gap-5 cursor-pointer group/card border-transparent hover:border-primary/20 select-none"
+          <div className="overflow-hidden -mx-4 px-4 group/marquee">
+            <div className="flex gap-6 animate-marquee group-hover/marquee:[animation-play-state:paused] w-max">
+              {[...students, ...students].map((s, i) => (
+                <div 
+                  key={`${s.id}-${i}`} 
+                  className="min-w-[320px] card-saas flex items-center gap-5 cursor-pointer group/card border-transparent hover:border-primary/20 select-none transition-transform hover:scale-[1.02] active:scale-[0.98]"
                   onClick={() => navigate(`/admin/student/${s.id}`)}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
                 >
                   <div className="relative shrink-0">
                     <img 
@@ -310,10 +299,10 @@ export function DashboardPage() {
                   )}>
                     {s.status}
                   </div>
-                </motion.div>
+                </div>
               ))}
-            </motion.div>
-          </motion.div>
+            </div>
+          </div>
         </div>
       </main>
     </>
