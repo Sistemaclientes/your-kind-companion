@@ -20,6 +20,7 @@ import {
 import { cn } from '../lib/utils';
 import { useNavigate, useParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
+import { phoneMask } from '../lib/masks';
 
 export function StudentDetailsPage() {
   const navigate = useNavigate();
@@ -329,7 +330,7 @@ export function StudentDetailsPage() {
                           type={field.type} 
                           className="w-full bg-surface-container-low border border-outline rounded-2xl px-5 py-4 text-on-surface font-semibold focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all shadow-inner"
                           value={field.value}
-                          onChange={(e) => setTempData({ ...tempData, [field.key]: e.target.value })}
+                          onChange={(e) => setTempData({ ...tempData, [field.key]: field.key === 'phone' ? phoneMask(e.target.value) : e.target.value })}
                         />
                       )}
                     </div>
