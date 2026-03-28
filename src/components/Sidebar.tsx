@@ -34,10 +34,10 @@ export function Sidebar() {
       <div className="px-2 py-4 mb-2 flex flex-col items-start gap-2">
         <img src={logoUplife} alt="UpLife Educacional" className="w-12 h-12 rounded-full object-cover" />
         <div className="flex flex-col gap-0.5">
-          <p className="text-[11px] font-bold text-on-surface leading-tight">
+          <p className="text-sm font-medium text-on-surface-variant leading-tight">
             Hora: {currentTime.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
           </p>
-          <p className="text-[10px] font-semibold text-on-surface-variant leading-tight">
+          <p className="text-sm font-medium text-on-surface-variant leading-tight">
             Data: {currentTime.toLocaleDateString('pt-BR')}
           </p>
         </div>
