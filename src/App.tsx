@@ -47,7 +47,7 @@ export default function App() {
             <Route path="dashboard" element={<DashboardPage />} />
             <Route path="exams" element={<ExamsPage />} />
             <Route path="students" element={<StudentsPage />} />
-            <Route path="student/:id" element={<StudentDetailsPage />} />
+            <Route path="students/:email" element={<StudentDetailsPage />} />
             <Route path="settings" element={<SettingsPage />} />
           </Route>
           <Route path="/admin/exams/new" element={<ProtectedRoute><CreateExamPage /></ProtectedRoute>} />
