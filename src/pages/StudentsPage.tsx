@@ -83,7 +83,7 @@ export function StudentsPage() {
   return (
     <>
       <TopBar title="Painel Administrativo" subtitle="Gestão de Alunos" />
-      <main className="pt-24 px-6 pb-12 max-w-7xl mx-auto">
+      <main className="pt-24 px-4 sm:px-6 pb-12 max-w-7xl mx-auto">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
           <div>
             <h1 className="text-3xl font-bold text-on-surface font-headline tracking-tight">Gestão de Alunos</h1>

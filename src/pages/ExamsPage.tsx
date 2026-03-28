@@ -179,8 +179,8 @@ export function ExamsPage() {
         </section>
 
         <div className="card-saas !p-0 overflow-hidden border-none shadow-xl shadow-primary/5">
-          <div className="p-6 border-b border-outline flex flex-wrap items-center justify-between gap-6 bg-surface-container-low/50 backdrop-blur-md">
-            <div className="flex flex-wrap items-center gap-4">
+          <div className="p-4 sm:p-6 border-b border-outline flex flex-col sm:flex-row sm:flex-wrap items-start sm:items-center justify-between gap-3 sm:gap-6 bg-surface-container-low/50 backdrop-blur-md">
+            <div className="flex flex-col sm:flex-row sm:flex-wrap items-stretch sm:items-center gap-3 sm:gap-4 w-full sm:w-auto">
               <div className="relative group">
                 <Filter className="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant w-4 h-4 group-focus-within:text-primary transition-colors" />
                 <select 
@@ -282,24 +282,24 @@ export function ExamsPage() {
                           {exam.date}
                         </div>
                       </td>
-                      <td className="px-8 py-6">
-                        <div className="flex items-center justify-end gap-3">
+                      <td className="px-4 sm:px-8 py-4 sm:py-6">
+                        <div className="flex items-center justify-end gap-2 sm:gap-3">
                           <button 
-                            className="w-10 h-10 rounded-xl bg-surface-container hover:bg-primary/10 text-on-surface-variant hover:text-primary transition-all flex items-center justify-center border border-outline hover:border-primary/20 btn-icon-saas"
+                            className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-surface-container hover:bg-primary/10 text-on-surface-variant hover:text-primary transition-all flex items-center justify-center border border-outline hover:border-primary/20 btn-icon-saas"
                             onClick={() => navigate(`/admin/exams/edit/${exam.id}`)}
                             title="Editar Prova"
                           >
-                            <Edit className="w-4 h-4" />
+                            <Edit className="w-3.5 sm:w-4 h-3.5 sm:h-4" />
                           </button>
                           <button 
-                            className="w-10 h-10 rounded-xl bg-surface-container hover:bg-primary/10 text-on-surface-variant hover:text-primary transition-all flex items-center justify-center border border-outline hover:border-primary/20 btn-icon-saas"
+                            className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-surface-container hover:bg-primary/10 text-on-surface-variant hover:text-primary transition-all flex items-center justify-center border border-outline hover:border-primary/20 btn-icon-saas hidden sm:flex"
                             onClick={() => navigate('/student/start')}
                             title="Visualizar Prova"
                           >
                             <Eye className="w-4 h-4" />
                           </button>
                           <button 
-                            className="w-10 h-10 rounded-xl bg-surface-container hover:bg-primary/10 text-on-surface-variant hover:text-primary transition-all flex items-center justify-center border border-outline hover:border-primary/20 btn-icon-saas"
+                            className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-surface-container hover:bg-primary/10 text-on-surface-variant hover:text-primary transition-all flex items-center justify-center border border-outline hover:border-primary/20 btn-icon-saas hidden sm:flex"
                             onClick={() => {
                               const url = `${window.location.origin}/student/start`;
                               navigator.clipboard.writeText(url);
@@ -310,11 +310,11 @@ export function ExamsPage() {
                             <LinkIcon className="w-4 h-4" />
                           </button>
                           <button 
-                            className="w-10 h-10 rounded-xl bg-surface-container hover:bg-error/10 text-on-surface-variant hover:text-error transition-all flex items-center justify-center border border-outline hover:border-error/20 btn-icon-saas"
+                            className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-surface-container hover:bg-error/10 text-on-surface-variant hover:text-error transition-all flex items-center justify-center border border-outline hover:border-error/20 btn-icon-saas"
                             onClick={() => handleDeleteExam(exam.id)}
                             title="Excluir Prova"
                           >
-                            <Trash2 className="w-4 h-4" />
+                            <Trash2 className="w-3.5 sm:w-4 h-3.5 sm:h-4" />
                           </button>
                         </div>
                       </td>
