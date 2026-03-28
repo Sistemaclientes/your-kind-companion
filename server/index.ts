@@ -195,6 +195,18 @@ app.delete('/api/provas', adminMiddleware, masterMiddleware, (req, res) => {
   }
 });
 
+app.get('/api/provas/slug/:slug', (req, res) => {
+  const exam = db.prepare('SELECT * FROM provas WHERE slug = ?').get(req.params.slug) as any;
+  if (!exam) return res.status(404).json({ error: 'Prova não encontrada' });
+
+  const questions = db.prepare('SELECT * FROM perguntas WHERE prova_id = ?').all(exam.id) as any[];
+  for (const q of questions) {
+    q.alternativas = db.prepare('SELECT id, texto FROM alternativas WHERE pergunta_id = ?').all(q.id);
+  }
+
+  res.json({ ...exam, perguntas: questions });
+});
+
 app.get('/api/provas/:id', (req, res) => {
   const exam = db.prepare('SELECT * FROM provas WHERE id = ?').get(req.params.id) as any;
   if (!exam) return res.status(404).json({ error: 'Prova não encontrada' });
