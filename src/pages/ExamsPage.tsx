@@ -30,8 +30,8 @@ export function ExamsPage() {
   const [isLoading, setIsLoading] = React.useState(true);
   const [showDeleteConfirm, setShowDeleteConfirm] = React.useState(false);
   const [examToDelete, setExamToDelete] = React.useState<string | null>(null);
-  const [categoryFilter, setCategoryFilter] = React.useState('Todas');
   const [dateFilter, setDateFilter] = React.useState('Todos');
+  const [sortBy, setSortBy] = React.useState('Recentes');
 
   const fetchExams = async () => {
     setIsLoading(true);
@@ -85,29 +85,30 @@ export function ExamsPage() {
     }
   };
 
-  const filteredExams = exams.filter(exam => {
-    const categoryMatch = categoryFilter === 'Todas' || exam.category === categoryFilter;
-    
-    if (!categoryMatch) return false;
+  const filteredExams = React.useMemo(() => {
+    let result = exams.filter(exam => {
+      if (dateFilter === 'Todos') return true;
 
-    if (dateFilter === 'Todos') return true;
+      const [day, month, year] = exam.date.split('/').map(Number);
+      const examDate = new Date(year, month - 1, day);
+      const now = new Date();
+      const firstDayThisMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+      const firstDayLastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+      const lastDayLastMonth = new Date(now.getFullYear(), now.getMonth(), 0);
 
-    const [day, month, year] = exam.date.split('/').map(Number);
-    const examDate = new Date(year, month - 1, day);
-    const now = new Date();
-    const firstDayThisMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-    const firstDayLastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
-    const lastDayLastMonth = new Date(now.getFullYear(), now.getMonth(), 0);
+      if (dateFilter === 'Este Mês') return examDate >= firstDayThisMonth;
+      if (dateFilter === 'Mês Passado') return examDate >= firstDayLastMonth && examDate <= lastDayLastMonth;
+      return true;
+    });
 
-    if (dateFilter === 'Este Mês') {
-      return examDate >= firstDayThisMonth;
+    if (sortBy === 'Nome (A-Z)') {
+      result.sort((a, b) => a.title.localeCompare(b.title));
+    } else if (sortBy === 'Recentes') {
+      // Already sorted by most recent from API
     }
-    if (dateFilter === 'Mês Passado') {
-      return examDate >= firstDayLastMonth && examDate <= lastDayLastMonth;
-    }
 
-    return true;
-  });
+    return result;
+  }, [exams, dateFilter, sortBy]);
 
   const getIconConfig = (category: string) => {
     switch (category) {
@@ -182,21 +183,6 @@ export function ExamsPage() {
           <div className="p-4 sm:p-6 border-b border-outline flex flex-col sm:flex-row sm:flex-wrap items-start sm:items-center justify-between gap-3 sm:gap-6 bg-surface-container-low/50 backdrop-blur-md">
             <div className="flex flex-col sm:flex-row sm:flex-wrap items-stretch sm:items-center gap-3 sm:gap-4 w-full sm:w-auto">
               <div className="relative group">
-                <Filter className="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant w-4 h-4 group-focus-within:text-primary transition-colors" />
-                <select 
-                  className="pl-11 pr-10 py-3 bg-surface-container border border-outline rounded-xl text-xs font-bold uppercase tracking-widest text-on-surface focus:border-primary focus:ring-4 focus:ring-primary/10 cursor-pointer appearance-none outline-none transition-all shadow-sm focus:shadow-primary/10"
-                  value={categoryFilter}
-                  onChange={(e) => setCategoryFilter(e.target.value)}
-                >
-                  <option value="Todas">Categoria: Todas</option>
-                  <option value="Engenharia">Engenharia</option>
-                  <option value="Lógica">Lógica</option>
-                  <option value="Segurança">Segurança</option>
-                </select>
-                <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-on-surface-variant pointer-events-none" />
-              </div>
-              
-              <div className="relative group">
                 <Clock className="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant w-4 h-4 group-focus-within:text-primary transition-colors" />
                 <select 
                   className="pl-11 pr-10 py-3 bg-surface-container border border-outline rounded-xl text-xs font-bold uppercase tracking-widest text-on-surface focus:border-primary focus:ring-4 focus:ring-primary/10 cursor-pointer appearance-none outline-none transition-all shadow-sm focus:shadow-primary/10"
@@ -206,17 +192,19 @@ export function ExamsPage() {
                   <option value="Todos">Período: Todos</option>
                   <option value="Este Mês">Este Mês</option>
                   <option value="Mês Passado">Mês Passado</option>
-                  <option value="Personalizado">Personalizado</option>
                 </select>
                 <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-on-surface-variant pointer-events-none" />
               </div>
 
               <div className="relative group">
                 <ArrowUpDown className="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant w-4 h-4 group-focus-within:text-primary transition-colors" />
-                <select className="pl-11 pr-10 py-3 bg-surface-container border border-outline rounded-xl text-xs font-bold uppercase tracking-widest text-on-surface focus:border-primary focus:ring-4 focus:ring-primary/10 cursor-pointer appearance-none outline-none transition-all shadow-sm focus:shadow-primary/10">
-                  <option>Ordenar por: Recentes</option>
-                  <option>Nome (A-Z)</option>
-                  <option>Data de Criação</option>
+                <select 
+                  className="pl-11 pr-10 py-3 bg-surface-container border border-outline rounded-xl text-xs font-bold uppercase tracking-widest text-on-surface focus:border-primary focus:ring-4 focus:ring-primary/10 cursor-pointer appearance-none outline-none transition-all shadow-sm focus:shadow-primary/10"
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                >
+                  <option value="Recentes">Ordenar: Recentes</option>
+                  <option value="Nome (A-Z)">Nome (A-Z)</option>
                 </select>
                 <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-on-surface-variant pointer-events-none" />
               </div>
