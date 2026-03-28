@@ -339,7 +339,7 @@ export function StudentDetailsPage() {
                 <div className="p-8 border-t border-border bg-background-light/50 dark:bg-background-dark/50 flex gap-4">
                   <button 
                     onClick={() => setIsEditing(false)}
-                    className="flex-1 py-3.5 border border-border text-text-secondary font-bold rounded-xl hover:bg-white hover:text-text-primary transition-all shadow-sm"
+                    className="flex-1 py-3.5 border border-outline text-on-surface-variant font-bold rounded-xl hover:bg-surface-container hover:text-on-surface transition-all shadow-sm"
                   >
                     Cancelar
                   </button>
