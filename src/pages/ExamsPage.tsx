@@ -319,7 +319,7 @@ export function ExamsPage() {
                           </button>
                           <button 
                             className="w-10 h-10 rounded-xl bg-surface-container hover:bg-primary/10 text-on-surface-variant hover:text-primary transition-all flex items-center justify-center border border-outline hover:border-primary/20 btn-icon-saas"
-                            onClick={() => navigate('/student/start')}
+                            onClick={() => navigate(exam.slug ? `/prova/${exam.slug}` : '/student/start')}
                             title="Visualizar Prova"
                           >
                             <Eye className="w-4 h-4" />
@@ -327,9 +327,11 @@ export function ExamsPage() {
                           <button 
                             className="w-10 h-10 rounded-xl bg-surface-container hover:bg-primary/10 text-on-surface-variant hover:text-primary transition-all flex items-center justify-center border border-outline hover:border-primary/20 btn-icon-saas"
                             onClick={() => {
-                              const url = `${window.location.origin}/student/start`;
+                              const url = exam.slug 
+                                ? `${window.location.origin}/prova/${exam.slug}`
+                                : `${window.location.origin}/student/start`;
                               navigator.clipboard.writeText(url);
-                              alert('Link da prova copiado para a área de transferência!');
+                              alert('Link copiado: ' + url);
                             }}
                             title="Copiar Link"
                           >
