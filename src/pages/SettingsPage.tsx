@@ -15,7 +15,8 @@ import {
   Plus,
   Trash2,
   Mail,
-  Lock
+  Lock,
+  AlertCircle
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { motion, AnimatePresence } from 'motion/react';
@@ -29,6 +30,9 @@ export function SettingsPage() {
   const [newAdmin, setNewAdmin] = useState({ nome: '', email: '', senha: '' });
   const [isCreatingAdmin, setIsCreatingAdmin] = useState(false);
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
+  const [passwordData, setPasswordData] = useState({ current: '', new: '', confirm: '' });
+  const [isChangingPassword, setIsChangingPassword] = useState(false);
+  const [passwordMsg, setPasswordMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const logoInputRef = React.useRef<HTMLInputElement>(null);
 
   React.useEffect(() => {
@@ -110,9 +114,31 @@ export function SettingsPage() {
     }
   };
 
+  const handleChangePassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setPasswordMsg(null);
+    if (passwordData.new.length < 6) {
+      setPasswordMsg({ type: 'error', text: 'A nova senha deve ter pelo menos 6 caracteres' });
+      return;
+    }
+    if (passwordData.new !== passwordData.confirm) {
+      setPasswordMsg({ type: 'error', text: 'As senhas não coincidem' });
+      return;
+    }
+    setIsChangingPassword(true);
+    try {
+      await api.put('/admins/change-password', { current_password: passwordData.current, new_password: passwordData.new });
+      setPasswordMsg({ type: 'success', text: 'Senha alterada com sucesso!' });
+      setPasswordData({ current: '', new: '', confirm: '' });
+    } catch (err: any) {
+      setPasswordMsg({ type: 'error', text: err.message || 'Erro ao alterar senha' });
+    } finally {
+      setIsChangingPassword(false);
+    }
+  };
+
   const handleSave = () => {
     setIsSaving(true);
-    // Simulate API call
     setTimeout(() => {
       setIsSaving(false);
       setShowSuccess(true);
@@ -361,6 +387,61 @@ export function SettingsPage() {
                   />
                 </div>
               </div>
+            </div>
+
+            {/* Password Change Section */}
+            <div className="card-saas p-8">
+              <div className="flex items-center gap-3 mb-6 text-primary">
+                <div className="p-2 bg-primary/10 rounded-lg">
+                  <Lock className="w-5 h-5" />
+                </div>
+                <span className="text-sm font-bold uppercase tracking-wider">Alterar Senha</span>
+              </div>
+              <form onSubmit={handleChangePassword} className="space-y-4">
+                {passwordMsg && (
+                  <div className={`p-3 rounded-xl text-sm font-medium flex items-center gap-2 ${passwordMsg.type === 'success' ? 'bg-primary/10 text-primary border border-primary/20' : 'bg-error/10 text-error border border-error/20'}`}>
+                    {passwordMsg.type === 'success' ? <Check className="w-4 h-4" /> : <AlertCircle className="w-4 h-4" />}
+                    {passwordMsg.text}
+                  </div>
+                )}
+                <div className="relative group">
+                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-on-surface-variant/40 group-focus-within:text-primary transition-colors" />
+                  <input
+                    className="w-full pl-11 pr-4 py-3 bg-surface-container-low border border-outline rounded-xl text-sm font-medium focus:border-primary transition-all outline-none"
+                    placeholder="Senha atual"
+                    type="password"
+                    value={passwordData.current}
+                    onChange={e => setPasswordData({...passwordData, current: e.target.value})}
+                    required
+                  />
+                </div>
+                <div className="relative group">
+                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-on-surface-variant/40 group-focus-within:text-primary transition-colors" />
+                  <input
+                    className="w-full pl-11 pr-4 py-3 bg-surface-container-low border border-outline rounded-xl text-sm font-medium focus:border-primary transition-all outline-none"
+                    placeholder="Nova senha (mín. 6 caracteres)"
+                    type="password"
+                    value={passwordData.new}
+                    onChange={e => setPasswordData({...passwordData, new: e.target.value})}
+                    required
+                  />
+                </div>
+                <div className="relative group">
+                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-on-surface-variant/40 group-focus-within:text-primary transition-colors" />
+                  <input
+                    className="w-full pl-11 pr-4 py-3 bg-surface-container-low border border-outline rounded-xl text-sm font-medium focus:border-primary transition-all outline-none"
+                    placeholder="Confirmar nova senha"
+                    type="password"
+                    value={passwordData.confirm}
+                    onChange={e => setPasswordData({...passwordData, confirm: e.target.value})}
+                    required
+                  />
+                </div>
+                <button type="submit" disabled={isChangingPassword} className="btn-primary w-full py-3 text-xs uppercase tracking-widest">
+                  {isChangingPassword ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+                  {isChangingPassword ? 'Alterando...' : 'Alterar Senha'}
+                </button>
+              </form>
             </div>
 
             {/* Administrator Management (Master Only) */}
