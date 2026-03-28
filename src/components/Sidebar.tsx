@@ -31,9 +31,9 @@ export function Sidebar() {
 
   return (
     <aside className="h-screen w-64 fixed left-0 top-0 bg-surface-container flex flex-col p-4 gap-2 z-50 border-r border-outline">
-      <div className="px-2 py-4 mb-2 flex flex-col items-center gap-3">
-        <img src={logoUplife} alt="UpLife Educacional" className="w-14 h-14 rounded-full object-cover" />
-        <div className="text-center flex flex-col gap-0.5">
+      <div className="px-2 py-4 mb-2 flex flex-col items-start gap-2">
+        <img src={logoUplife} alt="UpLife Educacional" className="w-12 h-12 rounded-full object-cover" />
+        <div className="flex flex-col gap-0.5">
           <p className="text-[11px] font-bold text-on-surface leading-tight">
             Hora: {currentTime.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
           </p>
