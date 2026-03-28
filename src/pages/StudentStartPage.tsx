@@ -15,6 +15,7 @@ import { useNavigate } from 'react-router-dom';
 import { cn } from '../lib/utils';
 import { motion } from 'motion/react';
 import { api } from '../lib/api';
+import { phoneMask } from '../lib/masks';
 
 export function StudentStartPage() {
   const navigate = useNavigate();
@@ -198,7 +199,7 @@ export function StudentStartPage() {
                   placeholder="(00) 00000-0000" 
                   type="tel"
                   value={formData.telefone}
-                  onChange={(e) => setFormData({ ...formData, telefone: e.target.value })}
+                  onChange={(e) => setFormData({ ...formData, telefone: phoneMask(e.target.value) })}
                   required
                 />
               </div>
