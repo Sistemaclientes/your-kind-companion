@@ -458,25 +458,25 @@ export function CreateExamPage() {
                     className="group relative"
                   >
                     <div className="card-saas !p-0 overflow-hidden hover:border-primary/40 hover:shadow-xl hover:shadow-primary/5 transition-all">
-                      <div className="bg-surface-container-low/50 px-8 py-5 border-b border-outline flex items-center justify-between">
-                        <div className="flex items-center gap-4">
-                          <div className="p-2 text-on-surface-variant/30 hover:text-on-surface-variant cursor-grab active:cursor-grabbing transition-colors">
+                      <div className="bg-surface-container-low/50 px-4 sm:px-8 py-4 sm:py-5 border-b border-outline flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0">
+                        <div className="flex items-center gap-2 sm:gap-4 flex-wrap">
+                          <div className="p-1.5 sm:p-2 text-on-surface-variant/30 hover:text-on-surface-variant cursor-grab active:cursor-grabbing transition-colors hidden sm:block">
                             <GripVertical className="w-5 h-5" />
                           </div>
-                          <div className="w-10 h-10 rounded-xl bg-primary text-white flex items-center justify-center font-bold shadow-lg shadow-primary/20">
+                          <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-primary text-white flex items-center justify-center font-bold text-sm shadow-lg shadow-primary/20">
                             {idx + 1}
                           </div>
-                          <div className="h-4 w-px bg-outline"></div>
+                          <div className="h-4 w-px bg-outline hidden sm:block"></div>
                           <div className="relative">
                             <button 
                               onClick={() => setOpenTypeDropdownId(openTypeDropdownId === q.id ? null : q.id)}
-                              className="flex items-center gap-2 px-4 py-2 bg-surface-container rounded-xl border border-outline text-[10px] font-black uppercase tracking-widest text-on-surface-variant hover:border-primary transition-all"
+                              className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-1.5 sm:py-2 bg-surface-container rounded-lg sm:rounded-xl border border-outline text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-on-surface-variant hover:border-primary transition-all"
                             >
-                              {q.type === 'multiple' && <CheckSquare className="w-4 h-4 text-primary" />}
-                              {q.type === 'list' && <LayoutList className="w-4 h-4 text-blue-500" />}
-                              {q.type === 'text' && <Type className="w-4 h-4 text-amber-500" />}
-                              {q.type === 'multiple' ? 'Múltipla Escolha' : q.type === 'list' ? 'Lista' : 'Dissertativa'}
-                              <ChevronDown className={cn("w-4 h-4 ml-1 opacity-50 transition-transform", openTypeDropdownId === q.id && "rotate-180")} />
+                              {q.type === 'multiple' && <CheckSquare className="w-3.5 sm:w-4 h-3.5 sm:h-4 text-primary" />}
+                              {q.type === 'list' && <LayoutList className="w-3.5 sm:w-4 h-3.5 sm:h-4 text-blue-500" />}
+                              {q.type === 'text' && <Type className="w-3.5 sm:w-4 h-3.5 sm:h-4 text-amber-500" />}
+                              <span className="hidden sm:inline">{q.type === 'multiple' ? 'Múltipla Escolha' : q.type === 'list' ? 'Lista' : 'Dissertativa'}</span>
+                              <ChevronDown className={cn("w-3.5 h-3.5 opacity-50 transition-transform", openTypeDropdownId === q.id && "rotate-180")} />
                             </button>
                             
                             <AnimatePresence>
@@ -487,7 +487,7 @@ export function CreateExamPage() {
                                     initial={{ opacity: 0, y: 10, scale: 0.95 }}
                                     animate={{ opacity: 1, y: 0, scale: 1 }}
                                     exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                                    className="absolute top-full left-0 mt-2 w-56 bg-surface-container rounded-2xl shadow-2xl border border-outline z-10 p-2"
+                                    className="absolute top-full left-0 mt-2 w-48 sm:w-56 bg-surface-container rounded-2xl shadow-2xl border border-outline z-10 p-2"
                                   >
                                     {[
                                       { id: 'multiple', label: 'Múltipla Escolha', icon: CheckSquare, color: 'text-primary' },
@@ -502,9 +502,9 @@ export function CreateExamPage() {
                                           setQuestions(newQuestions);
                                           setOpenTypeDropdownId(null);
                                         }}
-                                        className="w-full flex items-center gap-4 p-3.5 rounded-xl hover:bg-primary/5 text-[10px] font-black uppercase tracking-widest text-on-surface-variant hover:text-primary transition-all"
+                                        className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-primary/5 text-[10px] font-black uppercase tracking-widest text-on-surface-variant hover:text-primary transition-all"
                                       >
-                                        <type.icon className={cn("w-5 h-5", type.color)} />
+                                        <type.icon className={cn("w-4 h-4", type.color)} />
                                         {type.label}
                                       </button>
                                     ))}
@@ -515,13 +515,13 @@ export function CreateExamPage() {
                           </div>
                         </div>
                         
-                        <div className="flex items-center gap-4">
-                          <div className="flex items-center gap-3 bg-surface-container px-4 py-2 rounded-xl border border-outline">
-                            <Target className="w-4 h-4 text-primary/40" />
-                            <span className="text-[10px] font-black text-on-surface-variant uppercase tracking-widest">Pontos:</span>
+                        <div className="flex items-center gap-2 sm:gap-4 w-full sm:w-auto justify-between sm:justify-end">
+                          <div className="flex items-center gap-2 sm:gap-3 bg-surface-container px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg sm:rounded-xl border border-outline">
+                            <Target className="w-3.5 sm:w-4 h-3.5 sm:h-4 text-primary/40" />
+                            <span className="text-[9px] sm:text-[10px] font-black text-on-surface-variant uppercase tracking-widest">Pts:</span>
                             <input 
                               type="number" 
-                              className="w-10 text-sm font-black text-primary bg-transparent border-none p-0 focus:ring-0" 
+                              className="w-8 sm:w-10 text-sm font-black text-primary bg-transparent border-none p-0 focus:ring-0" 
                               value={q.points}
                               onChange={(e) => {
                                 const newQuestions = [...questions];
@@ -530,30 +530,29 @@ export function CreateExamPage() {
                               }}
                             />
                           </div>
-                          <div className="h-6 w-px bg-outline"></div>
-                          <div className="flex items-center gap-1">
+                          <div className="flex items-center gap-0.5 sm:gap-1">
                             <button 
                               onClick={() => duplicateQuestion(q.id)}
-                              className="p-2.5 text-on-surface-variant/50 hover:text-primary hover:bg-primary/5 rounded-xl transition-all"
+                              className="p-2 sm:p-2.5 text-on-surface-variant/50 hover:text-primary hover:bg-primary/5 rounded-xl transition-all"
                               title="Duplicar"
                             >
-                              <Copy className="w-5 h-5" />
+                              <Copy className="w-4 sm:w-5 h-4 sm:h-5" />
                             </button>
                             <button 
                               onClick={() => removeQuestion(q.id)}
-                              className="p-2.5 text-on-surface-variant/50 hover:text-error hover:bg-error/10 rounded-xl transition-all"
+                              className="p-2 sm:p-2.5 text-on-surface-variant/50 hover:text-error hover:bg-error/10 rounded-xl transition-all"
                               title="Excluir"
                             >
-                              <Trash2 className="w-5 h-5" />
+                              <Trash2 className="w-4 sm:w-5 h-4 sm:h-5" />
                             </button>
                           </div>
                         </div>
                       </div>
                       
-                      <div className="p-10 space-y-10">
+                      <div className="p-5 sm:p-10 space-y-6 sm:space-y-10">
                         <div className="relative group/input">
                           <textarea 
-                            className="w-full text-2xl font-bold text-on-surface border-none p-0 focus:ring-0 placeholder:text-on-surface-variant/20 bg-transparent resize-none leading-tight font-headline" 
+                            className="w-full text-lg sm:text-2xl font-bold text-on-surface border-none p-0 focus:ring-0 placeholder:text-on-surface-variant/20 bg-transparent resize-none leading-tight font-headline" 
                             placeholder="Qual o enunciado desta questão?"
                             rows={2}
                             value={q.text}
@@ -581,9 +580,9 @@ export function CreateExamPage() {
                             />
                           </div>
                         ) : (
-                        <div className="grid grid-cols-1 gap-5">
+                        <div className="grid grid-cols-1 gap-4 sm:gap-5">
                           {q.options.map((opt, optIdx) => (
-                            <div key={optIdx} className="flex items-center gap-5 group/opt">
+                            <div key={optIdx} className="flex items-center gap-2 sm:gap-5 group/opt">
                               <button 
                                 onClick={() => {
                                   const newQuestions = [...questions];
@@ -596,7 +595,7 @@ export function CreateExamPage() {
                                   setQuestions(newQuestions);
                                 }}
                                 className={cn(
-                                  "w-12 h-12 rounded-2xl border-2 flex items-center justify-center text-sm font-black transition-all shrink-0",
+                                  "w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl border-2 flex items-center justify-center text-xs sm:text-sm font-black transition-all shrink-0",
                                   optIdx === q.correct 
                                     ? q.type === 'list' 
                                       ? "bg-blue-500 border-blue-500 text-white shadow-xl shadow-blue-500/20"
@@ -613,7 +612,7 @@ export function CreateExamPage() {
                               <div className="flex-1 relative">
                                 <input 
                                   className={cn(
-                                    "input-saas w-full h-14 text-base font-semibold",
+                                    "input-saas w-full h-11 sm:h-14 text-sm sm:text-base font-semibold",
                                     optIdx === q.correct 
                                       ? q.type === 'list' ? "bg-blue-500/5 border-blue-500/20" : "bg-primary/5 border-primary/20" 
                                       : ""
@@ -628,9 +627,9 @@ export function CreateExamPage() {
                                   }}
                                 />
                                 {optIdx === q.correct && q.type !== 'list' && (
-                                  <div className="absolute right-5 top-1/2 -translate-y-1/2 flex items-center gap-2 bg-primary/10 px-3 py-1 rounded-lg">
-                                    <CheckSquare className="w-3.5 h-3.5 text-primary" />
-                                    <span className="text-[9px] font-black text-primary uppercase tracking-widest">Gabarito</span>
+                                  <div className="absolute right-2 sm:right-5 top-1/2 -translate-y-1/2 flex items-center gap-1.5 bg-primary/10 px-2 sm:px-3 py-1 rounded-lg">
+                                    <CheckSquare className="w-3 h-3 text-primary" />
+                                    <span className="text-[8px] sm:text-[9px] font-black text-primary uppercase tracking-widest hidden sm:inline">Gabarito</span>
                                   </div>
                                 )}
                               </div>
@@ -812,47 +811,47 @@ export function CreateExamPage() {
             initial={{ y: 100, x: '-50%', opacity: 0 }}
             animate={{ y: 0, x: '-50%', opacity: 1 }}
             exit={{ y: 100, x: '-50%', opacity: 0 }}
-            className="fixed bottom-10 left-1/2 -translate-x-1/2 z-50"
+            className="fixed bottom-6 sm:bottom-10 left-1/2 -translate-x-1/2 z-50 w-[calc(100%-2rem)] sm:w-auto max-w-lg"
           >
-            <div className="bg-surface-container/80 backdrop-blur-xl shadow-[0_20px_50px_rgba(0,0,0,0.3)] rounded-[32px] p-2 border border-outline flex items-center gap-2">
+            <div className="bg-surface-container/80 backdrop-blur-xl shadow-[0_20px_50px_rgba(0,0,0,0.3)] rounded-2xl sm:rounded-[32px] p-1.5 sm:p-2 border border-outline flex items-center justify-between sm:justify-start gap-1 sm:gap-2">
               <button 
                 onClick={() => addQuestion('multiple')}
-                className="flex items-center gap-3 px-6 py-4 rounded-2xl hover:bg-primary/10 text-on-surface-variant hover:text-primary transition-all group"
+                className="flex items-center gap-2 sm:gap-3 px-3 sm:px-6 py-3 sm:py-4 rounded-xl sm:rounded-2xl hover:bg-primary/10 text-on-surface-variant hover:text-primary transition-all group flex-1 sm:flex-auto"
               >
-                <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-all">
-                  <CheckSquare className="w-5 h-5" />
+                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-all shrink-0">
+                  <CheckSquare className="w-4 sm:w-5 h-4 sm:h-5" />
                 </div>
-                <div className="text-left">
+                <div className="text-left hidden sm:block">
                   <p className="text-xs font-black uppercase tracking-widest">Múltipla</p>
                   <p className="text-[10px] opacity-50 font-medium">Escolha única</p>
                 </div>
               </button>
               
-              <div className="w-px h-10 bg-outline mx-2"></div>
+              <div className="w-px h-8 sm:h-10 bg-outline"></div>
               
               <button 
                 onClick={() => addQuestion('list')}
-                className="flex items-center gap-3 px-6 py-4 rounded-2xl hover:bg-blue-500/10 text-on-surface-variant hover:text-blue-500 transition-all group"
+                className="flex items-center gap-2 sm:gap-3 px-3 sm:px-6 py-3 sm:py-4 rounded-xl sm:rounded-2xl hover:bg-blue-500/10 text-on-surface-variant hover:text-blue-500 transition-all group flex-1 sm:flex-auto"
               >
-                <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center group-hover:bg-blue-500 group-hover:text-white transition-all">
-                  <LayoutList className="w-5 h-5" />
+                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-blue-500/10 flex items-center justify-center group-hover:bg-blue-500 group-hover:text-white transition-all shrink-0">
+                  <LayoutList className="w-4 sm:w-5 h-4 sm:h-5" />
                 </div>
-                <div className="text-left">
+                <div className="text-left hidden sm:block">
                   <p className="text-xs font-black uppercase tracking-widest">Lista</p>
                   <p className="text-[10px] opacity-50 font-medium">Múltiplas opções</p>
                 </div>
               </button>
               
-              <div className="w-px h-10 bg-outline mx-2"></div>
+              <div className="w-px h-8 sm:h-10 bg-outline"></div>
               
               <button 
                 onClick={() => addQuestion('text')}
-                className="flex items-center gap-3 px-6 py-4 rounded-2xl hover:bg-amber-500/10 text-on-surface-variant hover:text-amber-500 transition-all group"
+                className="flex items-center gap-2 sm:gap-3 px-3 sm:px-6 py-3 sm:py-4 rounded-xl sm:rounded-2xl hover:bg-amber-500/10 text-on-surface-variant hover:text-amber-500 transition-all group flex-1 sm:flex-auto"
               >
-                <div className="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center group-hover:bg-amber-500 group-hover:text-white transition-all">
-                  <Type className="w-5 h-5" />
+                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-amber-500/10 flex items-center justify-center group-hover:bg-amber-500 group-hover:text-white transition-all shrink-0">
+                  <Type className="w-4 sm:w-5 h-4 sm:h-5" />
                 </div>
-                <div className="text-left">
+                <div className="text-left hidden sm:block">
                   <p className="text-xs font-black uppercase tracking-widest">Dissertativa</p>
                   <p className="text-[10px] opacity-50 font-medium">Texto livre</p>
                 </div>

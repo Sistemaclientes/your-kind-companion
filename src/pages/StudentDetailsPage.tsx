@@ -112,7 +112,7 @@ export function StudentDetailsPage() {
   return (
     <>
       <TopBar title="Painel Administrativo" subtitle="Detalhes do Aluno" />
-      <main className="pt-24 px-6 pb-12 max-w-7xl mx-auto">
+      <main className="pt-24 px-4 sm:px-6 pb-12 max-w-7xl mx-auto">
         <button 
           className="flex items-center gap-2 text-text-secondary hover:text-primary font-bold text-xs uppercase tracking-widest mb-8 transition-all group"
           onClick={() => navigate('/admin/students')}
@@ -237,38 +237,36 @@ export function StudentDetailsPage() {
                 {student.history.map((item, i) => (
                   <div 
                     key={i} 
-                    className="p-5 flex items-center justify-between hover:bg-background-light dark:hover:bg-background-dark/30 transition-all cursor-pointer group"
+                    className="p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-background-light dark:hover:bg-background-dark/30 transition-all cursor-pointer group"
                     onClick={() => setSelectedExam(item)}
                   >
-                    <div className="flex items-center gap-4">
-                      <div className="w-11 h-11 rounded-xl bg-background-light dark:bg-background-dark flex items-center justify-center text-text-secondary group-hover:bg-primary/10 group-hover:text-primary transition-all border border-border group-hover:border-primary/20">
-                        <FileText className="w-5 h-5" />
+                    <div className="flex items-center gap-3 sm:gap-4">
+                      <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-background-light dark:bg-background-dark flex items-center justify-center text-text-secondary group-hover:bg-primary/10 group-hover:text-primary transition-all border border-border group-hover:border-primary/20 shrink-0">
+                        <FileText className="w-4 sm:w-5 h-4 sm:h-5" />
                       </div>
                       <div>
-                        <p className="font-bold text-base text-text-primary group-hover:text-primary transition-colors">{item.exam}</p>
+                        <p className="font-bold text-sm sm:text-base text-text-primary group-hover:text-primary transition-colors">{item.exam}</p>
                         <div className="flex items-center gap-2 mt-0.5">
                           <Calendar className="w-3 h-3 text-text-secondary" />
                           <p className="text-[11px] text-text-secondary font-medium">{item.date}</p>
                         </div>
                       </div>
                     </div>
-                    <div className="flex items-center gap-8">
-                      <div className="text-right">
-                        <p className="text-xl font-bold text-primary font-headline leading-none">{item.score}</p>
+                    <div className="flex items-center gap-4 sm:gap-8 ml-13 sm:ml-0">
+                      <div className="text-left sm:text-right">
+                        <p className="text-lg sm:text-xl font-bold text-primary font-headline leading-none">{item.score}</p>
                         <p className="text-[10px] font-bold text-text-secondary uppercase tracking-widest mt-1">Nota</p>
                       </div>
-                      <div className="flex items-center gap-4">
-                        <span className={cn(
-                          "px-3 py-1 text-[10px] font-bold rounded-lg uppercase tracking-wider border",
-                          item.status === 'Aprovado' 
-                            ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/20 dark:bg-emerald-500/5 dark:text-emerald-400" 
-                            : "bg-red-500/10 text-red-600 border-red-500/20 dark:bg-red-500/5 dark:text-red-400"
-                        )}>
-                          {item.status}
-                        </span>
-                        <div className="p-1.5 rounded-lg bg-background-light dark:bg-background-dark group-hover:bg-primary/10 transition-all">
-                          <ChevronRight className="w-4 h-4 text-text-secondary group-hover:text-primary group-hover:translate-x-0.5 transition-all" />
-                        </div>
+                      <span className={cn(
+                        "px-3 py-1 text-[10px] font-bold rounded-lg uppercase tracking-wider border",
+                        item.status === 'Aprovado' 
+                          ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/20 dark:bg-emerald-500/5 dark:text-emerald-400" 
+                          : "bg-red-500/10 text-red-600 border-red-500/20 dark:bg-red-500/5 dark:text-red-400"
+                      )}>
+                        {item.status}
+                      </span>
+                      <div className="p-1.5 rounded-lg bg-background-light dark:bg-background-dark group-hover:bg-primary/10 transition-all hidden sm:block">
+                        <ChevronRight className="w-4 h-4 text-text-secondary group-hover:text-primary group-hover:translate-x-0.5 transition-all" />
                       </div>
                     </div>
                   </div>

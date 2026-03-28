@@ -131,38 +131,39 @@ export function ExamsPage() {
   return (
     <>
       <TopBar title="Painel Administrativo" subtitle="Gerenciamento de Provas" />
-      <main className="pt-24 px-8 pb-12 max-w-[1600px] mx-auto">
-        <section className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+      <main className="pt-24 px-4 sm:px-8 pb-12 max-w-[1600px] mx-auto">
+        <section className="flex flex-col md:flex-row md:items-end justify-between gap-4 sm:gap-6 mb-8 sm:mb-12">
           <div>
             <nav className="flex items-center gap-2 text-[10px] font-bold text-on-surface-variant mb-3 uppercase tracking-widest">
               <span>Admin</span>
               <span className="w-1 h-1 bg-outline rounded-full"></span>
               <span className="text-primary">Provas</span>
             </nav>
-            <h3 className="text-4xl font-extrabold text-on-surface tracking-tight font-headline leading-tight">Gerenciamento de <span className="text-primary">Provas</span></h3>
-            <p className="text-on-surface-variant mt-2 font-medium text-lg">Crie, edite e acompanhe o desempenho de suas avaliações.</p>
+            <h3 className="text-2xl sm:text-4xl font-extrabold text-on-surface tracking-tight font-headline leading-tight">Gerenciamento de <span className="text-primary">Provas</span></h3>
+            <p className="text-on-surface-variant mt-2 font-medium text-sm sm:text-lg">Crie, edite e acompanhe suas avaliações.</p>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 sm:gap-4">
             {exams.length > 0 && (
               <button 
-                className="flex items-center gap-2 px-6 py-3.5 rounded-xl font-bold text-xs uppercase tracking-widest text-error hover:bg-error/5 transition-all border border-transparent hover:border-error/20 hover:scale-[1.03] active:scale-[0.98]"
+                className="flex items-center gap-2 px-4 sm:px-6 py-3 sm:py-3.5 rounded-xl font-bold text-xs uppercase tracking-widest text-error hover:bg-error/5 transition-all border border-transparent hover:border-error/20"
                 onClick={() => setShowDeleteConfirm(true)}
               >
-                <Trash2 className="w-5 h-5" />
-                <span>Excluir todas</span>
+                <Trash2 className="w-4 sm:w-5 h-4 sm:h-5" />
+                <span className="hidden sm:inline">Excluir todas</span>
               </button>
             )}
             <button 
-              className="btn-primary px-8 py-4 text-sm uppercase tracking-widest"
+              className="btn-primary px-4 sm:px-8 py-3 sm:py-4 text-xs sm:text-sm uppercase tracking-widest"
               onClick={() => navigate('/admin/exams/new')}
             >
-              <Plus className="w-5 h-5" />
-              <span>Criar nova prova</span>
+              <Plus className="w-4 sm:w-5 h-4 sm:h-5" />
+              <span className="hidden sm:inline">Criar nova prova</span>
+              <span className="sm:hidden">Nova</span>
             </button>
           </div>
         </section>
 
-        <section className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+        <section className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-8 mb-8 sm:mb-12">
           {stats.map((s, i) => (
             <div key={i} className="card-saas flex flex-col gap-2 group hover:border-primary/30 transition-all">
               <span className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">{s.label}</span>
@@ -178,8 +179,8 @@ export function ExamsPage() {
         </section>
 
         <div className="card-saas !p-0 overflow-hidden border-none shadow-xl shadow-primary/5">
-          <div className="p-6 border-b border-outline flex flex-wrap items-center justify-between gap-6 bg-surface-container-low/50 backdrop-blur-md">
-            <div className="flex flex-wrap items-center gap-4">
+          <div className="p-4 sm:p-6 border-b border-outline flex flex-col sm:flex-row sm:flex-wrap items-start sm:items-center justify-between gap-3 sm:gap-6 bg-surface-container-low/50 backdrop-blur-md">
+            <div className="flex flex-col sm:flex-row sm:flex-wrap items-stretch sm:items-center gap-3 sm:gap-4 w-full sm:w-auto">
               <div className="relative group">
                 <Filter className="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant w-4 h-4 group-focus-within:text-primary transition-colors" />
                 <select 
@@ -281,24 +282,24 @@ export function ExamsPage() {
                           {exam.date}
                         </div>
                       </td>
-                      <td className="px-8 py-6">
-                        <div className="flex items-center justify-end gap-3">
+                      <td className="px-4 sm:px-8 py-4 sm:py-6">
+                        <div className="flex items-center justify-end gap-2 sm:gap-3">
                           <button 
-                            className="w-10 h-10 rounded-xl bg-surface-container hover:bg-primary/10 text-on-surface-variant hover:text-primary transition-all flex items-center justify-center border border-outline hover:border-primary/20 btn-icon-saas"
+                            className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-surface-container hover:bg-primary/10 text-on-surface-variant hover:text-primary transition-all flex items-center justify-center border border-outline hover:border-primary/20 btn-icon-saas"
                             onClick={() => navigate(`/admin/exams/edit/${exam.id}`)}
                             title="Editar Prova"
                           >
-                            <Edit className="w-4 h-4" />
+                            <Edit className="w-3.5 sm:w-4 h-3.5 sm:h-4" />
                           </button>
                           <button 
-                            className="w-10 h-10 rounded-xl bg-surface-container hover:bg-primary/10 text-on-surface-variant hover:text-primary transition-all flex items-center justify-center border border-outline hover:border-primary/20 btn-icon-saas"
+                            className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-surface-container hover:bg-primary/10 text-on-surface-variant hover:text-primary transition-all flex items-center justify-center border border-outline hover:border-primary/20 btn-icon-saas hidden sm:flex"
                             onClick={() => navigate('/student/start')}
                             title="Visualizar Prova"
                           >
                             <Eye className="w-4 h-4" />
                           </button>
                           <button 
-                            className="w-10 h-10 rounded-xl bg-surface-container hover:bg-primary/10 text-on-surface-variant hover:text-primary transition-all flex items-center justify-center border border-outline hover:border-primary/20 btn-icon-saas"
+                            className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-surface-container hover:bg-primary/10 text-on-surface-variant hover:text-primary transition-all flex items-center justify-center border border-outline hover:border-primary/20 btn-icon-saas hidden sm:flex"
                             onClick={() => {
                               const url = `${window.location.origin}/student/start`;
                               navigator.clipboard.writeText(url);
@@ -309,11 +310,11 @@ export function ExamsPage() {
                             <LinkIcon className="w-4 h-4" />
                           </button>
                           <button 
-                            className="w-10 h-10 rounded-xl bg-surface-container hover:bg-error/10 text-on-surface-variant hover:text-error transition-all flex items-center justify-center border border-outline hover:border-error/20 btn-icon-saas"
+                            className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-surface-container hover:bg-error/10 text-on-surface-variant hover:text-error transition-all flex items-center justify-center border border-outline hover:border-error/20 btn-icon-saas"
                             onClick={() => handleDeleteExam(exam.id)}
                             title="Excluir Prova"
                           >
-                            <Trash2 className="w-4 h-4" />
+                            <Trash2 className="w-3.5 sm:w-4 h-3.5 sm:h-4" />
                           </button>
                         </div>
                       </td>
