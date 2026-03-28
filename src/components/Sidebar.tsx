@@ -16,10 +16,21 @@ import logoUplife from '../assets/logo-uplife.png';
 export function Sidebar() {
   const { theme, toggleTheme } = useTheme();
   const [currentTime, setCurrentTime] = React.useState(new Date());
+  const [customLogo, setCustomLogo] = React.useState<string | null>(null);
 
   React.useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 1000);
     return () => clearInterval(timer);
+  }, []);
+
+  React.useEffect(() => {
+    const loadLogo = () => {
+      const saved = localStorage.getItem('institution_logo');
+      setCustomLogo(saved);
+    };
+    loadLogo();
+    window.addEventListener('logo-updated', loadLogo);
+    return () => window.removeEventListener('logo-updated', loadLogo);
   }, []);
 
   const navItems = [
@@ -32,7 +43,7 @@ export function Sidebar() {
   return (
     <aside className="h-screen w-64 fixed left-0 top-0 bg-surface-container flex flex-col p-4 gap-2 z-50 border-r border-outline">
       <div className="px-2 py-4 mb-2 flex flex-col items-start gap-2">
-        <img src={logoUplife} alt="UpLife Educacional" className="w-12 h-12 rounded-full object-cover" />
+        <img src={customLogo || logoUplife} alt="Logo" className="w-12 h-12 rounded-full object-cover" />
         <div className="flex flex-col gap-0.5">
           <p className="text-sm font-medium text-on-surface-variant leading-tight">
             Hora: {currentTime.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
