@@ -33,6 +33,7 @@ export function SettingsPage() {
   const [passwordData, setPasswordData] = useState({ current: '', new: '', confirm: '' });
   const [isChangingPassword, setIsChangingPassword] = useState(false);
   const [passwordMsg, setPasswordMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const [activeSection, setActiveSection] = useState<string>('academicas');
   const logoInputRef = React.useRef<HTMLInputElement>(null);
 
   React.useEffect(() => {
@@ -156,14 +157,22 @@ export function SettingsPage() {
     </div>
   );
 
+  const sections = [
+    { id: 'academicas', label: 'Acadêmicas', icon: SettingsIcon },
+    { id: 'visual', label: 'Visual', icon: Palette },
+    { id: 'seguranca', label: 'Segurança', icon: Lock },
+    { id: 'marketing', label: 'Marketing', icon: BarChart3 },
+    ...(currentUser?.is_master ? [{ id: 'admins', label: 'Admins', icon: Shield }] : []),
+  ];
+
   return (
     <>
       <TopBar title="Painel Administrativo" subtitle="Configurações Gerais" />
-      <main className="pt-20 px-4 sm:px-6 pb-20 max-w-7xl mx-auto">
-        <header className="mb-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <main className="pt-20 px-4 sm:px-6 pb-20 max-w-6xl mx-auto">
+        <header className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <h3 className="text-3xl font-bold text-text-primary mb-2 font-headline tracking-tight">Configurações Gerais</h3>
-            <p className="text-text-secondary font-medium">Gerencie os parâmetros globais das suas avaliações e a experiência dos alunos.</p>
+            <h3 className="text-2xl sm:text-3xl font-bold text-on-surface mb-1 font-headline tracking-tight">Configurações</h3>
+            <p className="text-on-surface-variant font-medium text-sm">Gerencie os parâmetros globais das suas avaliações.</p>
           </div>
           
           <AnimatePresence>
@@ -172,295 +181,357 @@ export function SettingsPage() {
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
-                className="bg-emerald-500 text-white px-4 py-2.5 rounded-xl flex items-center gap-2 shadow-lg shadow-emerald-500/20 border border-emerald-400/20"
+                className="bg-primary/10 text-primary px-4 py-2.5 rounded-xl flex items-center gap-2 border border-primary/20"
               >
-                <div className="bg-white/20 p-1 rounded-full">
+                <div className="bg-primary/20 p-1 rounded-full">
                   <Check className="w-3.5 h-3.5" />
                 </div>
-                <span className="text-sm font-semibold">Configurações salvas com sucesso!</span>
+                <span className="text-sm font-semibold">Configurações salvas!</span>
               </motion.div>
             )}
           </AnimatePresence>
         </header>
 
-        <form className="grid grid-cols-1 lg:grid-cols-12 gap-8" onSubmit={(e) => e.preventDefault()}>
-          {/* Left Column */}
-          <div className="lg:col-span-7 space-y-6">
-            <div className="card-saas p-8">
-              <div className="flex items-center gap-3 mb-6 text-primary">
-                <div className="p-2 bg-primary/10 rounded-lg">
-                  <SettingsIcon className="w-5 h-5" />
-                </div>
-                <span className="text-sm font-bold uppercase tracking-wider">Regras Acadêmicas</span>
-              </div>
-              
-              <div className="space-y-6">
-                <div>
-                  <label className="flex items-center text-sm font-semibold text-text-primary mb-2">
-                    Nota mínima para aprovação
-                    <Tooltip text="Define a pontuação necessária para que o aluno seja considerado aprovado. Notas abaixo deste valor serão marcadas como reprovadas." />
-                  </label>
-                  <div className="relative">
-                    <input 
-                      className="input-saas pr-16 font-bold text-primary text-lg" 
-                      defaultValue="7.0"
-                      max="10" 
-                      min="0" 
-                      step="0.5" 
-                      type="number"
-                    />
-                    <div className="absolute right-4 top-1/2 -translate-y-1/2 text-text-secondary font-bold text-sm bg-surface-container-high px-2 py-1 rounded">/ 10</div>
-                  </div>
-                  <p className="mt-2 text-xs text-text-secondary">Define o limiar para o status de 'Aprovado' nos relatórios.</p>
-                </div>
+        {/* Section Navigation Tabs */}
+        <div className="flex gap-2 mb-8 overflow-x-auto pb-2 no-scrollbar">
+          {sections.map((section) => (
+            <button
+              key={section.id}
+              onClick={() => setActiveSection(section.id)}
+              className={cn(
+                "flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider whitespace-nowrap transition-all border",
+                activeSection === section.id
+                  ? "bg-primary/10 text-primary border-primary/20"
+                  : "bg-surface-container text-on-surface-variant border-outline hover:border-primary/20 hover:text-primary"
+              )}
+            >
+              <section.icon className="w-4 h-4" />
+              {section.label}
+            </button>
+          ))}
+        </div>
 
-                <div className="pt-2">
-                  <label className="flex items-center text-sm font-semibold text-text-primary mb-2">
-                    Mensagem de Resultado Personalizada
-                    <Tooltip text="Esta mensagem será exibida ao aluno na tela de resultados após a conclusão da prova." />
-                  </label>
-                  <textarea 
-                    className="input-saas min-h-[120px] py-3 resize-none" 
-                    defaultValue="Parabéns pelo seu desempenho na avaliação!"
-                    rows={4}
-                  />
-                  <div className="flex justify-between mt-2">
-                    <p className="text-[11px] text-text-secondary italic font-medium">Use {'{nome_aluno}'} para inserir o nome automaticamente.</p>
-                    <p className="text-[11px] text-text-secondary font-medium">0 / 500 caracteres</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="card-saas p-8">
-              <div className="flex items-center gap-3 mb-6 text-primary">
-                <div className="p-2 bg-primary/10 rounded-lg">
-                  <Eye className="w-5 h-5" />
-                </div>
-                <span className="text-sm font-bold uppercase tracking-wider">Experiência do Aluno</span>
-              </div>
-              
-              <div className="grid grid-cols-1 gap-4">
-                {[
-                  { label: 'Exibir resultado imediatamente', sub: 'O aluno verá sua nota logo após finalizar a prova.', checked: true, tooltip: "Se desativado, o aluno só verá o resultado quando você liberar manualmente." },
-                  { label: 'Permitir refazer avaliação', sub: 'Habilita o botão de tentativa adicional para alunos reprovados.', checked: false, tooltip: "Define se o aluno pode tentar a prova novamente caso não atinja a nota mínima." },
-                  { label: 'Liberar revisão de questões', sub: 'Permite que o aluno veja quais questões errou e o gabarito.', checked: true, tooltip: "Exibe o detalhamento de acertos e erros após a conclusão." },
-                ].map((item, i) => (
-                  <label key={i} className="flex items-start gap-4 p-5 rounded-xl bg-surface-container-low cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all group border border-transparent hover:border-primary/20">
-                    <div className="pt-1">
-                      <input 
-                        defaultChecked={item.checked}
-                        className="rounded-md text-primary focus:ring-primary/20 border-outline bg-surface-container w-5 h-5 cursor-pointer transition-all" 
-                        type="checkbox"
-                      />
+        <form onSubmit={(e) => e.preventDefault()}>
+          <AnimatePresence mode="wait">
+            {/* REGRAS ACADÊMICAS + EXPERIÊNCIA */}
+            {activeSection === 'academicas' && (
+              <motion.div
+                key="academicas"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.2 }}
+                className="space-y-6"
+              >
+                <div className="card-saas p-6 sm:p-8">
+                  <div className="flex items-center gap-3 mb-6 text-primary">
+                    <div className="p-2 bg-primary/10 rounded-lg">
+                      <SettingsIcon className="w-5 h-5" />
                     </div>
-                    <div className="flex-1">
-                      <div className="flex items-center gap-1.5">
-                        <span className="block text-sm font-bold text-text-primary group-hover:text-primary transition-colors">{item.label}</span>
-                        <Tooltip text={item.tooltip} />
+                    <span className="text-sm font-bold uppercase tracking-wider">Regras Acadêmicas</span>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div>
+                      <label className="flex items-center text-sm font-semibold text-on-surface mb-2">
+                        Nota mínima para aprovação
+                        <Tooltip text="Define a pontuação necessária para que o aluno seja considerado aprovado." />
+                      </label>
+                      <div className="relative">
+                        <input 
+                          className="input-saas pr-16 font-bold text-primary text-lg w-full" 
+                          defaultValue="7.0"
+                          max="10" 
+                          min="0" 
+                          step="0.5" 
+                          type="number"
+                        />
+                        <div className="absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant font-bold text-sm bg-surface-container-high px-2 py-1 rounded">/ 10</div>
                       </div>
-                      <span className="block text-xs text-text-secondary mt-1 font-medium leading-relaxed">{item.sub}</span>
+                      <p className="mt-2 text-xs text-on-surface-variant">Define o limiar para o status de 'Aprovado' nos relatórios.</p>
                     </div>
-                  </label>
-                ))}
-              </div>
-            </div>
-          </div>
 
-          {/* Right Column */}
-          <div className="lg:col-span-5 space-y-6">
-            <div className="card-saas p-8">
-              <div className="flex items-center gap-3 mb-6 text-primary">
-                <div className="p-2 bg-primary/10 rounded-lg">
-                  <Palette className="w-5 h-5" />
+                    <div>
+                      <label className="flex items-center text-sm font-semibold text-on-surface mb-2">
+                        Mensagem de Resultado
+                        <Tooltip text="Exibida ao aluno na tela de resultados após a conclusão da prova." />
+                      </label>
+                      <textarea 
+                        className="input-saas min-h-[100px] py-3 resize-none w-full" 
+                        defaultValue="Parabéns pelo seu desempenho na avaliação!"
+                        rows={3}
+                      />
+                      <div className="flex justify-between mt-2">
+                        <p className="text-[11px] text-on-surface-variant italic font-medium">Use {'{nome_aluno}'} para nome automático.</p>
+                        <p className="text-[11px] text-on-surface-variant font-medium">0 / 500</p>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <span className="text-sm font-bold uppercase tracking-wider">Identidade Visual</span>
-              </div>
-              
-              <div className="space-y-6">
-                <input
-                  ref={logoInputRef}
-                  type="file"
-                  accept="image/png,image/jpeg"
-                  className="hidden"
-                  onChange={handleLogoUpload}
-                />
-                <div 
-                  className="aspect-video w-full rounded-xl bg-surface-container-low overflow-hidden relative group border-2 border-dashed border-outline hover:border-primary/50 transition-all flex items-center justify-center cursor-pointer"
-                  onClick={() => logoInputRef.current?.click()}
-                >
-                  {logoPreview ? (
-                    <>
-                      <img src={logoPreview} className="absolute inset-0 w-full h-full object-contain p-4" alt="Logo" />
-                      <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center z-10">
-                        <div className="text-center">
-                          <div className="w-12 h-12 bg-surface-container rounded-full flex items-center justify-center mx-auto mb-3 shadow-sm border border-outline">
-                            <UploadCloud className="text-primary w-6 h-6" />
+
+                <div className="card-saas p-6 sm:p-8">
+                  <div className="flex items-center gap-3 mb-6 text-primary">
+                    <div className="p-2 bg-primary/10 rounded-lg">
+                      <Eye className="w-5 h-5" />
+                    </div>
+                    <span className="text-sm font-bold uppercase tracking-wider">Experiência do Aluno</span>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {[
+                      { label: 'Exibir resultado imediatamente', sub: 'Nota visível logo após finalizar.', checked: true, tooltip: "Se desativado, o aluno só verá o resultado quando você liberar manualmente." },
+                      { label: 'Permitir refazer avaliação', sub: 'Tentativa adicional para reprovados.', checked: false, tooltip: "Define se o aluno pode tentar a prova novamente." },
+                      { label: 'Liberar revisão de questões', sub: 'Aluno vê acertos e gabarito.', checked: true, tooltip: "Exibe o detalhamento de acertos e erros após a conclusão." },
+                    ].map((item, i) => (
+                      <label key={i} className="flex items-start gap-3 p-4 rounded-xl bg-surface-container-low cursor-pointer hover:ring-1 hover:ring-primary/30 transition-all group border border-transparent hover:border-primary/20">
+                        <div className="pt-0.5">
+                          <input 
+                            defaultChecked={item.checked}
+                            className="rounded-md text-primary focus:ring-primary/20 border-outline bg-surface-container w-4 h-4 cursor-pointer" 
+                            type="checkbox"
+                          />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-1">
+                            <span className="text-sm font-bold text-on-surface group-hover:text-primary transition-colors">{item.label}</span>
+                            <Tooltip text={item.tooltip} />
                           </div>
-                          <p className="text-sm font-bold text-white">Alterar Logo</p>
+                          <span className="text-xs text-on-surface-variant mt-0.5 block font-medium">{item.sub}</span>
                         </div>
-                      </div>
-                    </>
-                  ) : (
-                    <>
-                      <img 
-                        className="absolute inset-0 w-full h-full object-cover opacity-10 group-hover:opacity-20 transition-opacity" 
-                        src="https://images.unsplash.com/photo-1557683316-973673baf926?auto=format&fit=crop&w=800&q=80"
-                        referrerPolicy="no-referrer"
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              </motion.div>
+            )}
+
+            {/* IDENTIDADE VISUAL */}
+            {activeSection === 'visual' && (
+              <motion.div
+                key="visual"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.2 }}
+              >
+                <div className="card-saas p-6 sm:p-8">
+                  <div className="flex items-center gap-3 mb-6 text-primary">
+                    <div className="p-2 bg-primary/10 rounded-lg">
+                      <Palette className="w-5 h-5" />
+                    </div>
+                    <span className="text-sm font-bold uppercase tracking-wider">Identidade Visual</span>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    {/* Logo Upload */}
+                    <div className="space-y-4">
+                      <p className="text-sm font-semibold text-on-surface">Logo da Instituição</p>
+                      <input
+                        ref={logoInputRef}
+                        type="file"
+                        accept="image/png,image/jpeg"
+                        className="hidden"
+                        onChange={handleLogoUpload}
                       />
-                      <div className="relative z-10 text-center p-4">
-                        <div className="w-12 h-12 bg-surface-container rounded-full flex items-center justify-center mx-auto mb-3 shadow-sm border border-outline group-hover:scale-110 transition-transform">
-                          <UploadCloud className="text-primary w-6 h-6" />
-                        </div>
-                        <p className="text-sm font-bold text-on-surface">Logo da Instituição</p>
-                        <p className="text-[11px] text-on-surface-variant mt-1 font-medium">PNG ou JPG (Máx. 2MB)</p>
+                      <div 
+                        className="aspect-video w-full max-w-sm rounded-xl bg-surface-container-low overflow-hidden relative group border-2 border-dashed border-outline hover:border-primary/50 transition-all flex items-center justify-center cursor-pointer"
+                        onClick={() => logoInputRef.current?.click()}
+                      >
+                        {logoPreview ? (
+                          <>
+                            <img src={logoPreview} className="absolute inset-0 w-full h-full object-contain p-4" alt="Logo" />
+                            <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center z-10">
+                              <div className="text-center">
+                                <div className="w-10 h-10 bg-surface-container rounded-full flex items-center justify-center mx-auto mb-2 shadow-sm border border-outline">
+                                  <UploadCloud className="text-primary w-5 h-5" />
+                                </div>
+                                <p className="text-xs font-bold text-white">Alterar Logo</p>
+                              </div>
+                            </div>
+                          </>
+                        ) : (
+                          <>
+                            <img 
+                              className="absolute inset-0 w-full h-full object-cover opacity-10 group-hover:opacity-20 transition-opacity" 
+                              src="https://images.unsplash.com/photo-1557683316-973673baf926?auto=format&fit=crop&w=800&q=80"
+                              referrerPolicy="no-referrer"
+                            />
+                            <div className="relative z-10 text-center p-4">
+                              <div className="w-10 h-10 bg-surface-container rounded-full flex items-center justify-center mx-auto mb-2 shadow-sm border border-outline group-hover:scale-110 transition-transform">
+                                <UploadCloud className="text-primary w-5 h-5" />
+                              </div>
+                              <p className="text-sm font-bold text-on-surface">Clique para enviar</p>
+                              <p className="text-[11px] text-on-surface-variant mt-1 font-medium">PNG ou JPG (Máx. 2MB)</p>
+                            </div>
+                          </>
+                        )}
                       </div>
-                    </>
-                  )}
-                </div>
-                {logoPreview && (
-                  <button
-                    type="button"
-                    onClick={handleRemoveLogo}
-                    className="flex items-center gap-2 text-xs font-bold text-error hover:text-error/80 transition-colors mt-2"
-                  >
-                    <Trash2 className="w-3.5 h-3.5" />
-                    Remover logo
-                  </button>
-                )}
+                      {logoPreview && (
+                        <button
+                          type="button"
+                          onClick={handleRemoveLogo}
+                          className="flex items-center gap-2 text-xs font-bold text-error hover:text-error/80 transition-colors"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                          Remover logo
+                        </button>
+                      )}
+                    </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="p-4 rounded-xl bg-surface-container-low border border-outline">
-                    <label className="flex items-center text-[11px] font-bold text-text-secondary uppercase mb-3 tracking-wider">
-                      Cor Principal
-                      <Tooltip text="Cor utilizada em botões, ícones e elementos de destaque em toda a plataforma." />
-                    </label>
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-primary shadow-sm ring-2 ring-surface-container"></div>
-                      <span className="text-xs font-mono font-bold text-text-primary">#0F8B8D</span>
+                    {/* Colors */}
+                    <div className="space-y-4">
+                      <p className="text-sm font-semibold text-on-surface">Cores da Plataforma</p>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="p-4 rounded-xl bg-surface-container-low border border-outline">
+                          <label className="flex items-center text-[11px] font-bold text-on-surface-variant uppercase mb-3 tracking-wider">
+                            Cor Principal
+                            <Tooltip text="Cor de botões, ícones e elementos de destaque." />
+                          </label>
+                          <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 rounded-lg bg-primary shadow-sm ring-2 ring-surface-container"></div>
+                            <span className="text-xs font-mono font-bold text-on-surface">#0F8B8D</span>
+                          </div>
+                        </div>
+                        <div className="p-4 rounded-xl bg-surface-container-low border border-outline">
+                          <label className="flex items-center text-[11px] font-bold text-on-surface-variant uppercase mb-3 tracking-wider">
+                            Cor de Sucesso
+                            <Tooltip text="Cor para aprovações e ações concluídas." />
+                          </label>
+                          <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 rounded-lg bg-secondary shadow-sm ring-2 ring-surface-container"></div>
+                            <span className="text-xs font-mono font-bold text-on-surface">#10B981</span>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                  <div className="p-4 rounded-xl bg-surface-container-low border border-outline">
-                    <label className="flex items-center text-[11px] font-bold text-text-secondary uppercase mb-3 tracking-wider">
-                      Cor de Sucesso
-                      <Tooltip text="Cor utilizada para indicar aprovações e ações concluídas com êxito." />
-                    </label>
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-emerald-500 shadow-sm ring-2 ring-surface-container"></div>
-                      <span className="text-xs font-mono font-bold text-text-primary">#10B981</span>
+                </div>
+              </motion.div>
+            )}
+
+            {/* SEGURANÇA */}
+            {activeSection === 'seguranca' && (
+              <motion.div
+                key="seguranca"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.2 }}
+              >
+                <div className="card-saas p-6 sm:p-8 max-w-lg">
+                  <div className="flex items-center gap-3 mb-6 text-primary">
+                    <div className="p-2 bg-primary/10 rounded-lg">
+                      <Lock className="w-5 h-5" />
+                    </div>
+                    <span className="text-sm font-bold uppercase tracking-wider">Alterar Senha</span>
+                  </div>
+                  <form onSubmit={handleChangePassword} className="space-y-4">
+                    {passwordMsg && (
+                      <div className={cn(
+                        "p-3 rounded-xl text-sm font-medium flex items-center gap-2 border",
+                        passwordMsg.type === 'success' ? 'bg-primary/10 text-primary border-primary/20' : 'bg-error/10 text-error border-error/20'
+                      )}>
+                        {passwordMsg.type === 'success' ? <Check className="w-4 h-4" /> : <AlertCircle className="w-4 h-4" />}
+                        {passwordMsg.text}
+                      </div>
+                    )}
+                    <div className="relative group">
+                      <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-on-surface-variant/40 group-focus-within:text-primary transition-colors" />
+                      <input
+                        className="w-full pl-11 pr-4 py-3 bg-surface-container-low border border-outline rounded-xl text-sm font-medium focus:border-primary transition-all outline-none"
+                        placeholder="Senha atual"
+                        type="password"
+                        value={passwordData.current}
+                        onChange={e => setPasswordData({...passwordData, current: e.target.value})}
+                        required
+                      />
+                    </div>
+                    <div className="relative group">
+                      <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-on-surface-variant/40 group-focus-within:text-primary transition-colors" />
+                      <input
+                        className="w-full pl-11 pr-4 py-3 bg-surface-container-low border border-outline rounded-xl text-sm font-medium focus:border-primary transition-all outline-none"
+                        placeholder="Nova senha (mín. 6 caracteres)"
+                        type="password"
+                        value={passwordData.new}
+                        onChange={e => setPasswordData({...passwordData, new: e.target.value})}
+                        required
+                      />
+                    </div>
+                    <div className="relative group">
+                      <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-on-surface-variant/40 group-focus-within:text-primary transition-colors" />
+                      <input
+                        className="w-full pl-11 pr-4 py-3 bg-surface-container-low border border-outline rounded-xl text-sm font-medium focus:border-primary transition-all outline-none"
+                        placeholder="Confirmar nova senha"
+                        type="password"
+                        value={passwordData.confirm}
+                        onChange={e => setPasswordData({...passwordData, confirm: e.target.value})}
+                        required
+                      />
+                    </div>
+                    <button type="submit" disabled={isChangingPassword} className="btn-primary w-full py-3 text-xs uppercase tracking-widest">
+                      {isChangingPassword ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+                      {isChangingPassword ? 'Alterando...' : 'Alterar Senha'}
+                    </button>
+                  </form>
+                </div>
+              </motion.div>
+            )}
+
+            {/* MARKETING */}
+            {activeSection === 'marketing' && (
+              <motion.div
+                key="marketing"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.2 }}
+              >
+                <div className="card-saas p-6 sm:p-8 max-w-2xl">
+                  <div className="flex items-center gap-3 mb-6 text-primary">
+                    <div className="p-2 bg-primary/10 rounded-lg">
+                      <BarChart3 className="w-5 h-5" />
+                    </div>
+                    <span className="text-sm font-bold uppercase tracking-wider">Marketing e Rastreamento</span>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <div>
+                      <label className="flex items-center text-sm font-semibold text-on-surface mb-2">
+                        Facebook Pixel ID
+                        <Tooltip text="O ID do seu Pixel do Facebook para rastreamento de eventos." />
+                      </label>
+                      <input className="input-saas w-full" placeholder="Ex: 123456789012345" type="text" />
+                    </div>
+                    <div>
+                      <label className="flex items-center text-sm font-semibold text-on-surface mb-2">
+                        Facebook API Token
+                        <Tooltip text="Token de acesso para a API de Conversões do Facebook (CAPI)." />
+                      </label>
+                      <input className="input-saas w-full" placeholder="EAAB..." type="password" />
+                    </div>
+                    <div className="sm:col-span-2">
+                      <label className="flex items-center text-sm font-semibold text-on-surface mb-2">
+                        Google Tag ID (GTM / GA4)
+                        <Tooltip text="O ID da sua Tag do Google (G-XXXXXXXXXX) ou GTM." />
+                      </label>
+                      <input className="input-saas w-full" placeholder="Ex: G-XXXXXXXXXX" type="text" />
                     </div>
                   </div>
                 </div>
-              </div>
-            </div>
+              </motion.div>
+            )}
 
-            <div className="card-saas p-8">
-              <div className="flex items-center gap-3 mb-6 text-primary">
-                <div className="p-2 bg-primary/10 rounded-lg">
-                  <BarChart3 className="w-5 h-5" />
-                </div>
-                <span className="text-sm font-bold uppercase tracking-wider">Marketing e Rastreamento</span>
-              </div>
-              
-              <div className="space-y-6">
-                <div>
-                  <label className="flex items-center text-sm font-semibold text-text-primary mb-2">
-                    Facebook Pixel ID
-                    <Tooltip text="O ID do seu Pixel do Facebook para rastreamento de eventos e conversões." />
-                  </label>
-                  <input 
-                    className="input-saas w-full" 
-                    placeholder="Ex: 123456789012345"
-                    type="text"
-                  />
-                </div>
-
-                <div>
-                  <label className="flex items-center text-sm font-semibold text-text-primary mb-2">
-                    Facebook API Token (Conversões)
-                    <Tooltip text="Token de acesso para a API de Conversões do Facebook (CAPI) para rastreamento server-side." />
-                  </label>
-                  <input 
-                    className="input-saas w-full" 
-                    placeholder="EAAB..."
-                    type="password"
-                  />
-                </div>
-
-                <div>
-                  <label className="flex items-center text-sm font-semibold text-text-primary mb-2">
-                    Google Tag ID (GTM / GA4)
-                    <Tooltip text="O ID da sua Tag do Google (G-XXXXXXXXXX) ou Gerenciador de Tags (GTM-XXXXXXX)." />
-                  </label>
-                  <input 
-                    className="input-saas w-full" 
-                    placeholder="Ex: G-XXXXXXXXXX"
-                    type="text"
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Password Change Section */}
-            <div className="card-saas p-8">
-              <div className="flex items-center gap-3 mb-6 text-primary">
-                <div className="p-2 bg-primary/10 rounded-lg">
-                  <Lock className="w-5 h-5" />
-                </div>
-                <span className="text-sm font-bold uppercase tracking-wider">Alterar Senha</span>
-              </div>
-              <form onSubmit={handleChangePassword} className="space-y-4">
-                {passwordMsg && (
-                  <div className={`p-3 rounded-xl text-sm font-medium flex items-center gap-2 ${passwordMsg.type === 'success' ? 'bg-primary/10 text-primary border border-primary/20' : 'bg-error/10 text-error border border-error/20'}`}>
-                    {passwordMsg.type === 'success' ? <Check className="w-4 h-4" /> : <AlertCircle className="w-4 h-4" />}
-                    {passwordMsg.text}
-                  </div>
-                )}
-                <div className="relative group">
-                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-on-surface-variant/40 group-focus-within:text-primary transition-colors" />
-                  <input
-                    className="w-full pl-11 pr-4 py-3 bg-surface-container-low border border-outline rounded-xl text-sm font-medium focus:border-primary transition-all outline-none"
-                    placeholder="Senha atual"
-                    type="password"
-                    value={passwordData.current}
-                    onChange={e => setPasswordData({...passwordData, current: e.target.value})}
-                    required
-                  />
-                </div>
-                <div className="relative group">
-                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-on-surface-variant/40 group-focus-within:text-primary transition-colors" />
-                  <input
-                    className="w-full pl-11 pr-4 py-3 bg-surface-container-low border border-outline rounded-xl text-sm font-medium focus:border-primary transition-all outline-none"
-                    placeholder="Nova senha (mín. 6 caracteres)"
-                    type="password"
-                    value={passwordData.new}
-                    onChange={e => setPasswordData({...passwordData, new: e.target.value})}
-                    required
-                  />
-                </div>
-                <div className="relative group">
-                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-on-surface-variant/40 group-focus-within:text-primary transition-colors" />
-                  <input
-                    className="w-full pl-11 pr-4 py-3 bg-surface-container-low border border-outline rounded-xl text-sm font-medium focus:border-primary transition-all outline-none"
-                    placeholder="Confirmar nova senha"
-                    type="password"
-                    value={passwordData.confirm}
-                    onChange={e => setPasswordData({...passwordData, confirm: e.target.value})}
-                    required
-                  />
-                </div>
-                <button type="submit" disabled={isChangingPassword} className="btn-primary w-full py-3 text-xs uppercase tracking-widest">
-                  {isChangingPassword ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-                  {isChangingPassword ? 'Alterando...' : 'Alterar Senha'}
-                </button>
-              </form>
-            </div>
-
-            {/* Administrator Management (Master Only) */}
-            {currentUser?.is_master && (
-              <div className="card-saas p-8">
-                <div className="flex items-center justify-between mb-8">
-                  <div className="flex items-center gap-3 text-primary">
+            {/* ADMINS */}
+            {activeSection === 'admins' && currentUser?.is_master && (
+              <motion.div
+                key="admins"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.2 }}
+              >
+                <div className="card-saas p-6 sm:p-8">
+                  <div className="flex items-center gap-3 mb-8 text-primary">
                     <div className="p-2 bg-primary/10 rounded-lg">
                       <Shield className="w-5 h-5" />
                     </div>
@@ -469,97 +540,94 @@ export function SettingsPage() {
                       <span className="text-[10px] text-on-surface-variant font-medium uppercase tracking-widest">Apenas Master</span>
                     </div>
                   </div>
-                </div>
 
-                <div className="space-y-8">
-                  {/* New Admin Form */}
-                  <form onSubmit={handleCreateAdmin} className="p-6 bg-surface-container-low rounded-2xl border border-outline space-y-4">
-                    <p className="text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-2">Adicionar Novo Admin</p>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <div className="relative group">
-                        <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-on-surface-variant/40 group-focus-within:text-primary transition-colors" />
-                        <input 
-                          className="w-full pl-11 pr-4 py-3 bg-surface border border-outline rounded-xl text-sm font-medium focus:border-primary transition-all outline-none" 
-                          placeholder="Nome"
-                          value={newAdmin.nome}
-                          onChange={e => setNewAdmin({...newAdmin, nome: e.target.value})}
-                          required
-                        />
-                      </div>
-                      <div className="relative group">
-                        <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-on-surface-variant/40 group-focus-within:text-primary transition-colors" />
-                        <input 
-                          className="w-full pl-11 pr-4 py-3 bg-surface border border-outline rounded-xl text-sm font-medium focus:border-primary transition-all outline-none" 
-                          placeholder="E-mail"
-                          type="email"
-                          value={newAdmin.email}
-                          onChange={e => setNewAdmin({...newAdmin, email: e.target.value})}
-                          required
-                        />
-                      </div>
-                      <div className="relative group">
-                        <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-on-surface-variant/40 group-focus-within:text-primary transition-colors" />
-                        <input 
-                          className="w-full pl-11 pr-4 py-3 bg-surface border border-outline rounded-xl text-sm font-medium focus:border-primary transition-all outline-none" 
-                          placeholder="Senha"
-                          type="password"
-                          value={newAdmin.senha}
-                          onChange={e => setNewAdmin({...newAdmin, senha: e.target.value})}
-                          required
-                        />
-                      </div>
-                    </div>
-                    <button 
-                      type="submit"
-                      disabled={isCreatingAdmin}
-                      className="btn-primary w-full py-3 text-xs uppercase tracking-widest"
-                    >
-                      {isCreatingAdmin ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
-                      {isCreatingAdmin ? 'Criando...' : 'Adicionar Administrador'}
-                    </button>
-                  </form>
-
-                  {/* Admin List */}
-                  <div className="space-y-3">
-                    <p className="text-[10px] font-black text-on-surface-variant uppercase tracking-widest ml-1">Administradores Ativos</p>
-                    <div className="grid grid-cols-1 gap-3">
-                      {admins.map((admin: any) => (
-                        <div key={admin.id} className="flex items-center justify-between p-4 bg-surface-container rounded-xl border border-outline group hover:border-primary/20 transition-all">
-                          <div className="flex items-center gap-4">
-                            <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
-                              <User className="w-5 h-5" />
-                            </div>
-                            <div>
-                              <div className="flex items-center gap-2">
-                                <p className="text-sm font-bold text-on-surface">{admin.nome}</p>
-                                {admin.is_master && (
-                                  <span className="px-2 py-0.5 bg-primary/10 text-primary text-[8px] font-black uppercase tracking-tighter rounded-full border border-primary/20">Master</span>
-                                )}
-                              </div>
-                              <p className="text-xs text-on-surface-variant font-medium">{admin.email}</p>
-                            </div>
-                          </div>
-                          {!admin.is_master && (
-                            <button 
-                              onClick={() => handleDeleteAdmin(admin.id)}
-                              className="p-2.5 text-on-surface-variant/30 hover:text-error hover:bg-error/10 rounded-xl transition-all"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </button>
-                          )}
+                  <div className="space-y-8">
+                    <form onSubmit={handleCreateAdmin} className="p-5 bg-surface-container-low rounded-2xl border border-outline space-y-4">
+                      <p className="text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-2">Adicionar Novo Admin</p>
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div className="relative group">
+                          <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-on-surface-variant/40 group-focus-within:text-primary transition-colors" />
+                          <input 
+                            className="w-full pl-11 pr-4 py-3 bg-surface border border-outline rounded-xl text-sm font-medium focus:border-primary transition-all outline-none" 
+                            placeholder="Nome"
+                            value={newAdmin.nome}
+                            onChange={e => setNewAdmin({...newAdmin, nome: e.target.value})}
+                            required
+                          />
                         </div>
-                      ))}
+                        <div className="relative group">
+                          <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-on-surface-variant/40 group-focus-within:text-primary transition-colors" />
+                          <input 
+                            className="w-full pl-11 pr-4 py-3 bg-surface border border-outline rounded-xl text-sm font-medium focus:border-primary transition-all outline-none" 
+                            placeholder="E-mail"
+                            type="email"
+                            value={newAdmin.email}
+                            onChange={e => setNewAdmin({...newAdmin, email: e.target.value})}
+                            required
+                          />
+                        </div>
+                        <div className="relative group">
+                          <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-on-surface-variant/40 group-focus-within:text-primary transition-colors" />
+                          <input 
+                            className="w-full pl-11 pr-4 py-3 bg-surface border border-outline rounded-xl text-sm font-medium focus:border-primary transition-all outline-none" 
+                            placeholder="Senha"
+                            type="password"
+                            value={newAdmin.senha}
+                            onChange={e => setNewAdmin({...newAdmin, senha: e.target.value})}
+                            required
+                          />
+                        </div>
+                      </div>
+                      <button 
+                        type="submit"
+                        disabled={isCreatingAdmin}
+                        className="btn-primary w-full py-3 text-xs uppercase tracking-widest"
+                      >
+                        {isCreatingAdmin ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
+                        {isCreatingAdmin ? 'Criando...' : 'Adicionar Administrador'}
+                      </button>
+                    </form>
+
+                    <div className="space-y-3">
+                      <p className="text-[10px] font-black text-on-surface-variant uppercase tracking-widest ml-1">Administradores Ativos</p>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        {admins.map((admin: any) => (
+                          <div key={admin.id} className="flex items-center justify-between p-4 bg-surface-container rounded-xl border border-outline group hover:border-primary/20 transition-all">
+                            <div className="flex items-center gap-3">
+                              <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+                                <User className="w-4 h-4" />
+                              </div>
+                              <div className="min-w-0">
+                                <div className="flex items-center gap-2">
+                                  <p className="text-sm font-bold text-on-surface truncate">{admin.nome}</p>
+                                  {admin.is_master && (
+                                    <span className="px-2 py-0.5 bg-primary/10 text-primary text-[8px] font-black uppercase tracking-tighter rounded-full border border-primary/20 shrink-0">Master</span>
+                                  )}
+                                </div>
+                                <p className="text-xs text-on-surface-variant font-medium truncate">{admin.email}</p>
+                              </div>
+                            </div>
+                            {!admin.is_master && (
+                              <button 
+                                onClick={() => handleDeleteAdmin(admin.id)}
+                                className="p-2 text-on-surface-variant/30 hover:text-error hover:bg-error/10 rounded-xl transition-all shrink-0"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            )}
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
+              </motion.div>
             )}
-          </div>
-
+          </AnimatePresence>
 
           {/* Action Buttons */}
-          <div className="lg:col-span-12 flex flex-col sm:flex-row justify-end gap-4 mt-8 pt-8 border-t border-outline">
-            <button className="px-8 py-3.5 rounded-xl text-sm font-bold text-text-secondary hover:text-text-primary hover:bg-surface-container-high transition-all">
+          <div className="flex flex-col sm:flex-row justify-end gap-4 mt-10 pt-8 border-t border-outline">
+            <button className="px-8 py-3 rounded-xl text-sm font-bold text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-all">
               Descartar Alterações
             </button>
             <button 
@@ -567,14 +635,8 @@ export function SettingsPage() {
               disabled={isSaving}
               className="btn-primary w-auto px-8 py-3 flex items-center justify-center gap-2"
             >
-              {isSaving ? (
-                <Loader2 className="w-5 h-5 animate-spin" />
-              ) : (
-                <Save className="w-5 h-5" />
-              )}
-              <span className="text-base">
-                {isSaving ? 'Salvando alterações...' : 'Salvar Configurações'}
-              </span>
+              {isSaving ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
+              <span>{isSaving ? 'Salvando...' : 'Salvar Configurações'}</span>
             </button>
           </div>
         </form>
