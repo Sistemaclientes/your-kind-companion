@@ -128,7 +128,11 @@ export function StudentsPage() {
               <tbody className="divide-y divide-outline">
                 {currentStudents.length > 0 ? (
                   currentStudents.map((student, i) => (
-                    <tr key={i} className="hover:bg-primary/[0.02] transition-colors group">
+                    <tr 
+                      key={i} 
+                      className="hover:bg-primary/[0.02] transition-colors group cursor-pointer"
+                      onClick={() => navigate(`/admin/students/${encodeURIComponent(student.email)}`)}
+                    >
                       <td className="px-6 py-6">
                         <div className="flex items-center gap-4">
                           <div className="w-12 h-12 rounded-2xl bg-surface-container flex items-center justify-center text-primary font-bold text-lg">
@@ -155,7 +159,7 @@ export function StudentsPage() {
                         {new Date(student.ultimo_acesso).toLocaleDateString('pt-BR')}
                       </td>
                       <td className="px-6 py-6 text-right">
-                        <MoreVertical className="w-5 h-5 text-on-surface-variant inline-block" />
+                        <ChevronRight className="w-5 h-5 text-on-surface-variant inline-block group-hover:text-primary transition-colors" />
                       </td>
                     </tr>
                   ))
