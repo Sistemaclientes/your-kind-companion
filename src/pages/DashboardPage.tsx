@@ -31,6 +31,8 @@ export function DashboardPage() {
   const [stats, setStats] = React.useState<any>(null);
   const [loading, setLoading] = React.useState(true);
   const [sliderIndex, setSliderIndex] = React.useState(0);
+  const carouselRef = React.useRef<HTMLDivElement>(null);
+  const [carouselWidth, setCarouselWidth] = React.useState(0);
 
   React.useEffect(() => {
     const fetchStats = async () => {
@@ -69,16 +71,22 @@ export function DashboardPage() {
     { name: 'Jun', value: stats?.metrics.mediaGeral || 78 },
   ];
 
-  // Placeholder for students slider until StudentsPage is fully integrated
   const students = [
-    { name: 'Beatriz Helena Santos', stats: 'Média: 0 • 0 provas', status: 'Ativo', img: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=facearea&facepad=2&w=256&h=256&q=80' },
-    { name: 'Ricardo Almeida', stats: 'Média: 0 • 0 provas', status: 'Ativo', img: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=facearea&facepad=2&w=256&h=256&q=80' },
+    { id: '1', name: 'Beatriz Helena Santos', stats: 'Média: 0 • 0 provas', status: 'Ativo', img: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=facearea&facepad=2&w=256&h=256&q=80' },
+    { id: '2', name: 'Ricardo Almeida', stats: 'Média: 0 • 0 provas', status: 'Ativo', img: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=facearea&facepad=2&w=256&h=256&q=80' },
+    { id: '3', name: 'Ana Carolina Lima', stats: 'Média: 0 • 0 provas', status: 'Ativo', img: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=facearea&facepad=2&w=256&h=256&q=80' },
+    { id: '4', name: 'Lucas Ferreira', stats: 'Média: 0 • 0 provas', status: 'Inativo', img: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=facearea&facepad=2&w=256&h=256&q=80' },
+    { id: '5', name: 'Mariana Costa', stats: 'Média: 0 • 0 provas', status: 'Ativo', img: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=facearea&facepad=2&w=256&h=256&q=80' },
   ];
-  
-  const totalPages = Math.ceil(students.length / 3) || 1;
-  const nextSlide = () => setSliderIndex((prev) => (prev + 1) % totalPages);
-  const prevSlide = () => setSliderIndex((prev) => (prev - 1 + totalPages) % totalPages);
-  
+
+  React.useEffect(() => {
+    if (carouselRef.current) {
+      const scrollWidth = carouselRef.current.scrollWidth;
+      const offsetWidth = carouselRef.current.offsetWidth;
+      setCarouselWidth(scrollWidth - offsetWidth);
+    }
+  }, [students.length, loading]);
+
   if (loading) return null;
 
   return (
@@ -248,84 +256,64 @@ export function DashboardPage() {
               <h4 className="text-2xl font-bold text-on-surface font-headline tracking-tight">Status dos Alunos</h4>
               <p className="text-sm text-on-surface-variant font-medium mt-1">Acompanhe o engajamento individual em tempo real</p>
             </div>
-            <div className="flex items-center gap-3">
-              <div className="flex items-center gap-2 bg-surface-container p-1 rounded-xl border border-outline">
-                <button 
-                  onClick={prevSlide}
-                  className="w-10 h-10 rounded-xl bg-surface-container border border-outline flex items-center justify-center text-on-surface-variant hover:text-primary hover:border-primary/20 transition-all disabled:opacity-30 btn-icon-saas"
-                  disabled={sliderIndex === 0}
-                >
-                  <ChevronLeft className="w-5 h-5" />
-                </button>
-                <div className="text-[10px] font-bold uppercase tracking-widest px-2 text-on-surface-variant">
-                  {sliderIndex + 1} / {totalPages}
-                </div>
-                <button 
-                  onClick={nextSlide}
-                  className="w-10 h-10 rounded-xl bg-surface-container border border-outline flex items-center justify-center text-on-surface-variant hover:text-primary hover:border-primary/20 transition-all disabled:opacity-30 btn-icon-saas"
-                  disabled={sliderIndex === totalPages - 1}
-                >
-                  <ChevronRight className="w-5 h-5" />
-                </button>
-              </div>
-              <button className="btn-primary py-2.5 px-6 text-xs uppercase tracking-widest">
-                Filtros
-              </button>
-            </div>
+            <button 
+              className="btn-primary py-2.5 px-6 text-xs uppercase tracking-widest"
+              onClick={() => navigate('/admin/students')}
+            >
+              Ver Todos
+            </button>
           </div>
           
-          <div className="relative overflow-hidden -mx-4 px-4 py-4">
+          <motion.div 
+            ref={carouselRef} 
+            className="overflow-hidden cursor-grab active:cursor-grabbing -mx-4 px-4"
+          >
             <motion.div 
-              className="flex"
-              animate={{ x: `-${sliderIndex * 100}%` }}
-              transition={{ type: "spring", stiffness: 150, damping: 20 }}
+              className="flex gap-6"
+              drag="x"
+              dragConstraints={{ right: 0, left: -carouselWidth }}
+              dragElastic={0.1}
+              dragTransition={{ bounceStiffness: 300, bounceDamping: 30 }}
             >
-              {Array.from({ length: totalPages }).map((_, pageIdx) => (
-                <div key={pageIdx} className="flex gap-6 min-w-full px-1">
-                  {students.slice(pageIdx * 3, (pageIdx + 1) * 3).map((s, i) => (
-                    <div 
-                      key={i} 
-                      className="flex-1 card-saas flex items-center gap-5 cursor-pointer group/card border-transparent hover:border-primary/20"
-                      onClick={() => navigate('/admin/student/1')}
-                    >
-                      <div className="relative">
-                        <img 
-                          alt={s.name} 
-                          className="w-16 h-16 rounded-2xl object-cover ring-4 ring-transparent group-hover/card:ring-primary/20 transition-all shadow-md" 
-                          src={s.img}
-                          referrerPolicy="no-referrer"
-                        />
-                        <div className={cn(
-                          "absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-surface-container",
-                          s.status === 'Ativo' ? "bg-green-500" : 
-                          s.status === 'Inativo' ? "bg-red-500" :
-                          "bg-orange-500"
-                        )}></div>
-                      </div>
-                      <div className="flex-1 overflow-hidden">
-                        <p className="font-bold text-lg text-on-surface group-hover/card:text-primary transition-colors truncate tracking-tight">{s.name}</p>
-                        <p className="text-xs text-on-surface-variant font-semibold mt-0.5">{s.stats}</p>
-                      </div>
-                      <div className={cn(
-                        "px-3 py-1.5 rounded-xl text-[10px] font-bold uppercase tracking-widest",
-                        s.status === 'Ativo' && "bg-green-500/10 text-green-600 dark:text-green-400",
-                        s.status === 'Inativo' && "bg-red-500/10 text-red-600 dark:text-red-400",
-                        s.status === 'Pendente' && "bg-orange-500/10 text-orange-600 dark:text-orange-400",
-                      )}>
-                        {s.status}
-                      </div>
-                    </div>
-                  ))}
-                  {/* Fill empty slots on the last page to maintain layout */}
-                  {students.slice(pageIdx * 3, (pageIdx + 1) * 3).length < 3 && 
-                    Array.from({ length: 3 - students.slice(pageIdx * 3, (pageIdx + 1) * 3).length }).map((_, i) => (
-                      <div key={`empty-${i}`} className="flex-1 invisible" />
-                    ))
-                  }
-                </div>
+              {students.map((s) => (
+                <motion.div 
+                  key={s.id} 
+                  className="min-w-[320px] card-saas flex items-center gap-5 cursor-pointer group/card border-transparent hover:border-primary/20 select-none"
+                  onClick={() => navigate(`/admin/student/${s.id}`)}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <div className="relative shrink-0">
+                    <img 
+                      alt={s.name} 
+                      className="w-16 h-16 rounded-2xl object-cover ring-4 ring-transparent group-hover/card:ring-primary/20 transition-all shadow-md pointer-events-none" 
+                      src={s.img}
+                      referrerPolicy="no-referrer"
+                      draggable={false}
+                    />
+                    <div className={cn(
+                      "absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-surface-container",
+                      s.status === 'Ativo' ? "bg-green-500" : 
+                      s.status === 'Inativo' ? "bg-red-500" :
+                      "bg-orange-500"
+                    )}></div>
+                  </div>
+                  <div className="flex-1 overflow-hidden">
+                    <p className="font-bold text-lg text-on-surface group-hover/card:text-primary transition-colors truncate tracking-tight">{s.name}</p>
+                    <p className="text-xs text-on-surface-variant font-semibold mt-0.5">{s.stats}</p>
+                  </div>
+                  <div className={cn(
+                    "px-3 py-1.5 rounded-xl text-[10px] font-bold uppercase tracking-widest shrink-0",
+                    s.status === 'Ativo' && "bg-green-500/10 text-green-600 dark:text-green-400",
+                    s.status === 'Inativo' && "bg-red-500/10 text-red-600 dark:text-red-400",
+                    s.status === 'Pendente' && "bg-orange-500/10 text-orange-600 dark:text-orange-400",
+                  )}>
+                    {s.status}
+                  </div>
+                </motion.div>
               ))}
             </motion.div>
-          </div>
+          </motion.div>
         </div>
       </main>
     </>
