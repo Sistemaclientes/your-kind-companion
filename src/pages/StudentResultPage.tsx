@@ -68,15 +68,15 @@ export function StudentResultPage() {
           initial={{ scale: 0, rotate: -45 }}
           animate={{ scale: 1, rotate: 0 }}
           transition={{ type: "spring", stiffness: 260, damping: 20 }}
-          className="w-28 h-28 bg-primary/10 rounded-[32px] flex items-center justify-center mb-10 shadow-xl shadow-primary/10 border border-primary/20 relative"
+          className="w-28 h-28 bg-gradient-to-br from-primary/20 to-primary/5 rounded-[32px] flex items-center justify-center mb-10 shadow-xl shadow-primary/20 border-2 border-primary/30 relative"
         >
-          <Trophy className="w-12 h-12 text-primary" />
+          <Trophy className="w-14 h-14 text-primary drop-shadow-lg" strokeWidth={2.5} />
           <motion.div 
             animate={{ scale: [1, 1.2, 1] }}
             transition={{ repeat: Infinity, duration: 2 }}
-            className="absolute -top-2 -right-2 w-8 h-8 bg-secondary rounded-xl flex items-center justify-center text-white shadow-lg"
+            className="absolute -top-3 -right-3 w-10 h-10 bg-gradient-to-br from-secondary to-secondary/80 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-secondary/40"
           >
-            <Zap className="w-4 h-4 fill-current" />
+            <Award className="w-5 h-5" />
           </motion.div>
         </motion.div>
         
@@ -168,7 +168,7 @@ export function StudentResultPage() {
             className="btn-primary py-4 px-10 w-full md:w-auto text-sm uppercase tracking-widest group"
           >
             <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-            Fazer outra prova
+            Realizar nova avaliação
           </button>
         </motion.div>
 
@@ -181,9 +181,9 @@ export function StudentResultPage() {
         >
           <button 
             className="text-on-surface-variant font-black text-[10px] uppercase tracking-[0.2em] hover:text-primary transition-colors"
-            onClick={() => navigate('/admin/dashboard')}
+            onClick={() => navigate('/admin/exams')}
           >
-            Voltar para o Painel Administrativo
+            Voltar ao painel de provas
           </button>
         </motion.div>
       </div>

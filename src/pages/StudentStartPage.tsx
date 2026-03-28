@@ -69,7 +69,7 @@ export function StudentStartPage() {
           </div>
           
           <div className="space-y-6">
-            <h1 className="text-5xl md:text-7xl font-black text-on-surface font-headline leading-[1.1] tracking-tighter">
+            <h1 className="text-3xl md:text-4xl font-black text-on-surface font-headline leading-[1.15] tracking-tight">
               {selectedExam ? selectedExam.titulo : 'Carregando...'}
             </h1>
             <p className="text-lg md:text-xl text-on-surface-variant leading-relaxed font-medium max-w-xl">
