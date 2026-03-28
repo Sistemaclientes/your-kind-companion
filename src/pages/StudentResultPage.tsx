@@ -17,6 +17,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { cn } from '../lib/utils';
 import { motion } from 'motion/react';
+import confetti from 'canvas-confetti';
 
 export function StudentResultPage() {
   const navigate = useNavigate();
