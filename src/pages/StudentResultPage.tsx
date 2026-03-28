@@ -17,6 +17,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { cn } from '../lib/utils';
 import { motion } from 'motion/react';
+import confetti from 'canvas-confetti';
 
 export function StudentResultPage() {
   const navigate = useNavigate();
@@ -29,6 +30,19 @@ export function StudentResultPage() {
     if (res) setResult(JSON.parse(res));
     if (info) setStudentInfo(JSON.parse(info));
   }, []);
+
+  React.useEffect(() => {
+    if (result && result.pontuacao >= 70) {
+      const duration = 3000;
+      const end = Date.now() + duration;
+      const frame = () => {
+        confetti({ particleCount: 3, angle: 60, spread: 55, origin: { x: 0 } });
+        confetti({ particleCount: 3, angle: 120, spread: 55, origin: { x: 1 } });
+        if (Date.now() < end) requestAnimationFrame(frame);
+      };
+      frame();
+    }
+  }, [result]);
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -90,7 +104,9 @@ export function StudentResultPage() {
             {isApproved ? 'Parabéns,' : 'Continue tentando,'} <span className="text-primary">{studentInfo?.nome || 'Estudante'}!</span>
           </h1>
           <p className="text-lg md:text-xl text-on-surface-variant font-medium max-w-2xl mx-auto leading-relaxed">
-            Você concluiu sua avaliação. {isApproved ? 'Seu desempenho foi satisfatório e você pode baixar seu certificado.' : 'Infelizmente você não atingiu a pontuação mínima, mas pode tentar novamente.'}
+            {isApproved 
+              ? 'Você concluiu sua avaliação. Seu desempenho foi satisfatório e você pode baixar seu certificado.\n\nVocê foi Ótimo! Deseja fazer mais uma avaliação? Clique no botão ao lado.'
+              : 'Infelizmente você não atingiu a pontuação mínima, mas pode tentar novamente.'}
           </p>
         </motion.div>
 
