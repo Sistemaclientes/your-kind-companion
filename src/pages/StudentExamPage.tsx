@@ -474,12 +474,6 @@ export function StudentExamPage() {
                 >
                   Sim, Finalizar Prova
                 </button>
-                <button 
-                  className="w-full py-4 rounded-2xl font-bold text-on-surface-variant hover:bg-surface-container-high transition-colors text-sm uppercase tracking-widest"
-                  onClick={() => setShowFinishConfirm(false)}
-                >
-                  Continuar Respondendo
-                </button>
               </div>
             </motion.div>
           </div>
