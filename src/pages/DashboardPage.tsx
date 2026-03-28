@@ -201,7 +201,7 @@ export function DashboardPage() {
                       border: '1px solid var(--color-outline)'
                     }}
                     itemStyle={{ color: '#14B8A6' }}
-                    formatter={(value: number) => [`${value}%`, 'Desempenho']}
+                    formatter={(value: any) => [`${value}%`, 'Desempenho']}
                   />
                   <Area 
                     type="monotone" 
