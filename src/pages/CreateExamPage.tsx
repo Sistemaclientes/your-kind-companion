@@ -154,83 +154,83 @@ export function CreateExamPage() {
 
   return (
     <div className="min-h-screen bg-surface transition-colors duration-300">
-      <header className="fixed top-0 left-0 right-0 h-20 bg-surface-container/80 backdrop-blur-md border-b border-outline z-50 flex items-center justify-between px-8">
-        <div className="flex items-center gap-6">
-          <button 
-            className="p-2.5 hover:bg-surface-container-high rounded-xl text-on-surface-variant transition-all hover:scale-110 active:scale-95 border border-transparent hover:border-outline"
-            onClick={() => navigate('/admin/exams')}
-          >
-            <ArrowLeft className="w-5 h-5" />
-          </button>
-          <div className="h-8 w-px bg-outline"></div>
-          <div className="flex items-center gap-2 text-[10px] font-bold text-primary uppercase tracking-widest bg-primary/10 px-3 py-1.5 rounded-lg border border-primary/20">
-            <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-            Salvo
+      <header className="fixed top-0 left-0 right-0 bg-surface-container/80 backdrop-blur-md border-b border-outline z-50">
+        <div className="flex items-center justify-between px-3 sm:px-6 h-16 sm:h-20">
+          <div className="flex items-center gap-2 sm:gap-4 min-w-0">
+            <button 
+              className="p-2 hover:bg-surface-container-high rounded-xl text-on-surface-variant transition-all shrink-0"
+              onClick={() => navigate('/admin/exams')}
+            >
+              <ArrowLeft className="w-5 h-5" />
+            </button>
+            <div className="hidden sm:block h-8 w-px bg-outline shrink-0"></div>
+            <div className="flex items-center gap-1.5 text-[9px] sm:text-[10px] font-bold text-primary uppercase tracking-widest bg-primary/10 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg border border-primary/20 shrink-0">
+              <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+              Salvo
+            </div>
+            <nav className="flex items-center gap-4 sm:gap-8 ml-2 sm:ml-4">
+              <button 
+                onClick={() => setActiveTab('content')}
+                className={cn(
+                  "text-xs sm:text-sm font-bold transition-all relative py-5 sm:py-7 group",
+                  activeTab === 'content' ? "text-primary" : "text-on-surface-variant hover:text-on-surface"
+                )}
+              >
+                Questões
+                {activeTab === 'content' && (
+                  <motion.div layoutId="tab-underline" className="absolute bottom-0 left-0 right-0 h-1 bg-primary rounded-t-full" />
+                )}
+              </button>
+              <button 
+                onClick={() => setActiveTab('settings')}
+                className={cn(
+                  "text-xs sm:text-sm font-bold transition-all relative py-5 sm:py-7 group whitespace-nowrap",
+                  activeTab === 'settings' ? "text-primary" : "text-on-surface-variant hover:text-on-surface"
+                )}
+              >
+                Config.
+                {activeTab === 'settings' && (
+                  <motion.div layoutId="tab-underline" className="absolute bottom-0 left-0 right-0 h-1 bg-primary rounded-t-full" />
+                )}
+              </button>
+            </nav>
           </div>
-          <nav className="flex items-center gap-8 ml-4">
-            <button 
-              onClick={() => setActiveTab('content')}
-              className={cn(
-                "text-sm font-bold transition-all relative py-7 group",
-                activeTab === 'content' ? "text-primary" : "text-on-surface-variant hover:text-on-surface"
-              )}
-            >
-              Questões
-              {activeTab === 'content' && (
-                <motion.div layoutId="tab-underline" className="absolute bottom-0 left-0 right-0 h-1 bg-primary rounded-t-full" />
-              )}
-              <div className="absolute bottom-0 left-0 right-0 h-1 bg-primary/20 rounded-t-full scale-x-0 group-hover:scale-x-100 transition-transform" />
-            </button>
-            <button 
-              onClick={() => setActiveTab('settings')}
-              className={cn(
-                "text-sm font-bold transition-all relative py-7 group",
-                activeTab === 'settings' ? "text-primary" : "text-on-surface-variant hover:text-on-surface"
-              )}
-            >
-              Configurações
-              {activeTab === 'settings' && (
-                <motion.div layoutId="tab-underline" className="absolute bottom-0 left-0 right-0 h-1 bg-primary rounded-t-full" />
-              )}
-              <div className="absolute bottom-0 left-0 right-0 h-1 bg-primary/20 rounded-t-full scale-x-0 group-hover:scale-x-100 transition-transform" />
-            </button>
-          </nav>
-        </div>
 
-        <div className="flex items-center gap-4">
-          <div className="hidden xl:flex items-center gap-6 mr-6 text-[10px] font-bold text-on-surface-variant uppercase tracking-widest bg-surface-container-low px-5 py-2.5 rounded-2xl border border-outline">
-            <span className="flex items-center gap-2">
-              <ListChecks className="w-4 h-4 text-primary/60" />
-              {questions.length} Questões
-            </span>
-            <div className="w-px h-4 bg-outline"></div>
-            <span className="flex items-center gap-2">
-              <Target className="w-4 h-4 text-secondary/60" />
-              {totalPoints} Pontos
-            </span>
+          <div className="flex items-center gap-2 sm:gap-4 shrink-0">
+            <div className="hidden xl:flex items-center gap-6 mr-6 text-[10px] font-bold text-on-surface-variant uppercase tracking-widest bg-surface-container-low px-5 py-2.5 rounded-2xl border border-outline">
+              <span className="flex items-center gap-2">
+                <ListChecks className="w-4 h-4 text-primary/60" />
+                {questions.length} Questões
+              </span>
+              <div className="w-px h-4 bg-outline"></div>
+              <span className="flex items-center gap-2">
+                <Target className="w-4 h-4 text-secondary/60" />
+                {totalPoints} Pontos
+              </span>
+            </div>
+            <button 
+              onClick={() => setShowPreview(true)}
+              className="hidden sm:flex px-4 py-2 text-sm font-bold text-on-surface-variant hover:text-primary transition-all items-center gap-2 rounded-xl hover:bg-primary/5"
+            >
+              <Eye className="w-4 h-4" />
+              <span className="hidden md:inline">Visualizar</span>
+            </button>
+            <button 
+              onClick={handlePublish}
+              disabled={isPublishing}
+              className={cn(
+                "btn-primary px-4 sm:px-6 py-2.5 sm:py-3 text-xs sm:text-sm",
+                isPublishing && "opacity-70 cursor-not-allowed"
+              )}
+            >
+              {isPublishing ? (
+                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              ) : (
+                <Save className="w-4 h-4" />
+              )}
+              <span className="hidden sm:inline">{isPublishing ? 'Salvando...' : id ? 'Salvar' : 'Publicar'}</span>
+            </button>
           </div>
-          <button 
-            onClick={() => setShowPreview(true)}
-            className="px-5 py-2.5 text-sm font-bold text-on-surface-variant hover:text-primary transition-all flex items-center gap-2 rounded-xl hover:bg-primary/5"
-          >
-            <Eye className="w-4 h-4" />
-            Visualizar
-          </button>
-          <button 
-            onClick={handlePublish}
-            disabled={isPublishing}
-            className={cn(
-              "btn-primary px-8 py-3 h-11",
-              isPublishing && "opacity-70 cursor-not-allowed"
-            )}
-          >
-            {isPublishing ? (
-              <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-            ) : (
-              <Save className="w-5 h-5" />
-            )}
-            {isPublishing ? 'Salvando...' : id ? 'Salvar Alterações' : 'Publicar Prova'}
-          </button>
         </div>
       </header>
 
@@ -319,7 +319,7 @@ export function CreateExamPage() {
         )}
       </AnimatePresence>
 
-      <main className="pt-28 pb-32 px-8 max-w-[1600px] mx-auto transition-all duration-500">
+      <main className="pt-20 sm:pt-28 pb-32 px-3 sm:px-8 max-w-[1600px] mx-auto transition-all duration-500">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
           <div className="lg:col-span-8 space-y-8">
             {activeTab === 'settings' ? (
