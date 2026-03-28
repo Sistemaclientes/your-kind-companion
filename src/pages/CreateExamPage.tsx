@@ -388,11 +388,25 @@ export function CreateExamPage() {
                         onChange={(e) => setCategory(e.target.value)}
                         className="input-saas w-full h-14 text-lg font-semibold appearance-none cursor-pointer"
                       >
-                        <option value="Engenharia">Engenharia</option>
-                        <option value="Matemática">Matemática</option>
-                        <option value="Lógica">Lógica</option>
-                        <option value="Segurança">Segurança</option>
-                        <option value="Outros">Outros</option>
+                        <option value="Administração">Administração</option>
+                        <option value="Ambiental">Ambiental</option>
+                        <option value="Arquitetura e Engenharia">Arquitetura e Engenharia</option>
+                        <option value="Concursos Públicos">Concursos Públicos</option>
+                        <option value="Contabilidade">Contabilidade</option>
+                        <option value="Cotidiano">Cotidiano</option>
+                        <option value="Cursos Profissionalizantes">Cursos Profissionalizantes</option>
+                        <option value="Desenvolvimento Pessoal">Desenvolvimento Pessoal</option>
+                        <option value="Enfermagem">Enfermagem</option>
+                        <option value="Finanças">Finanças</option>
+                        <option value="Gestão e Liderança">Gestão e Liderança</option>
+                        <option value="Idiomas">Idiomas</option>
+                        <option value="Informática">Informática</option>
+                        <option value="Logística">Logística</option>
+                        <option value="Programação e Desenvolvimento">Programação e Desenvolvimento</option>
+                        <option value="Publicidade e Marketing">Publicidade e Marketing</option>
+                        <option value="Recursos Humanos">Recursos Humanos</option>
+                        <option value="Segurança do Trabalho">Segurança do Trabalho</option>
+                        <option value="Vendas">Vendas</option>
                       </select>
                     </div>
                   </div>
