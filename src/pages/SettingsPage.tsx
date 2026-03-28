@@ -290,21 +290,33 @@ export function SettingsPage() {
                   onClick={() => logoInputRef.current?.click()}
                 >
                   {logoPreview ? (
-                    <img src={logoPreview} className="absolute inset-0 w-full h-full object-contain p-4" alt="Logo" />
+                    <>
+                      <img src={logoPreview} className="absolute inset-0 w-full h-full object-contain p-4" alt="Logo" />
+                      <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center z-10">
+                        <div className="text-center">
+                          <div className="w-12 h-12 bg-surface-container rounded-full flex items-center justify-center mx-auto mb-3 shadow-sm border border-outline">
+                            <UploadCloud className="text-primary w-6 h-6" />
+                          </div>
+                          <p className="text-sm font-bold text-white">Alterar Logo</p>
+                        </div>
+                      </div>
+                    </>
                   ) : (
-                    <img 
-                      className="absolute inset-0 w-full h-full object-cover opacity-10 group-hover:opacity-20 transition-opacity" 
-                      src="https://images.unsplash.com/photo-1557683316-973673baf926?auto=format&fit=crop&w=800&q=80"
-                      referrerPolicy="no-referrer"
-                    />
+                    <>
+                      <img 
+                        className="absolute inset-0 w-full h-full object-cover opacity-10 group-hover:opacity-20 transition-opacity" 
+                        src="https://images.unsplash.com/photo-1557683316-973673baf926?auto=format&fit=crop&w=800&q=80"
+                        referrerPolicy="no-referrer"
+                      />
+                      <div className="relative z-10 text-center p-4">
+                        <div className="w-12 h-12 bg-surface-container rounded-full flex items-center justify-center mx-auto mb-3 shadow-sm border border-outline group-hover:scale-110 transition-transform">
+                          <UploadCloud className="text-primary w-6 h-6" />
+                        </div>
+                        <p className="text-sm font-bold text-on-surface">Logo da Instituição</p>
+                        <p className="text-[11px] text-on-surface-variant mt-1 font-medium">PNG ou JPG (Máx. 2MB)</p>
+                      </div>
+                    </>
                   )}
-                  <div className="relative z-10 text-center p-4">
-                    <div className="w-12 h-12 bg-surface-container rounded-full flex items-center justify-center mx-auto mb-3 shadow-sm border border-outline group-hover:scale-110 transition-transform">
-                      <UploadCloud className="text-primary w-6 h-6" />
-                    </div>
-                    <p className="text-sm font-bold text-text-primary">{logoPreview ? 'Alterar Logo' : 'Logo da Instituição'}</p>
-                    <p className="text-[11px] text-text-secondary mt-1 font-medium">PNG ou JPG (Máx. 2MB)</p>
-                  </div>
                 </div>
                 {logoPreview && (
                   <button
