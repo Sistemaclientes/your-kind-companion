@@ -16,41 +16,178 @@ function getLocalExams(): any[] {
   const stored = localStorage.getItem(LOCAL_EXAMS_KEY);
   if (!stored) {
     // Seed with MS Project exam
-    const seed = [{
-      id: 1, titulo: 'PROVA – MS PROJECT (PRÁTICA)', 
-      descricao: 'Avaliação prática sobre Microsoft Project - Gerenciamento de Projetos',
-      created_by: 1, created_at: new Date().toISOString(), creator_name: 'Admin Master',
-      qCount: 5, studentCount: 0,
-      perguntas: [
-        { id: 1, enunciado: 'O que é o Microsoft Project?', alternativas: [
-          { id: 1, texto: 'Um software para edição de vídeos' },
-          { id: 2, texto: 'Um software para gerenciamento e planejamento de projetos' },
-          { id: 3, texto: 'Um programa para criar planilhas financeiras' }
-        ]},
-        { id: 2, enunciado: 'No MS Project, o que são tarefas?', alternativas: [
-          { id: 4, texto: 'Pessoas responsáveis pelo projeto' },
-          { id: 5, texto: 'Atividades que precisam ser realizadas dentro do projeto' },
-          { id: 6, texto: 'Custos do projeto' }
-        ]},
-        { id: 3, enunciado: 'Para que serve o calendário no MS Project?', alternativas: [
-          { id: 7, texto: 'Apenas para marcar reuniões' },
-          { id: 8, texto: 'Definir datas de trabalho, períodos ativos e inativos' },
-          { id: 9, texto: 'Criar relatórios financeiros' }
-        ]},
-        { id: 4, enunciado: 'O que são recursos no MS Project?', alternativas: [
-          { id: 10, texto: 'Apenas equipamentos utilizados' },
-          { id: 11, texto: 'Pessoas, materiais ou custos usados nas tarefas' },
-          { id: 12, texto: 'Apenas o dinheiro do projeto' }
-        ]},
-        { id: 5, enunciado: 'Qual é a função dos relatórios no MS Project?', alternativas: [
-          { id: 13, texto: 'Apenas imprimir documentos' },
-          { id: 14, texto: 'Analisar o desempenho, custos e andamento do projeto' },
-          { id: 15, texto: 'Criar tarefas automaticamente' }
-        ]}
-      ],
-      // Correct alternative IDs: 2, 5, 8, 11, 14
-      correctAlts: { 1: 2, 2: 5, 3: 8, 4: 11, 5: 14 }
-    }];
+    const seed = [
+      {
+        id: 1, titulo: 'PROVA – MS PROJECT (PRÁTICA)', 
+        descricao: 'Avaliação prática sobre Microsoft Project - Gerenciamento de Projetos',
+        created_by: 1, created_at: new Date().toISOString(), creator_name: 'Admin Master',
+        qCount: 5, studentCount: 0,
+        perguntas: [
+          { id: 1, enunciado: 'O que é o Microsoft Project?', alternativas: [
+            { id: 1, texto: 'Um software para edição de vídeos' },
+            { id: 2, texto: 'Um software para gerenciamento e planejamento de projetos' },
+            { id: 3, texto: 'Um programa para criar planilhas financeiras' }
+          ]},
+          { id: 2, enunciado: 'No MS Project, o que são tarefas?', alternativas: [
+            { id: 4, texto: 'Pessoas responsáveis pelo projeto' },
+            { id: 5, texto: 'Atividades que precisam ser realizadas dentro do projeto' },
+            { id: 6, texto: 'Custos do projeto' }
+          ]},
+          { id: 3, enunciado: 'Para que serve o calendário no MS Project?', alternativas: [
+            { id: 7, texto: 'Apenas para marcar reuniões' },
+            { id: 8, texto: 'Definir datas de trabalho, períodos ativos e inativos' },
+            { id: 9, texto: 'Criar relatórios financeiros' }
+          ]},
+          { id: 4, enunciado: 'O que são recursos no MS Project?', alternativas: [
+            { id: 10, texto: 'Apenas equipamentos utilizados' },
+            { id: 11, texto: 'Pessoas, materiais ou custos usados nas tarefas' },
+            { id: 12, texto: 'Apenas o dinheiro do projeto' }
+          ]},
+          { id: 5, enunciado: 'Qual é a função dos relatórios no MS Project?', alternativas: [
+            { id: 13, texto: 'Apenas imprimir documentos' },
+            { id: 14, texto: 'Analisar o desempenho, custos e andamento do projeto' },
+            { id: 15, texto: 'Criar tarefas automaticamente' }
+          ]}
+        ],
+        correctAlts: { 1: 2, 2: 5, 3: 8, 4: 11, 5: 14 }
+      },
+      {
+        id: 2, titulo: 'PROVA – Gestão da Produção Industrial',
+        descricao: 'Avaliação sobre Gestão da Produção Industrial',
+        created_by: 1, created_at: new Date().toISOString(), creator_name: 'Admin Master',
+        qCount: 5, studentCount: 0,
+        perguntas: [
+          { id: 16, enunciado: 'O que é PPCP na gestão da produção?', alternativas: [
+            { id: 46, texto: 'Planejamento, Programação e Controle da Produção' },
+            { id: 47, texto: 'Processo de Controle de Pessoas' },
+            { id: 48, texto: 'Plano de Produção Contábil' }
+          ]},
+          { id: 17, enunciado: 'Qual o principal objetivo do sistema Just in Time?', alternativas: [
+            { id: 49, texto: 'Produzir apenas o necessário no momento certo' },
+            { id: 50, texto: 'Aumentar o estoque ao máximo' },
+            { id: 51, texto: 'Reduzir a qualidade dos produtos' }
+          ]},
+          { id: 18, enunciado: 'O que significa produtividade?', alternativas: [
+            { id: 52, texto: 'Quantidade produzida em relação aos recursos utilizados' },
+            { id: 53, texto: 'Quantidade de funcionários em uma empresa' },
+            { id: 54, texto: 'Número de máquinas utilizadas' }
+          ]},
+          { id: 19, enunciado: 'Qual ferramenta é usada para identificar causas principais de problemas?', alternativas: [
+            { id: 55, texto: 'Diagrama de Pareto' },
+            { id: 56, texto: 'Organograma' },
+            { id: 57, texto: 'Fluxograma básico' }
+          ]},
+          { id: 20, enunciado: 'O que é manutenção preventiva?', alternativas: [
+            { id: 58, texto: 'Realizada antes da falha para evitar problemas' },
+            { id: 59, texto: 'Feita somente após quebra' },
+            { id: 60, texto: 'Sem planejamento' }
+          ]}
+        ],
+        correctAlts: { 16: 46, 17: 49, 18: 52, 19: 55, 20: 58 }
+      },
+      {
+        id: 3, titulo: 'PROVA – Mestre de Obras',
+        descricao: 'Avaliação sobre Mestre de Obras',
+        created_by: 1, created_at: new Date().toISOString(), creator_name: 'Admin Master',
+        qCount: 5, studentCount: 0,
+        perguntas: [
+          { id: 21, enunciado: 'Qual a função principal do mestre de obras?', alternativas: [
+            { id: 61, texto: 'Supervisionar e coordenar a obra' },
+            { id: 62, texto: 'Fazer apenas cálculos estruturais' },
+            { id: 63, texto: 'Cuidar apenas da parte administrativa' }
+          ]},
+          { id: 22, enunciado: 'O que envolve a leitura de projetos?', alternativas: [
+            { id: 64, texto: 'Interpretar plantas e escalas' },
+            { id: 65, texto: 'Somente leitura textual' },
+            { id: 66, texto: 'Apenas cálculos financeiros' }
+          ]},
+          { id: 23, enunciado: 'O que é canteiro de obras?', alternativas: [
+            { id: 67, texto: 'Local onde a obra é executada' },
+            { id: 68, texto: 'Somente o escritório' },
+            { id: 69, texto: 'Área de descanso' }
+          ]},
+          { id: 24, enunciado: 'Qual é uma etapa da construção?', alternativas: [
+            { id: 70, texto: 'Fundação' },
+            { id: 71, texto: 'Somente pintura' },
+            { id: 72, texto: 'Entrega direta' }
+          ]},
+          { id: 25, enunciado: 'Qual projeto define a estrutura?', alternativas: [
+            { id: 73, texto: 'Projeto estrutural' },
+            { id: 74, texto: 'Projeto decorativo' },
+            { id: 75, texto: 'Projeto de marketing' }
+          ]}
+        ],
+        correctAlts: { 21: 61, 22: 64, 23: 67, 24: 70, 25: 73 }
+      },
+      {
+        id: 4, titulo: 'PROVA – Power BI',
+        descricao: 'Avaliação sobre Power BI',
+        created_by: 1, created_at: new Date().toISOString(), creator_name: 'Admin Master',
+        qCount: 5, studentCount: 0,
+        perguntas: [
+          { id: 26, enunciado: 'Qual é a principal função do Power BI?', alternativas: [
+            { id: 76, texto: 'Analisar dados e criar dashboards' },
+            { id: 77, texto: 'Criar sites' },
+            { id: 78, texto: 'Editar imagens' }
+          ]},
+          { id: 27, enunciado: 'O que é DAX no Power BI?', alternativas: [
+            { id: 79, texto: 'Linguagem de fórmulas para análise de dados' },
+            { id: 80, texto: 'Tipo de gráfico' },
+            { id: 81, texto: 'Banco de dados externo' }
+          ]},
+          { id: 28, enunciado: 'Qual etapa envolve importar dados no Power BI?', alternativas: [
+            { id: 82, texto: 'Carregamento de dados' },
+            { id: 83, texto: 'Publicação' },
+            { id: 84, texto: 'Compartilhamento' }
+          ]},
+          { id: 29, enunciado: 'Para que servem os dashboards?', alternativas: [
+            { id: 85, texto: 'Visualizar informações de forma clara' },
+            { id: 86, texto: 'Programar sistemas' },
+            { id: 87, texto: 'Armazenar arquivos' }
+          ]},
+          { id: 30, enunciado: 'O que são filtros no Power BI?', alternativas: [
+            { id: 88, texto: 'Recursos para refinar dados exibidos' },
+            { id: 89, texto: 'Ferramentas de edição de imagem' },
+            { id: 90, texto: 'Tipos de gráficos' }
+          ]}
+        ],
+        correctAlts: { 26: 76, 27: 79, 28: 82, 29: 85, 30: 88 }
+      },
+      {
+        id: 5, titulo: 'PROVA – Mecatrônica',
+        descricao: 'Avaliação sobre Mecatrônica',
+        created_by: 1, created_at: new Date().toISOString(), creator_name: 'Admin Master',
+        qCount: 5, studentCount: 0,
+        perguntas: [
+          { id: 31, enunciado: 'O que é mecatrônica?', alternativas: [
+            { id: 91, texto: 'Integração entre mecânica, eletrônica e automação' },
+            { id: 92, texto: 'Apenas eletrônica' },
+            { id: 93, texto: 'Somente programação' }
+          ]},
+          { id: 32, enunciado: 'Qual é a função do CLP?', alternativas: [
+            { id: 94, texto: 'Controlar processos automatizados' },
+            { id: 95, texto: 'Gerar energia elétrica' },
+            { id: 96, texto: 'Fazer cálculos estruturais' }
+          ]},
+          { id: 33, enunciado: 'O que são sensores?', alternativas: [
+            { id: 97, texto: 'Dispositivos que captam informações do ambiente' },
+            { id: 98, texto: 'Motores elétricos' },
+            { id: 99, texto: 'Programas de computador' }
+          ]},
+          { id: 34, enunciado: 'Qual é a função dos atuadores?', alternativas: [
+            { id: 100, texto: 'Executar ações no sistema' },
+            { id: 101, texto: 'Armazenar dados' },
+            { id: 102, texto: 'Controlar usuários' }
+          ]},
+          { id: 35, enunciado: 'O que é manutenção preventiva?', alternativas: [
+            { id: 103, texto: 'Evitar falhas antes que aconteçam' },
+            { id: 104, texto: 'Corrigir falhas após ocorrerem' },
+            { id: 105, texto: 'Ignorar manutenção' }
+          ]}
+        ],
+        correctAlts: { 31: 91, 32: 94, 33: 97, 34: 100, 35: 103 }
+      }
+    ];
     localStorage.setItem(LOCAL_EXAMS_KEY, JSON.stringify(seed));
     return seed;
   }
