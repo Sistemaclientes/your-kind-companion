@@ -226,7 +226,59 @@ export function ExamsPage() {
             </div>
           </div>
 
-          <div className="overflow-x-auto">
+          {/* Mobile card layout */}
+          <div className="sm:hidden divide-y divide-outline">
+            {filteredExams.map((exam) => {
+              const config = getIconConfig(exam.category);
+              const Icon = config.icon;
+              return (
+                <div key={exam.id} className="p-4 space-y-3">
+                  <div className="flex items-start gap-3">
+                    <div className={cn("w-10 h-10 rounded-xl flex items-center justify-center shrink-0", 
+                      config.iconBg === 'bg-blue-100' ? "bg-primary/10 text-primary" : 
+                      config.iconBg === 'bg-purple-100' ? "bg-purple-500/10 text-purple-500" :
+                      config.iconBg === 'bg-orange-100' ? "bg-secondary/10 text-secondary" :
+                      cn(config.iconBg, config.iconColor)
+                    )}>
+                      <Icon className="w-5 h-5" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-bold text-sm text-on-surface tracking-tight leading-snug">{exam.title}</p>
+                      <p className="text-xs text-on-surface-variant font-medium mt-1 line-clamp-2">{exam.subtitle}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className={cn(
+                      "px-3 py-1 text-[10px] font-bold rounded-lg uppercase tracking-widest",
+                      (exam.status === 'Ativa' || exam.status === 'Ativo') && "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30",
+                      (exam.status === 'Inativa' || exam.status === 'Inativo') && "bg-red-500/20 text-red-400 border border-red-500/30",
+                      (exam.status === 'Pendente' || exam.status === 'Rascunho') && "bg-orange-500/15 text-orange-400 border border-orange-500/30",
+                      exam.status === 'Finalizada' && "bg-surface-container-high text-on-surface-variant",
+                    )}>
+                      {exam.status}
+                    </span>
+                    <div className="flex items-center gap-2">
+                      <button 
+                        className="w-8 h-8 rounded-lg bg-surface-container hover:bg-primary/10 text-on-surface-variant hover:text-primary transition-all flex items-center justify-center border border-outline"
+                        onClick={() => navigate(`/admin/exams/edit/${exam.id}`)}
+                      >
+                        <Edit className="w-3.5 h-3.5" />
+                      </button>
+                      <button 
+                        className="w-8 h-8 rounded-lg bg-surface-container hover:bg-error/10 text-on-surface-variant hover:text-error transition-all flex items-center justify-center border border-outline"
+                        onClick={() => handleDeleteExam(exam.id)}
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Desktop table layout */}
+          <div className="overflow-x-auto hidden sm:block">
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="bg-surface-container-low/50">
@@ -236,7 +288,7 @@ export function ExamsPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-outline">
-                {filteredExams.map((exam, i) => {
+                {filteredExams.map((exam) => {
                   const config = getIconConfig(exam.category);
                   const Icon = config.icon;
                   return (
@@ -268,24 +320,24 @@ export function ExamsPage() {
                           {exam.status}
                         </span>
                       </td>
-                      <td className="px-4 sm:px-8 py-4 sm:py-6">
-                        <div className="flex items-center justify-end gap-2 sm:gap-3">
+                      <td className="px-8 py-6">
+                        <div className="flex items-center justify-end gap-3">
                           <button 
-                            className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-surface-container hover:bg-primary/10 text-on-surface-variant hover:text-primary transition-all flex items-center justify-center border border-outline hover:border-primary/20 btn-icon-saas"
+                            className="w-10 h-10 rounded-xl bg-surface-container hover:bg-primary/10 text-on-surface-variant hover:text-primary transition-all flex items-center justify-center border border-outline hover:border-primary/20 btn-icon-saas"
                             onClick={() => navigate(`/admin/exams/edit/${exam.id}`)}
                             title="Editar Prova"
                           >
-                            <Edit className="w-3.5 sm:w-4 h-3.5 sm:h-4" />
+                            <Edit className="w-4 h-4" />
                           </button>
                           <button 
-                            className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-surface-container hover:bg-primary/10 text-on-surface-variant hover:text-primary transition-all flex items-center justify-center border border-outline hover:border-primary/20 btn-icon-saas hidden sm:flex"
+                            className="w-10 h-10 rounded-xl bg-surface-container hover:bg-primary/10 text-on-surface-variant hover:text-primary transition-all flex items-center justify-center border border-outline hover:border-primary/20 btn-icon-saas"
                             onClick={() => navigate('/student/start')}
                             title="Visualizar Prova"
                           >
                             <Eye className="w-4 h-4" />
                           </button>
                           <button 
-                            className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-surface-container hover:bg-primary/10 text-on-surface-variant hover:text-primary transition-all flex items-center justify-center border border-outline hover:border-primary/20 btn-icon-saas hidden sm:flex"
+                            className="w-10 h-10 rounded-xl bg-surface-container hover:bg-primary/10 text-on-surface-variant hover:text-primary transition-all flex items-center justify-center border border-outline hover:border-primary/20 btn-icon-saas"
                             onClick={() => {
                               const url = `${window.location.origin}/student/start`;
                               navigator.clipboard.writeText(url);
@@ -296,11 +348,11 @@ export function ExamsPage() {
                             <LinkIcon className="w-4 h-4" />
                           </button>
                           <button 
-                            className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-surface-container hover:bg-error/10 text-on-surface-variant hover:text-error transition-all flex items-center justify-center border border-outline hover:border-error/20 btn-icon-saas"
+                            className="w-10 h-10 rounded-xl bg-surface-container hover:bg-error/10 text-on-surface-variant hover:text-error transition-all flex items-center justify-center border border-outline hover:border-error/20 btn-icon-saas"
                             onClick={() => handleDeleteExam(exam.id)}
                             title="Excluir Prova"
                           >
-                            <Trash2 className="w-3.5 sm:w-4 h-3.5 sm:h-4" />
+                            <Trash2 className="w-4 h-4" />
                           </button>
                         </div>
                       </td>
