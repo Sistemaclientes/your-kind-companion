@@ -136,7 +136,7 @@ export function LoginPage() {
           </div>
         </footer>
       </div>
-      <div className="fixed bottom-0 left-0 w-full h-1.5 bg-gradient-to-r from-primary via-primary-container to-secondary opacity-30"></div>
+      <div className="fixed bottom-0 left-0 w-full h-1 bg-gradient-to-r from-primary via-[#06B6D4] to-primary-container opacity-40"></div>
     </div>
   );
 }

@@ -21,6 +21,17 @@ import {
   Tooltip as RechartsTooltip
 } from 'recharts';
 import { api } from '../lib/api';
+import { motion } from 'motion/react';
+
+const stagger = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { staggerChildren: 0.06 } }
+};
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 12 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: "easeOut" as const } }
+};
 
 export function DashboardPage() {
   const navigate = useNavigate();
@@ -42,9 +53,9 @@ export function DashboardPage() {
   }, []);
 
   const metrics = [
-    { label: 'Total de provas', value: stats?.metrics.totalProvas.toString() || '0', trend: '0%', icon: FileText, color: 'blue' },
-    { label: 'Alunos únicos', value: stats?.metrics.totalAlunos.toString() || '0', trend: '0%', icon: Users, color: 'purple' },
-    { label: 'Provas realizadas', value: stats?.metrics.provasRealizadas.toString() || '0', trend: '0%', icon: CheckCircle2, color: 'orange' },
+    { label: 'Total de provas', value: stats?.metrics.totalProvas.toString() || '0', trend: '0%', icon: FileText, color: 'primary' },
+    { label: 'Alunos únicos', value: stats?.metrics.totalAlunos.toString() || '0', trend: '0%', icon: Users, color: 'violet' },
+    { label: 'Provas realizadas', value: stats?.metrics.provasRealizadas.toString() || '0', trend: '0%', icon: CheckCircle2, color: 'amber' },
     { label: 'Média de desempenho', value: `${stats?.metrics.mediaGeral || 0}/100`, trend: '0', icon: TrendingUp, color: 'emerald' },
   ];
 
@@ -72,178 +83,197 @@ export function DashboardPage() {
     { id: '5', name: 'Mariana Costa', stats: 'Média: 0 • 0 provas', status: 'Ativo', img: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=facearea&facepad=2&w=256&h=256&q=80' },
   ];
 
-
-  if (loading) return null;
+  if (loading) {
+    return (
+      <>
+        <TopBar title="Dashboard" />
+        <main className="pt-24 px-4 sm:px-8 pb-12 max-w-[1600px] mx-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-10">
+            {[1,2,3,4].map(i => <div key={i} className="skeleton h-36 rounded-2xl" />)}
+          </div>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-2 skeleton h-96 rounded-2xl" />
+            <div className="skeleton h-96 rounded-2xl" />
+          </div>
+        </main>
+      </>
+    );
+  }
 
   return (
     <>
       <TopBar title="Dashboard" />
-      <main className="pt-24 px-8 pb-12 max-w-[1600px] mx-auto">
-        <div className="mb-12 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
+      <motion.main 
+        initial="hidden" animate="visible" variants={stagger}
+        className="pt-24 px-4 sm:px-8 pb-12 max-w-[1600px] mx-auto"
+      >
+        {/* Welcome */}
+        <motion.div variants={fadeUp} className="mb-10 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
           <div>
-            <h1 className="text-4xl font-extrabold text-on-surface font-headline tracking-tight leading-tight">Bem-vindo, <span className="text-primary">Administrador</span></h1>
-            <p className="text-on-surface-variant font-medium mt-2 text-lg">Aqui está o resumo do desempenho da sua instituição hoje.</p>
+            <h1 className="text-3xl md:text-4xl font-bold text-on-surface tracking-tight leading-tight">
+              Bem-vindo, <span className="text-primary">Administrador</span>
+            </h1>
+            <p className="text-on-surface-variant font-medium mt-2 text-base md:text-lg">Resumo do desempenho da sua instituição.</p>
           </div>
           <button 
-            className="btn-primary px-8 py-4 text-base"
+            className="btn-primary px-6 py-3.5 text-sm"
             onClick={() => navigate('/admin/exams/new')}
           >
-            <Plus className="w-5 h-5" />
+            <Plus className="w-4 h-4" />
             Criar Nova Prova
           </button>
-        </div>
+        </motion.div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+        {/* Metrics */}
+        <motion.div variants={stagger} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-10">
           {metrics.map((m) => (
-            <div key={m.label} className="card-saas group hover:border-primary/30 hover:shadow-xl hover:shadow-primary/5">
-              <div className="flex justify-between items-start mb-6">
+            <motion.div 
+              key={m.label} 
+              variants={fadeUp}
+              className="card-saas group"
+            >
+              <div className="flex justify-between items-start mb-5">
                 <div className={cn(
-                  "w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-300 group-hover:scale-110",
-                  m.color === 'blue' && "bg-primary/10 text-primary",
-                  m.color === 'purple' && "bg-purple-500/10 text-purple-500",
-                  m.color === 'orange' && "bg-secondary/10 text-secondary",
+                  "w-10 h-10 rounded-xl flex items-center justify-center transition-transform duration-300 group-hover:scale-110",
+                  m.color === 'primary' && "bg-primary/10 text-primary",
+                  m.color === 'violet' && "bg-violet-500/10 text-violet-500",
+                  m.color === 'amber' && "bg-amber-500/10 text-amber-500",
                   m.color === 'emerald' && "bg-emerald-500/10 text-emerald-500",
                 )}>
-                  <m.icon className="w-6 h-6" />
-                </div>
-                <div className={cn(
-                  "flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider",
-                  m.trend.startsWith('+') ? "bg-green-500/10 text-green-600 dark:text-green-400" : "bg-error/10 text-error"
-                )}>
-                  {m.trend.startsWith('+') ? <ArrowUpRight className="w-3 h-3" /> : <ArrowUpRight className="w-3 h-3 rotate-90" />}
-                  {m.trend}
+                  <m.icon className="w-5 h-5" />
                 </div>
               </div>
-              <p className="text-on-surface-variant text-[10px] font-bold uppercase tracking-widest mb-1">{m.label}</p>
-              <h3 className="text-3xl font-extrabold text-on-surface font-headline tracking-tight">{m.value}</h3>
-            </div>
+              <p className="text-on-surface-variant text-[11px] font-semibold uppercase tracking-wider mb-1">{m.label}</p>
+              <h3 className="text-3xl font-bold text-on-surface tracking-tight">{m.value}</h3>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Chart + Sidebar */}
+        <motion.div variants={fadeUp} className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 card-saas">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
               <div>
-                <h4 className="text-xl font-bold text-on-surface font-headline tracking-tight">Desempenho Geral</h4>
-                <p className="text-sm text-on-surface-variant font-medium mt-1">Evolução das notas médias nos últimos 6 meses</p>
+                <h4 className="text-lg font-bold text-on-surface tracking-tight">Desempenho Geral</h4>
+                <p className="text-sm text-on-surface-variant font-medium mt-0.5">Últimos 6 meses</p>
               </div>
-              <select className="input-saas text-xs font-bold uppercase tracking-widest py-2">
+              <select className="input-saas text-xs font-semibold py-2 px-3">
                 <option>Últimos 6 meses</option>
                 <option>Último ano</option>
               </select>
             </div>
             
-            <div className="h-[320px] mt-4">
+            <div className="h-[300px]">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={performanceData}>
                   <defs>
                     <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#0F8B8D" stopOpacity={0.3}/>
-                      <stop offset="95%" stopColor="#0F8B8D" stopOpacity={0}/>
+                      <stop offset="5%" stopColor="#14B8A6" stopOpacity={0.25}/>
+                      <stop offset="95%" stopColor="#14B8A6" stopOpacity={0}/>
                     </linearGradient>
                   </defs>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--color-outline)" opacity={0.3} />
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--color-outline)" opacity={0.5} />
                   <XAxis 
                     dataKey="name" 
                     axisLine={false} 
                     tickLine={false} 
-                    tick={{ fill: 'var(--color-on-surface-variant)', fontSize: 12, fontWeight: 600 }}
-                    dy={15}
+                    tick={{ fill: 'var(--color-on-surface-variant)', fontSize: 12, fontWeight: 500 }}
+                    dy={12}
                   />
                   <YAxis 
                     axisLine={false} 
                     tickLine={false} 
-                    tick={{ fill: 'var(--color-on-surface-variant)', fontSize: 12, fontWeight: 600 }}
+                    tick={{ fill: 'var(--color-on-surface-variant)', fontSize: 12, fontWeight: 500 }}
                     domain={[0, 10]}
-                    dx={-10}
+                    dx={-8}
                   />
                   <RechartsTooltip 
                     contentStyle={{ 
                       backgroundColor: 'var(--color-surface-container)', 
                       borderColor: 'var(--color-outline)',
-                      borderRadius: '16px',
-                      fontSize: '12px',
-                      fontWeight: '700',
+                      borderRadius: '12px',
+                      fontSize: '13px',
+                      fontWeight: '600',
                       color: 'var(--color-on-surface)',
-                      boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)'
+                      boxShadow: '0 8px 30px -4px rgba(0, 0, 0, 0.15)',
+                      border: '1px solid var(--color-outline)'
                     }}
-                    itemStyle={{ color: '#0F8B8D' }}
+                    itemStyle={{ color: '#14B8A6' }}
                   />
                   <Area 
                     type="monotone" 
                     dataKey="value" 
-                    stroke="#0F8B8D" 
-                    strokeWidth={4}
+                    stroke="#14B8A6" 
+                    strokeWidth={2.5}
                     fillOpacity={1} 
                     fill="url(#colorValue)" 
-                    animationDuration={2000}
+                    animationDuration={1500}
                   />
                 </AreaChart>
               </ResponsiveContainer>
             </div>
           </div>
 
-          <div className="space-y-8">
+          <div className="space-y-6">
             <div className="card-saas">
-              <div className="flex items-center justify-between mb-6">
-                <h4 className="text-lg font-bold text-on-surface font-headline tracking-tight">Provas Recentes</h4>
-                <FileText className="w-5 h-5 text-primary" />
+              <div className="flex items-center justify-between mb-5">
+                <h4 className="text-base font-bold text-on-surface tracking-tight">Provas Recentes</h4>
+                <FileText className="w-4 h-4 text-primary" />
               </div>
-              <div className="space-y-4">
+              <div className="space-y-2">
                 {recentExams.map((exam: { id: number | string; title: string; time: string; students: string }, i: number) => (
                   <div 
                     key={i} 
-                    className="flex items-center gap-4 p-3 rounded-xl hover:bg-surface-container-high transition-colors cursor-pointer group"
+                    className="flex items-center gap-3 p-3 rounded-xl hover:bg-primary/5 transition-all cursor-pointer group"
                     onClick={() => navigate(`/admin/exams/edit/${exam.id}`)}
                   >
-                    <div className="w-10 h-10 rounded-xl bg-surface-container-high flex items-center justify-center text-on-surface-variant group-hover:bg-primary/10 group-hover:text-primary transition-all">
-                      <FileText className="w-5 h-5" />
+                    <div className="w-9 h-9 rounded-xl bg-surface-container-high flex items-center justify-center text-on-surface-variant group-hover:bg-primary/10 group-hover:text-primary transition-all shrink-0">
+                      <FileText className="w-4 h-4" />
                     </div>
                     <div className="flex-1 overflow-hidden">
-                      <p className="text-sm font-bold text-on-surface truncate group-hover:text-primary transition-colors">{exam.title}</p>
-                      <p className="text-[10px] text-on-surface-variant font-bold uppercase tracking-widest mt-0.5">{exam.time} • {exam.students} alunos</p>
+                      <p className="text-sm font-semibold text-on-surface truncate group-hover:text-primary transition-colors">{exam.title}</p>
+                      <p className="text-[10px] text-on-surface-variant font-medium mt-0.5">{exam.time} • {exam.students}</p>
                     </div>
-                    <ArrowUpRight className="w-4 h-4 text-on-surface-variant opacity-0 group-hover:opacity-100 transition-all" />
+                    <ArrowUpRight className="w-3.5 h-3.5 text-on-surface-variant opacity-0 group-hover:opacity-100 transition-all" />
                   </div>
                 ))}
               </div>
               <button 
-                className="w-full mt-6 py-3 text-primary font-bold text-xs uppercase tracking-widest hover:bg-primary/5 rounded-xl transition-all border border-transparent hover:border-primary/20"
+                className="w-full mt-4 py-2.5 text-primary font-semibold text-xs hover:bg-primary/5 rounded-xl transition-all"
                 onClick={() => navigate('/admin/exams')}
               >
                 Ver Todas as Provas
               </button>
             </div>
 
-            <div className="bg-primary p-8 rounded-[24px] shadow-2xl shadow-primary/30 text-white relative overflow-hidden group">
-              <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl group-hover:scale-125 transition-transform duration-700"></div>
-              <div className="absolute bottom-0 left-0 w-20 h-20 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/2 blur-2xl"></div>
-              
+            <div className="bg-gradient-to-br from-primary to-primary-container p-7 rounded-2xl text-white relative overflow-hidden group">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl group-hover:scale-150 transition-transform duration-700"></div>
               <div className="relative z-10">
-                <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center mb-6">
-                  <TrendingUp className="w-6 h-6" />
+                <div className="w-9 h-9 bg-white/20 rounded-xl flex items-center justify-center mb-4">
+                  <TrendingUp className="w-5 h-5" />
                 </div>
-                <h4 className="text-xl font-bold font-headline mb-3 tracking-tight">Dica do Avaliador</h4>
-                <p className="text-sm opacity-90 font-medium leading-relaxed mb-6">
-                  Você sabia que provas com menos de 10 questões têm 30% mais engajamento entre os alunos?
+                <h4 className="text-lg font-bold mb-2 tracking-tight">Dica do Avaliador</h4>
+                <p className="text-sm opacity-90 font-medium leading-relaxed mb-4">
+                  Provas com menos de 10 questões têm 30% mais engajamento.
                 </p>
-                <a className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest hover:gap-3 transition-all" href="#">
+                <a className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wider hover:gap-3 transition-all opacity-80 hover:opacity-100" href="#">
                   Saiba mais
-                  <ArrowUpRight className="w-4 h-4" />
+                  <ArrowUpRight className="w-3.5 h-3.5" />
                 </a>
               </div>
             </div>
           </div>
-        </div>
+        </motion.div>
 
-        <div className="mt-12">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 mb-8">
+        {/* Students */}
+        <motion.div variants={fadeUp} className="mt-10">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
             <div>
-              <h4 className="text-2xl font-bold text-on-surface font-headline tracking-tight">Status dos Alunos</h4>
-              <p className="text-sm text-on-surface-variant font-medium mt-1">Acompanhe o engajamento individual em tempo real</p>
+              <h4 className="text-xl font-bold text-on-surface tracking-tight">Status dos Alunos</h4>
+              <p className="text-sm text-on-surface-variant font-medium mt-0.5">Engajamento individual em tempo real</p>
             </div>
             <button 
-              className="btn-primary py-2.5 px-6 text-xs uppercase tracking-widest"
+              className="btn-secondary py-2.5 px-5 text-xs"
               onClick={() => navigate('/admin/students')}
             >
               Ver Todos
@@ -251,37 +281,34 @@ export function DashboardPage() {
           </div>
           
           <div className="overflow-hidden -mx-4 px-4 group/marquee">
-            <div className="flex gap-6 animate-marquee group-hover/marquee:[animation-play-state:paused] w-max">
+            <div className="flex gap-5 animate-marquee group-hover/marquee:[animation-play-state:paused] w-max">
               {[...students, ...students].map((s, i) => (
                 <div 
                   key={`${s.id}-${i}`} 
-                  className="min-w-[320px] card-saas flex items-center gap-5 cursor-pointer group/card border-transparent hover:border-primary/20 select-none transition-transform hover:scale-[1.02] active:scale-[0.98]"
+                  className="min-w-[300px] card-saas flex items-center gap-4 cursor-pointer group/card select-none"
                   onClick={() => navigate(`/admin/student/${s.id}`)}
                 >
                   <div className="relative shrink-0">
                     <img 
                       alt={s.name} 
-                      className="w-16 h-16 rounded-2xl object-cover ring-4 ring-transparent group-hover/card:ring-primary/20 transition-all shadow-md pointer-events-none" 
+                      className="w-12 h-12 rounded-xl object-cover ring-2 ring-outline group-hover/card:ring-primary/30 transition-all shadow-sm pointer-events-none" 
                       src={s.img}
                       referrerPolicy="no-referrer"
                       draggable={false}
                     />
                     <div className={cn(
-                      "absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-surface-container",
-                      s.status === 'Ativo' ? "bg-green-500" : 
-                      s.status === 'Inativo' ? "bg-red-500" :
-                      "bg-orange-500"
+                      "absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full border-2 border-surface-container",
+                      s.status === 'Ativo' ? "bg-emerald-500" : "bg-red-500"
                     )}></div>
                   </div>
                   <div className="flex-1 overflow-hidden">
-                    <p className="font-bold text-lg text-on-surface group-hover/card:text-primary transition-colors truncate tracking-tight">{s.name}</p>
-                    <p className="text-xs text-on-surface-variant font-semibold mt-0.5">{s.stats}</p>
+                    <p className="font-semibold text-on-surface group-hover/card:text-primary transition-colors truncate">{s.name}</p>
+                    <p className="text-xs text-on-surface-variant font-medium mt-0.5">{s.stats}</p>
                   </div>
                   <div className={cn(
-                    "px-3 py-1.5 rounded-xl text-[10px] font-bold uppercase tracking-widest shrink-0",
-                    s.status === 'Ativo' && "bg-green-500/10 text-green-600 dark:text-green-400",
-                    s.status === 'Inativo' && "bg-red-500/10 text-red-600 dark:text-red-400",
-                    s.status === 'Pendente' && "bg-orange-500/10 text-orange-600 dark:text-orange-400",
+                    "px-2.5 py-1 rounded-lg text-[10px] font-semibold shrink-0",
+                    s.status === 'Ativo' && "bg-emerald-500/10 text-emerald-500",
+                    s.status === 'Inativo' && "bg-red-500/10 text-red-500",
                   )}>
                     {s.status}
                   </div>
@@ -289,8 +316,8 @@ export function DashboardPage() {
               ))}
             </div>
           </div>
-        </div>
-      </main>
+        </motion.div>
+      </motion.main>
     </>
   );
 }
