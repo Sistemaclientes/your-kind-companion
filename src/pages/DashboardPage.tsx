@@ -75,13 +75,19 @@ export function DashboardPage() {
     { name: 'Jun', value: stats?.metrics.mediaGeral || 78 },
   ];
 
-  const students = [
-    { id: '1', name: 'Beatriz Helena Santos', stats: 'Média: 0 • 0 provas', status: 'Ativo', img: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=facearea&facepad=2&w=256&h=256&q=80' },
-    { id: '2', name: 'Ricardo Almeida', stats: 'Média: 0 • 0 provas', status: 'Ativo', img: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=facearea&facepad=2&w=256&h=256&q=80' },
-    { id: '3', name: 'Ana Carolina Lima', stats: 'Média: 0 • 0 provas', status: 'Ativo', img: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=facearea&facepad=2&w=256&h=256&q=80' },
-    { id: '4', name: 'Lucas Ferreira', stats: 'Média: 0 • 0 provas', status: 'Inativo', img: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=facearea&facepad=2&w=256&h=256&q=80' },
-    { id: '5', name: 'Mariana Costa', stats: 'Média: 0 • 0 provas', status: 'Ativo', img: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=facearea&facepad=2&w=256&h=256&q=80' },
-  ];
+  const [students, setStudents] = React.useState<any[]>([]);
+
+  React.useEffect(() => {
+    const fetchStudents = async () => {
+      try {
+        const data = await api.get('/dashboard/students');
+        setStudents(data.slice(0, 8));
+      } catch (err) {
+        console.error('Error fetching students:', err);
+      }
+    };
+    fetchStudents();
+  }, []);
 
   if (loading) {
     return (
@@ -283,42 +289,37 @@ export function DashboardPage() {
             </button>
           </div>
           
-          <div className="overflow-hidden -mx-4 px-4 group/marquee">
-            <div className="flex gap-5 animate-marquee group-hover/marquee:[animation-play-state:paused] w-max">
-              {[...students, ...students].map((s, i) => (
-                <div 
-                  key={`${s.id}-${i}`} 
-                  className="min-w-[300px] card-saas flex items-center gap-4 cursor-pointer group/card select-none"
-                  onClick={() => navigate(`/admin/student/${s.id}`)}
-                >
-                  <div className="relative shrink-0">
-                    <img 
-                      alt={s.name} 
-                      className="w-12 h-12 rounded-xl object-cover ring-2 ring-outline group-hover/card:ring-primary/30 transition-all shadow-sm pointer-events-none" 
-                      src={s.img}
-                      referrerPolicy="no-referrer"
-                      draggable={false}
-                    />
-                    <div className={cn(
-                      "absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full border-2 border-surface-container",
-                      s.status === 'Ativo' ? "bg-emerald-500" : "bg-red-500"
-                    )}></div>
+          {students.length > 0 ? (
+            <div className="overflow-hidden -mx-4 px-4 group/marquee">
+              <div className="flex gap-5 animate-marquee group-hover/marquee:[animation-play-state:paused] w-max">
+                {[...students, ...students].map((s, i) => (
+                  <div 
+                    key={`${s.email}-${i}`} 
+                    className="min-w-[280px] card-saas flex items-center gap-4 cursor-pointer group/card select-none"
+                    onClick={() => navigate(`/admin/students/${encodeURIComponent(s.email)}`)}
+                  >
+                    <div className="relative shrink-0">
+                      <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary font-bold text-lg border border-outline">
+                        {s.nome?.charAt(0)?.toUpperCase() || '?'}
+                      </div>
+                      <div className={cn(
+                        "absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full border-2 border-surface-container",
+                        s.provas_contagem > 0 ? "bg-emerald-500" : "bg-red-500"
+                      )}></div>
+                    </div>
+                    <div className="flex-1 overflow-hidden">
+                      <p className="font-semibold text-on-surface group-hover/card:text-primary transition-colors truncate">{s.nome}</p>
+                      <p className="text-xs text-on-surface-variant font-medium mt-0.5">Média: {Math.round(s.media_pontuacao)}% • {s.provas_contagem} provas</p>
+                    </div>
                   </div>
-                  <div className="flex-1 overflow-hidden">
-                    <p className="font-semibold text-on-surface group-hover/card:text-primary transition-colors truncate">{s.name}</p>
-                    <p className="text-xs text-on-surface-variant font-medium mt-0.5">{s.stats}</p>
-                  </div>
-                  <div className={cn(
-                    "px-2.5 py-1 rounded-lg text-[10px] font-semibold shrink-0",
-                    s.status === 'Ativo' && "bg-emerald-500/10 text-emerald-500",
-                    s.status === 'Inativo' && "bg-red-500/10 text-red-500",
-                  )}>
-                    {s.status}
-                  </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
-          </div>
+          ) : (
+            <div className="card-saas text-center py-8">
+              <p className="text-on-surface-variant font-medium text-sm">Nenhum aluno cadastrado ainda.</p>
+            </div>
+          )}
         </motion.div>
       </motion.main>
     </>
