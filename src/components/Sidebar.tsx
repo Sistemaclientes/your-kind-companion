@@ -14,7 +14,12 @@ import { useTheme } from '../lib/ThemeContext';
 import { api } from '../lib/api';
 import logoUplife from '../assets/logo-uplife.png';
 
-export function Sidebar() {
+interface SidebarProps {
+  isOpen?: boolean;
+  onClose?: () => void;
+}
+
+export function Sidebar({ isOpen, onClose }: SidebarProps) {
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const [currentTime, setCurrentTime] = React.useState(new Date());
@@ -49,7 +54,11 @@ export function Sidebar() {
   ];
 
   return (
-    <aside className="h-screen w-64 fixed left-0 top-0 bg-surface-container flex flex-col p-4 gap-2 z-50 border-r border-outline">
+    <aside className={cn(
+      "h-screen w-64 fixed left-0 top-0 bg-surface-container flex flex-col p-4 gap-2 z-50 border-r border-outline transition-transform duration-300",
+      "lg:translate-x-0",
+      isOpen ? "translate-x-0" : "-translate-x-full"
+    )}>
       <div className="px-2 py-4 mb-2 flex flex-col items-start gap-2">
         <img src={customLogo || logoUplife} alt="Logo" className="w-[58.8px] h-[58.8px] rounded-full object-cover" />
         <div className="flex flex-col gap-0.5">
@@ -67,6 +76,7 @@ export function Sidebar() {
           <NavLink
             key={item.path}
             to={item.path}
+            onClick={() => onClose?.()}
             className={({ isActive }) => cn(
               "sidebar-item-saas",
               isActive 
