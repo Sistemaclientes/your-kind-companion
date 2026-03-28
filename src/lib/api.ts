@@ -11,10 +11,14 @@ const FALLBACK_ADMIN = {
 
 const LOCAL_EXAMS_KEY = 'local_provas';
 const LOCAL_RESULTS_KEY = 'local_resultados';
+const SEED_VERSION_KEY = 'local_provas_seed_version';
+const CURRENT_SEED_VERSION = '2'; // Increment when adding new seed exams
 
 function getLocalExams(): any[] {
   const stored = localStorage.getItem(LOCAL_EXAMS_KEY);
-  if (!stored) {
+  const seedVersion = localStorage.getItem(SEED_VERSION_KEY);
+  if (!stored || seedVersion !== CURRENT_SEED_VERSION) {
+    localStorage.setItem(SEED_VERSION_KEY, CURRENT_SEED_VERSION);
     // Seed with MS Project exam
     const seed = [
       {
