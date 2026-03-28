@@ -1,3 +1,7 @@
+// Storage utilities - kept for backward compatibility
+// Primary data is now in the backend SQLite database
+
+const STORAGE_KEY = 'avaliapro_exams_v2';
 
 export interface Question {
   id: number;
@@ -27,23 +31,10 @@ export interface Exam {
   };
 }
 
-const STORAGE_KEY = 'avaliapro_exams_v2';
-
-const initialExams: Exam[] = [];
-
-// Reset exams for this session as requested by the user
-if (typeof window !== 'undefined') {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify([]));
-}
-
 export const storage = {
   getExams: (): Exam[] => {
     const stored = localStorage.getItem(STORAGE_KEY);
-    if (!stored) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(initialExams));
-      return initialExams;
-    }
-    return JSON.parse(stored);
+    return stored ? JSON.parse(stored) : [];
   },
   saveExam: (exam: Exam) => {
     const exams = storage.getExams();

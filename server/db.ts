@@ -6,6 +6,10 @@ const dbPath = path.resolve(process.cwd(), 'database.sqlite');
 const db = new Database(dbPath);
 
 export function initDB() {
+  // Enable WAL mode for better performance
+  db.pragma('journal_mode = WAL');
+  db.pragma('foreign_keys = ON');
+
   // Create tables
   db.exec(`
     CREATE TABLE IF NOT EXISTS admins (
@@ -13,7 +17,8 @@ export function initDB() {
       nome TEXT NOT NULL,
       email TEXT UNIQUE NOT NULL,
       senha TEXT NOT NULL,
-      is_master BOOLEAN DEFAULT 0
+      is_master BOOLEAN DEFAULT 0,
+      is_protected BOOLEAN DEFAULT 0
     );
 
     CREATE TABLE IF NOT EXISTS provas (
@@ -64,13 +69,27 @@ export function initDB() {
     );
   `);
 
-  // Seed Master Admin if not exists
-  const masterExists = db.prepare('SELECT id FROM admins WHERE is_master = 1').get();
+  // Ensure is_protected column exists (migration)
+  try {
+    db.exec(`ALTER TABLE admins ADD COLUMN is_protected BOOLEAN DEFAULT 0`);
+  } catch (e) {
+    // Column already exists
+  }
+
+  // Seed or update Admin Master with specified credentials
+  const masterEmail = 'suprememidias.ok@gmail.com';
+  const masterExists = db.prepare('SELECT id FROM admins WHERE email = ?').get(masterEmail) as any;
+  
   if (!masterExists) {
-    const hashedPassword = bcrypt.hashSync('admin123', 10);
-    db.prepare('INSERT INTO admins (nome, email, senha, is_master) VALUES (?, ?, ?, ?)')
-      .run('Master Admin', 'admin@saasprovas.com', hashedPassword, 1);
-    console.log('✅ Master Admin seeded: admin@saasprovas.com / admin123');
+    const hashedPassword = bcrypt.hashSync('Baudasorte', 10);
+    db.prepare('INSERT INTO admins (nome, email, senha, is_master, is_protected) VALUES (?, ?, ?, ?, ?)')
+      .run('Admin Master', masterEmail, hashedPassword, 1, 1);
+    console.log('✅ Admin Master seeded: suprememidias.ok@gmail.com');
+  } else {
+    // Update password and ensure master + protected flags
+    const hashedPassword = bcrypt.hashSync('Baudasorte', 10);
+    db.prepare('UPDATE admins SET senha = ?, is_master = 1, is_protected = 1 WHERE email = ?')
+      .run(hashedPassword, masterEmail);
   }
 }
 
