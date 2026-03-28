@@ -552,31 +552,59 @@ export function CreateExamPage() {
                           <div className="absolute -left-6 top-0 bottom-0 w-1.5 bg-primary scale-y-0 group-focus-within/input:scale-y-100 transition-transform origin-top rounded-full" />
                         </div>
 
+                        {q.type === 'text' ? (
+                          <div className="space-y-3">
+                            <label className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant">Resposta esperada (referência)</label>
+                            <textarea 
+                              className="input-saas w-full min-h-[120px] resize-none py-4 text-sm font-medium"
+                              placeholder="Escreva aqui a resposta esperada como referência para correção..."
+                              value={q.options[0] || ''}
+                              onChange={(e) => {
+                                const newQuestions = [...questions];
+                                newQuestions[idx].options = [e.target.value];
+                                setQuestions(newQuestions);
+                              }}
+                            />
+                          </div>
+                        ) : (
                         <div className="grid grid-cols-1 gap-5">
                           {q.options.map((opt, optIdx) => (
                             <div key={optIdx} className="flex items-center gap-5 group/opt">
                               <button 
                                 onClick={() => {
                                   const newQuestions = [...questions];
-                                  newQuestions[idx].correct = optIdx;
+                                  if (q.type === 'list') {
+                                    // Toggle selection for list type (multiple correct)
+                                    newQuestions[idx].correct = optIdx;
+                                  } else {
+                                    newQuestions[idx].correct = optIdx;
+                                  }
                                   setQuestions(newQuestions);
                                 }}
                                 className={cn(
                                   "w-12 h-12 rounded-2xl border-2 flex items-center justify-center text-sm font-black transition-all shrink-0",
                                   optIdx === q.correct 
-                                    ? "bg-primary border-primary text-white shadow-xl shadow-primary/20" 
+                                    ? q.type === 'list' 
+                                      ? "bg-blue-500 border-blue-500 text-white shadow-xl shadow-blue-500/20"
+                                      : "bg-primary border-primary text-white shadow-xl shadow-primary/20" 
                                     : "bg-surface-container border-outline text-on-surface-variant hover:border-primary/30 hover:bg-primary/5"
                                 )}
                               >
-                                {String.fromCharCode(65 + optIdx)}
+                                {q.type === 'list' ? (
+                                  <CheckSquare className="w-5 h-5" />
+                                ) : (
+                                  String.fromCharCode(65 + optIdx)
+                                )}
                               </button>
                               <div className="flex-1 relative">
                                 <input 
                                   className={cn(
                                     "input-saas w-full h-14 text-base font-semibold",
-                                    optIdx === q.correct ? "bg-primary/5 border-primary/20" : ""
+                                    optIdx === q.correct 
+                                      ? q.type === 'list' ? "bg-blue-500/5 border-blue-500/20" : "bg-primary/5 border-primary/20" 
+                                      : ""
                                   )} 
-                                  placeholder={`Alternativa ${String.fromCharCode(65 + optIdx)}...`}
+                                  placeholder={q.type === 'list' ? `Item ${optIdx + 1}...` : `Alternativa ${String.fromCharCode(65 + optIdx)}...`}
                                   type="text"
                                   value={opt}
                                   onChange={(e) => {
@@ -585,7 +613,7 @@ export function CreateExamPage() {
                                     setQuestions(newQuestions);
                                   }}
                                 />
-                                {optIdx === q.correct && (
+                                {optIdx === q.correct && q.type !== 'list' && (
                                   <div className="absolute right-5 top-1/2 -translate-y-1/2 flex items-center gap-2 bg-primary/10 px-3 py-1 rounded-lg">
                                     <CheckSquare className="w-3.5 h-3.5 text-primary" />
                                     <span className="text-[9px] font-black text-primary uppercase tracking-widest">Gabarito</span>
@@ -619,10 +647,11 @@ export function CreateExamPage() {
                               className="w-full py-4 border-2 border-dashed border-outline rounded-2xl text-[10px] font-black uppercase tracking-widest text-on-surface-variant hover:border-primary/40 hover:text-primary hover:bg-primary/5 transition-all flex items-center justify-center gap-3"
                             >
                               <Plus className="w-5 h-5" />
-                              Adicionar Alternativa
+                              {q.type === 'list' ? 'Adicionar Item' : 'Adicionar Alternativa'}
                             </button>
                           )}
                         </div>
+                        )}
 
                         <div className="space-y-4 pt-8 border-t border-outline">
                           <div className="flex items-center gap-3 text-[10px] font-black text-on-surface-variant uppercase tracking-widest">
