@@ -65,7 +65,7 @@ export function SettingsPage() {
   };
 
   React.useEffect(() => {
-    const userJson = localStorage.getItem('user');
+    const userJson = localStorage.getItem('saas_user');
     if (userJson) {
       const user = JSON.parse(userJson);
       setCurrentUser(user);
