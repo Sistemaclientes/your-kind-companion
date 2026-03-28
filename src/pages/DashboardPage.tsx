@@ -72,13 +72,6 @@ export function DashboardPage() {
     { id: '5', name: 'Mariana Costa', stats: 'Média: 0 • 0 provas', status: 'Ativo', img: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=facearea&facepad=2&w=256&h=256&q=80' },
   ];
 
-  React.useEffect(() => {
-    if (carouselRef.current) {
-      const scrollWidth = carouselRef.current.scrollWidth;
-      const offsetWidth = carouselRef.current.offsetWidth;
-      setCarouselWidth(scrollWidth - offsetWidth);
-    }
-  }, [students.length, loading]);
 
   if (loading) return null;
 
