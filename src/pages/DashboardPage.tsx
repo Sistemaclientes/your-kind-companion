@@ -7,14 +7,10 @@ import {
   TrendingUp, 
   Plus,
   ArrowUpRight,
-  Clock,
-  ChevronLeft,
-  ChevronRight
 } from 'lucide-react';
 
 import { useNavigate } from 'react-router-dom';
 import { cn } from '../lib/utils';
-import { motion, useMotionValue, useTransform } from 'motion/react';
 import { 
   ResponsiveContainer, 
   AreaChart, 
