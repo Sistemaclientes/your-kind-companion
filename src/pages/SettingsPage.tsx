@@ -553,7 +553,7 @@ export function SettingsPage() {
             <button 
               onClick={handleSave}
               disabled={isSaving}
-              className="btn-primary min-w-[240px] flex items-center justify-center gap-2"
+              className="btn-primary w-auto px-8 py-3 flex items-center justify-center gap-2"
             >
               {isSaving ? (
                 <Loader2 className="w-5 h-5 animate-spin" />
