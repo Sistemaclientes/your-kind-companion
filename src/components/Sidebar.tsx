@@ -11,9 +11,17 @@ import {
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { useTheme } from '../lib/ThemeContext';
+import logoUplife from '../assets/logo-uplife.png';
 
 export function Sidebar() {
   const { theme, toggleTheme } = useTheme();
+  const [currentTime, setCurrentTime] = React.useState(new Date());
+
+  React.useEffect(() => {
+    const timer = setInterval(() => setCurrentTime(new Date()), 1000);
+    return () => clearInterval(timer);
+  }, []);
+
   const navItems = [
     { icon: LayoutDashboard, label: 'Dashboard', path: '/admin/dashboard' },
     { icon: FileText, label: 'Provas', path: '/admin/exams' },
@@ -23,7 +31,16 @@ export function Sidebar() {
 
   return (
     <aside className="h-screen w-64 fixed left-0 top-0 bg-surface-container flex flex-col p-4 gap-2 z-50 border-r border-outline">
-      <div className="px-4 py-8 mb-6">
+      <div className="px-2 py-4 mb-4 flex flex-col items-center gap-3">
+        <img src={logoUplife} alt="UpLife Educacional" className="w-16 h-16 rounded-full object-cover" />
+        <div className="text-center">
+          <p className="text-xs font-bold text-on-surface">
+            Hora: {currentTime.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+          </p>
+          <p className="text-xs font-bold text-on-surface">
+            Data: {currentTime.toLocaleDateString('pt-BR')}
+          </p>
+        </div>
       </div>
       
       <nav className="flex flex-col gap-2 flex-1">
