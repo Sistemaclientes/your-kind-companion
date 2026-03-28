@@ -232,8 +232,6 @@ export function ExamsPage() {
                 <tr className="bg-surface-container-low/50">
                   <th className="px-8 py-5 text-[10px] font-bold text-on-surface-variant uppercase tracking-widest border-b border-outline">Informações da Prova</th>
                   <th className="px-8 py-5 text-[10px] font-bold text-on-surface-variant uppercase tracking-widest border-b border-outline">Status</th>
-                  <th className="px-8 py-5 text-[10px] font-bold text-on-surface-variant uppercase tracking-widest border-b border-outline">Inscritos</th>
-                  <th className="px-8 py-5 text-[10px] font-bold text-on-surface-variant uppercase tracking-widest border-b border-outline">Data</th>
                   <th className="px-8 py-5 text-[10px] font-bold text-on-surface-variant uppercase tracking-widest border-b border-outline text-right">Ações</th>
                 </tr>
               </thead>
@@ -269,18 +267,6 @@ export function ExamsPage() {
                         )}>
                           {exam.status}
                         </span>
-                      </td>
-                      <td className="px-8 py-6">
-                        <div className="flex items-center gap-2">
-                          <Users className="w-4 h-4 text-on-surface-variant" />
-                          <span className="font-bold text-sm text-on-surface tracking-tight">{exam.students}</span>
-                        </div>
-                      </td>
-                      <td className="px-8 py-6">
-                        <div className="flex items-center gap-2 text-sm text-on-surface-variant font-medium">
-                          <Clock className="w-4 h-4" />
-                          {exam.date}
-                        </div>
                       </td>
                       <td className="px-4 sm:px-8 py-4 sm:py-6">
                         <div className="flex items-center justify-end gap-2 sm:gap-3">
