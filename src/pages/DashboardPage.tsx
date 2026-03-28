@@ -71,16 +71,22 @@ export function DashboardPage() {
     { name: 'Jun', value: stats?.metrics.mediaGeral || 78 },
   ];
 
-  // Placeholder for students slider until StudentsPage is fully integrated
   const students = [
-    { name: 'Beatriz Helena Santos', stats: 'Média: 0 • 0 provas', status: 'Ativo', img: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=facearea&facepad=2&w=256&h=256&q=80' },
-    { name: 'Ricardo Almeida', stats: 'Média: 0 • 0 provas', status: 'Ativo', img: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=facearea&facepad=2&w=256&h=256&q=80' },
+    { id: '1', name: 'Beatriz Helena Santos', stats: 'Média: 0 • 0 provas', status: 'Ativo', img: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=facearea&facepad=2&w=256&h=256&q=80' },
+    { id: '2', name: 'Ricardo Almeida', stats: 'Média: 0 • 0 provas', status: 'Ativo', img: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=facearea&facepad=2&w=256&h=256&q=80' },
+    { id: '3', name: 'Ana Carolina Lima', stats: 'Média: 0 • 0 provas', status: 'Ativo', img: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=facearea&facepad=2&w=256&h=256&q=80' },
+    { id: '4', name: 'Lucas Ferreira', stats: 'Média: 0 • 0 provas', status: 'Inativo', img: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=facearea&facepad=2&w=256&h=256&q=80' },
+    { id: '5', name: 'Mariana Costa', stats: 'Média: 0 • 0 provas', status: 'Ativo', img: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=facearea&facepad=2&w=256&h=256&q=80' },
   ];
-  
-  const totalPages = Math.ceil(students.length / 3) || 1;
-  const nextSlide = () => setSliderIndex((prev) => (prev + 1) % totalPages);
-  const prevSlide = () => setSliderIndex((prev) => (prev - 1 + totalPages) % totalPages);
-  
+
+  React.useEffect(() => {
+    if (carouselRef.current) {
+      const scrollWidth = carouselRef.current.scrollWidth;
+      const offsetWidth = carouselRef.current.offsetWidth;
+      setCarouselWidth(scrollWidth - offsetWidth);
+    }
+  }, [students.length, loading]);
+
   if (loading) return null;
 
   return (
