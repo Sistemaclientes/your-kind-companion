@@ -1,5 +1,5 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { 
   LayoutDashboard, 
   FileText, 
@@ -11,12 +11,15 @@ import {
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { useTheme } from '../lib/ThemeContext';
+import { api } from '../lib/api';
 import logoUplife from '../assets/logo-uplife.png';
 
 export function Sidebar() {
   const { theme, toggleTheme } = useTheme();
+  const navigate = useNavigate();
   const [currentTime, setCurrentTime] = React.useState(new Date());
   const [customLogo, setCustomLogo] = React.useState<string | null>(null);
+  const user = api.getUser();
 
   React.useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 1000);
@@ -32,6 +35,11 @@ export function Sidebar() {
     window.addEventListener('logo-updated', loadLogo);
     return () => window.removeEventListener('logo-updated', loadLogo);
   }, []);
+
+  const handleLogout = () => {
+    api.logout();
+    navigate('/', { replace: true });
+  };
 
   const navItems = [
     { icon: LayoutDashboard, label: 'Dashboard', path: '/admin/dashboard' },
@@ -72,7 +80,7 @@ export function Sidebar() {
         ))}
       </nav>
 
-      <div className="mt-auto flex flex-col gap-4">
+      <div className="mt-auto flex flex-col gap-3">
         <button
           onClick={toggleTheme}
           className="sidebar-item-saas w-full text-on-surface-variant"
@@ -90,14 +98,22 @@ export function Sidebar() {
           )}
         </button>
 
+        <button
+          onClick={handleLogout}
+          className="sidebar-item-saas w-full text-error/70 hover:text-error hover:bg-error/5"
+        >
+          <LogOut className="w-5 h-5" />
+          <span>Sair</span>
+        </button>
+
         <div className="p-4 bg-surface-container-high rounded-2xl border border-outline">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-on-primary text-xs font-bold shadow-lg shadow-primary/20">
-              AD
+              {user?.nome?.charAt(0)?.toUpperCase() || 'A'}
             </div>
             <div className="overflow-hidden">
-              <p className="text-sm font-bold truncate text-on-surface">Admin Master</p>
-              <p className="text-[10px] text-on-surface-variant font-bold uppercase truncate">admin@avaliapro.com</p>
+              <p className="text-sm font-bold truncate text-on-surface">{user?.nome || 'Admin'}</p>
+              <p className="text-[10px] text-on-surface-variant font-bold uppercase truncate">{user?.email || ''}</p>
             </div>
           </div>
         </div>
