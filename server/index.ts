@@ -147,7 +147,8 @@ app.post('/api/provas', adminMiddleware, (req: any, res) => {
 
   try {
     const id = transaction();
-    res.json({ id, message: 'Prova criada com sucesso' });
+    const exam = db.prepare('SELECT slug FROM provas WHERE id = ?').get(id) as any;
+    res.json({ id, slug: exam?.slug, message: 'Prova criada com sucesso' });
   } catch (err) {
     res.status(500).json({ error: 'Erro ao salvar prova' });
   }
