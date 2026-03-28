@@ -28,6 +28,41 @@ export function SettingsPage() {
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [newAdmin, setNewAdmin] = useState({ nome: '', email: '', senha: '' });
   const [isCreatingAdmin, setIsCreatingAdmin] = useState(false);
+  const [logoPreview, setLogoPreview] = useState<string | null>(null);
+  const logoInputRef = React.useRef<HTMLInputElement>(null);
+
+  React.useEffect(() => {
+    const saved = localStorage.getItem('institution_logo');
+    if (saved) setLogoPreview(saved);
+  }, []);
+
+  const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.size > 2 * 1024 * 1024) {
+      alert('O arquivo deve ter no máximo 2MB.');
+      return;
+    }
+    if (!['image/png', 'image/jpeg'].includes(file.type)) {
+      alert('Apenas PNG ou JPG são permitidos.');
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = reader.result as string;
+      setLogoPreview(result);
+      localStorage.setItem('institution_logo', result);
+      window.dispatchEvent(new Event('logo-updated'));
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleRemoveLogo = () => {
+    setLogoPreview(null);
+    localStorage.removeItem('institution_logo');
+    window.dispatchEvent(new Event('logo-updated'));
+    if (logoInputRef.current) logoInputRef.current.value = '';
+  };
 
   React.useEffect(() => {
     const userJson = localStorage.getItem('user');
@@ -217,20 +252,44 @@ export function SettingsPage() {
               </div>
               
               <div className="space-y-6">
-                <div className="aspect-video w-full rounded-xl bg-surface-container-low overflow-hidden relative group border-2 border-dashed border-outline hover:border-primary/50 transition-all flex items-center justify-center cursor-pointer">
-                  <img 
-                    className="absolute inset-0 w-full h-full object-cover opacity-10 group-hover:opacity-20 transition-opacity" 
-                    src="https://images.unsplash.com/photo-1557683316-973673baf926?auto=format&fit=crop&w=800&q=80"
-                    referrerPolicy="no-referrer"
-                  />
+                <input
+                  ref={logoInputRef}
+                  type="file"
+                  accept="image/png,image/jpeg"
+                  className="hidden"
+                  onChange={handleLogoUpload}
+                />
+                <div 
+                  className="aspect-video w-full rounded-xl bg-surface-container-low overflow-hidden relative group border-2 border-dashed border-outline hover:border-primary/50 transition-all flex items-center justify-center cursor-pointer"
+                  onClick={() => logoInputRef.current?.click()}
+                >
+                  {logoPreview ? (
+                    <img src={logoPreview} className="absolute inset-0 w-full h-full object-contain p-4" alt="Logo" />
+                  ) : (
+                    <img 
+                      className="absolute inset-0 w-full h-full object-cover opacity-10 group-hover:opacity-20 transition-opacity" 
+                      src="https://images.unsplash.com/photo-1557683316-973673baf926?auto=format&fit=crop&w=800&q=80"
+                      referrerPolicy="no-referrer"
+                    />
+                  )}
                   <div className="relative z-10 text-center p-4">
                     <div className="w-12 h-12 bg-surface-container rounded-full flex items-center justify-center mx-auto mb-3 shadow-sm border border-outline group-hover:scale-110 transition-transform">
                       <UploadCloud className="text-primary w-6 h-6" />
                     </div>
-                    <p className="text-sm font-bold text-text-primary">Logo da Instituição</p>
+                    <p className="text-sm font-bold text-text-primary">{logoPreview ? 'Alterar Logo' : 'Logo da Instituição'}</p>
                     <p className="text-[11px] text-text-secondary mt-1 font-medium">PNG ou JPG (Máx. 2MB)</p>
                   </div>
                 </div>
+                {logoPreview && (
+                  <button
+                    type="button"
+                    onClick={handleRemoveLogo}
+                    className="flex items-center gap-2 text-xs font-bold text-error hover:text-error/80 transition-colors mt-2"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                    Remover logo
+                  </button>
+                )}
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="p-4 rounded-xl bg-surface-container-low border border-outline">
