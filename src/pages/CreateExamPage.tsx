@@ -549,10 +549,10 @@ export function CreateExamPage() {
                         </div>
                       </div>
                       
-                      <div className="p-10 space-y-10">
+                      <div className="p-5 sm:p-10 space-y-6 sm:space-y-10">
                         <div className="relative group/input">
                           <textarea 
-                            className="w-full text-2xl font-bold text-on-surface border-none p-0 focus:ring-0 placeholder:text-on-surface-variant/20 bg-transparent resize-none leading-tight font-headline" 
+                            className="w-full text-lg sm:text-2xl font-bold text-on-surface border-none p-0 focus:ring-0 placeholder:text-on-surface-variant/20 bg-transparent resize-none leading-tight font-headline" 
                             placeholder="Qual o enunciado desta questão?"
                             rows={2}
                             value={q.text}
@@ -580,9 +580,9 @@ export function CreateExamPage() {
                             />
                           </div>
                         ) : (
-                        <div className="grid grid-cols-1 gap-5">
+                        <div className="grid grid-cols-1 gap-4 sm:gap-5">
                           {q.options.map((opt, optIdx) => (
-                            <div key={optIdx} className="flex items-center gap-5 group/opt">
+                            <div key={optIdx} className="flex items-center gap-2 sm:gap-5 group/opt">
                               <button 
                                 onClick={() => {
                                   const newQuestions = [...questions];
@@ -595,7 +595,7 @@ export function CreateExamPage() {
                                   setQuestions(newQuestions);
                                 }}
                                 className={cn(
-                                  "w-12 h-12 rounded-2xl border-2 flex items-center justify-center text-sm font-black transition-all shrink-0",
+                                  "w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl border-2 flex items-center justify-center text-xs sm:text-sm font-black transition-all shrink-0",
                                   optIdx === q.correct 
                                     ? q.type === 'list' 
                                       ? "bg-blue-500 border-blue-500 text-white shadow-xl shadow-blue-500/20"
@@ -612,7 +612,7 @@ export function CreateExamPage() {
                               <div className="flex-1 relative">
                                 <input 
                                   className={cn(
-                                    "input-saas w-full h-14 text-base font-semibold",
+                                    "input-saas w-full h-11 sm:h-14 text-sm sm:text-base font-semibold",
                                     optIdx === q.correct 
                                       ? q.type === 'list' ? "bg-blue-500/5 border-blue-500/20" : "bg-primary/5 border-primary/20" 
                                       : ""
