@@ -159,7 +159,7 @@ export function SettingsPage() {
   return (
     <>
       <TopBar title="Painel Administrativo" subtitle="Configurações Gerais" />
-      <main className="pt-20 px-6 pb-20 max-w-7xl mx-auto">
+      <main className="pt-20 px-4 sm:px-6 pb-20 max-w-7xl mx-auto">
         <header className="mb-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <h3 className="text-3xl font-bold text-text-primary mb-2 font-headline tracking-tight">Configurações Gerais</h3>
