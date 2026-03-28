@@ -117,7 +117,7 @@ export function StudentsPage() {
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-slate-50 dark:bg-slate-900/50 border-b border-outline">
+                <tr className="bg-surface-container/50 border-b border-outline">
                   <th className="px-6 py-5 text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">Aluno</th>
                   <th className="px-6 py-5 text-[10px] font-bold text-on-surface-variant uppercase tracking-widest text-center">Provas Realizadas</th>
                   <th className="px-6 py-5 text-[10px] font-bold text-on-surface-variant uppercase tracking-widest text-center">Média Geral</th>
@@ -170,7 +170,7 @@ export function StudentsPage() {
             </table>
           </div>
 
-          <div className="p-6 bg-background-light/50 dark:bg-background-dark/30 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="p-6 bg-surface-container/30 border-t border-outline flex flex-col sm:flex-row items-center justify-between gap-4">
             <span className="text-xs text-on-surface-variant font-bold tracking-tight">
               Mostrando {currentStudents.length} de {filteredStudents.length} alunos
             </span>
