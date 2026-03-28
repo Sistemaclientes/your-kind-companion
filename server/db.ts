@@ -25,6 +25,7 @@ export function initDB() {
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       titulo TEXT NOT NULL,
       descricao TEXT,
+      slug TEXT UNIQUE,
       created_by INTEGER,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
       FOREIGN KEY (created_by) REFERENCES admins(id)
@@ -72,6 +73,13 @@ export function initDB() {
   // Ensure is_protected column exists (migration)
   try {
     db.exec(`ALTER TABLE admins ADD COLUMN is_protected BOOLEAN DEFAULT 0`);
+  } catch (e) {
+    // Column already exists
+  }
+
+  // Ensure slug column exists (migration)
+  try {
+    db.exec(`ALTER TABLE provas ADD COLUMN slug TEXT UNIQUE`);
   } catch (e) {
     // Column already exists
   }

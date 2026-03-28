@@ -52,6 +52,7 @@ export default function App() {
           </Route>
           <Route path="/admin/exams/new" element={<ProtectedRoute><CreateExamPage /></ProtectedRoute>} />
           <Route path="/admin/exams/edit/:id" element={<ProtectedRoute><CreateExamPage /></ProtectedRoute>} />
+          <Route path="/prova/:slug" element={<StudentStartPage />} />
           <Route path="/student/start" element={<StudentStartPage />} />
           <Route path="/student/exam" element={<StudentExamPage />} />
           <Route path="/student/result" element={<StudentResultPage />} />

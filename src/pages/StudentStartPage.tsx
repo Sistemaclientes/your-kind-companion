@@ -11,7 +11,7 @@ import {
   ChevronRight,
   ChevronDown
 } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { cn } from '../lib/utils';
 import { motion } from 'motion/react';
 import { api } from '../lib/api';
@@ -19,22 +19,31 @@ import { phoneMask } from '../lib/masks';
 
 export function StudentStartPage() {
   const navigate = useNavigate();
+  const { slug } = useParams();
   const [exams, setExams] = React.useState<any[]>([]);
   const [selectedExamId, setSelectedExamId] = React.useState<string>('');
   const [formData, setFormData] = React.useState({ nome: '', email: '', telefone: '' });
 
   React.useEffect(() => {
-    const fetchExams = async () => {
+    const fetchData = async () => {
       try {
-        const data = await api.get('/provas');
-        setExams(data);
-        if (data.length > 0) setSelectedExamId(data[0].id.toString());
+        if (slug) {
+          // Load specific exam by slug
+          const exam = await api.get(`/provas/slug/${slug}`);
+          setExams([exam]);
+          setSelectedExamId(exam.id.toString());
+        } else {
+          // Load all exams
+          const data = await api.get('/provas');
+          setExams(data);
+          if (data.length > 0) setSelectedExamId(data[0].id.toString());
+        }
       } catch (err) {
         console.error('Error fetching exams:', err);
       }
     };
-    fetchExams();
-  }, []);
+    fetchData();
+  }, [slug]);
 
   const handleStart = (e: React.FormEvent) => {
     e.preventDefault();

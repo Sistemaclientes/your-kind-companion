@@ -4,6 +4,26 @@ import { initDB } from './db';
 import db from './db';
 import { authService, adminMiddleware, masterMiddleware } from './auth';
 
+function generateSlug(title: string): string {
+  return title
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 80);
+}
+
+function ensureUniqueSlug(baseSlug: string): string {
+  let slug = baseSlug;
+  let counter = 1;
+  while (db.prepare('SELECT id FROM provas WHERE slug = ?').get(slug)) {
+    slug = `${baseSlug}-${counter}`;
+    counter++;
+  }
+  return slug;
+}
+
 const app = express();
 app.use(cors());
 app.use(express.json({ limit: '5mb' }));
@@ -100,8 +120,10 @@ app.post('/api/provas', adminMiddleware, (req: any, res) => {
   const admin_id = req.user.id;
 
   const transaction = db.transaction(() => {
-    const info = db.prepare('INSERT INTO provas (titulo, descricao, created_by) VALUES (?, ?, ?)')
-      .run(titulo.trim(), descricao?.trim() || '', admin_id);
+    const slug = ensureUniqueSlug(generateSlug(titulo.trim()));
+
+    const info = db.prepare('INSERT INTO provas (titulo, descricao, slug, created_by) VALUES (?, ?, ?, ?)')
+      .run(titulo.trim(), descricao?.trim() || '', slug, admin_id);
     const provaId = info.lastInsertRowid;
 
     if (perguntas && Array.isArray(perguntas)) {
@@ -125,7 +147,8 @@ app.post('/api/provas', adminMiddleware, (req: any, res) => {
 
   try {
     const id = transaction();
-    res.json({ id, message: 'Prova criada com sucesso' });
+    const exam = db.prepare('SELECT slug FROM provas WHERE id = ?').get(id) as any;
+    res.json({ id, slug: exam?.slug, message: 'Prova criada com sucesso' });
   } catch (err) {
     res.status(500).json({ error: 'Erro ao salvar prova' });
   }
@@ -170,6 +193,18 @@ app.delete('/api/provas', adminMiddleware, masterMiddleware, (req, res) => {
   } catch (err) {
     res.status(500).json({ error: 'Erro ao excluir todas as provas' });
   }
+});
+
+app.get('/api/provas/slug/:slug', (req, res) => {
+  const exam = db.prepare('SELECT * FROM provas WHERE slug = ?').get(req.params.slug) as any;
+  if (!exam) return res.status(404).json({ error: 'Prova não encontrada' });
+
+  const questions = db.prepare('SELECT * FROM perguntas WHERE prova_id = ?').all(exam.id) as any[];
+  for (const q of questions) {
+    q.alternativas = db.prepare('SELECT id, texto FROM alternativas WHERE pergunta_id = ?').all(q.id);
+  }
+
+  res.json({ ...exam, perguntas: questions });
 });
 
 app.get('/api/provas/:id', (req, res) => {
