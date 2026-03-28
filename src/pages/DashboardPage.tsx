@@ -163,7 +163,7 @@ export function DashboardPage() {
               </select>
             </div>
             
-            <div className="h-[300px]">
+            <div className="h-[250px] sm:h-[300px] -ml-2 sm:ml-0">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={performanceData}>
                   <defs>
@@ -184,8 +184,10 @@ export function DashboardPage() {
                     axisLine={false} 
                     tickLine={false} 
                     tick={{ fill: 'var(--color-on-surface-variant)', fontSize: 12, fontWeight: 500 }}
-                    domain={[0, 10]}
+                    domain={[0, 100]}
+                    ticks={[0, 25, 50, 75, 100]}
                     dx={-8}
+                    width={35}
                   />
                   <RechartsTooltip 
                     contentStyle={{ 
@@ -199,6 +201,7 @@ export function DashboardPage() {
                       border: '1px solid var(--color-outline)'
                     }}
                     itemStyle={{ color: '#14B8A6' }}
+                    formatter={(value: any) => [`${value}%`, 'Desempenho']}
                   />
                   <Area 
                     type="monotone" 
