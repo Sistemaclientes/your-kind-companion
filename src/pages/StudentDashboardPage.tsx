@@ -63,7 +63,7 @@ export function StudentDashboardPage() {
   const overallAccuracy = totalQuestions > 0 ? Math.round((totalCorrect / totalQuestions) * 100) : 0;
   const lastExam = results.length > 0 ? results[results.length - 1] : null;
 
-  // IDs of exams where student scored >= 70 (approved) — hide from available list
+  // IDs of exams where student was approved (>=70) — hide from available exams list
   const approvedExamIds = new Set(results.filter(r => r.pontuacao >= 70).map(r => r.prova_id));
 
   const handleLogout = () => {
