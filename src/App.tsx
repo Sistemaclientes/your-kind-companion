@@ -1,4 +1,4 @@
-import React, { lazy, Suspense, useEffect } from 'react';
+import React, { lazy, Suspense } from 'react';
 import { 
   BrowserRouter as Router, 
   Routes, 
@@ -10,7 +10,7 @@ import { AdminLayout } from './components/AdminLayout';
 import { StudentLayout } from './components/StudentLayout';
 import { RouteTracker } from './components/RouteTracker';
 import { PrivateRoute } from './components/PrivateRoute';
-import { useAuthStore } from './lib/authStore';
+import { AuthProvider, useAuthStore } from './lib/authStore';
 
 // Lazy load pages for better performance
 const DashboardPage = lazy(() => import('./pages/DashboardPage').then(m => ({ default: m.DashboardPage })));
@@ -41,13 +41,8 @@ function PageLoader() {
   );
 }
 
-function AuthInitializer({ children }: { children: React.ReactNode }) {
-  const checkSession = useAuthStore(s => s.checkSession);
-  const isLoading = useAuthStore(s => s.isLoading);
-
-  useEffect(() => {
-    checkSession();
-  }, [checkSession]);
+function AuthGate({ children }: { children: React.ReactNode }) {
+  const { isLoading } = useAuthStore();
 
   if (isLoading) {
     return <PageLoader />;
@@ -59,7 +54,8 @@ function AuthInitializer({ children }: { children: React.ReactNode }) {
 export default function App() {
   return (
     <Router>
-      <AuthInitializer>
+      <AuthProvider>
+        <AuthGate>
         <RouteTracker />
         <Suspense fallback={<PageLoader />}>
           <Routes>
@@ -117,7 +113,8 @@ export default function App() {
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </Suspense>
-      </AuthInitializer>
+        </AuthGate>
+      </AuthProvider>
     </Router>
   );
 }

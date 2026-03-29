@@ -1,4 +1,4 @@
-import { create } from 'zustand';
+import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
 
 export type UserRole = 'admin' | 'aluno';
 
@@ -19,27 +19,27 @@ interface AuthState {
   logout: () => void;
 }
 
-export const useAuthStore = create<AuthState>((set) => ({
-  user: null,
-  isLoading: true,
+const AuthContext = createContext<AuthState | null>(null);
 
-  checkSession: () => {
+export function AuthProvider({ children }: { children: React.ReactNode }) {
+  const [user, setUser] = useState<AuthUser | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const checkSession = useCallback(() => {
     // Check admin session
     const adminToken = localStorage.getItem('saas_token');
     const adminUser = localStorage.getItem('saas_user');
     if (adminToken && adminUser) {
       try {
         const parsed = JSON.parse(adminUser);
-        set({
-          user: {
-            id: parsed.id,
-            nome: parsed.nome,
-            email: parsed.email,
-            role: 'admin',
-            is_master: parsed.is_master,
-          },
-          isLoading: false,
+        setUser({
+          id: parsed.id,
+          nome: parsed.nome,
+          email: parsed.email,
+          role: 'admin',
+          is_master: parsed.is_master,
         });
+        setIsLoading(false);
         return;
       } catch {}
     }
@@ -49,58 +49,73 @@ export const useAuthStore = create<AuthState>((set) => ({
     if (studentInfo) {
       try {
         const parsed = JSON.parse(studentInfo);
-        set({
-          user: {
-            id: parsed.email, // use email as id for students
-            nome: parsed.nome,
-            email: parsed.email,
-            role: 'aluno',
-          },
-          isLoading: false,
+        setUser({
+          id: parsed.email,
+          nome: parsed.nome,
+          email: parsed.email,
+          role: 'aluno',
         });
+        setIsLoading(false);
         return;
       } catch {}
     }
 
-    set({ user: null, isLoading: false });
-  },
+    setUser(null);
+    setIsLoading(false);
+  }, []);
 
-  loginAdmin: (token: string, adminUser: any) => {
+  const loginAdmin = useCallback((token: string, adminUser: any) => {
     localStorage.setItem('saas_token', token);
     localStorage.setItem('saas_user', JSON.stringify(adminUser));
-    set({
-      user: {
-        id: adminUser.id,
-        nome: adminUser.nome,
-        email: adminUser.email,
-        role: 'admin',
-        is_master: adminUser.is_master,
-      },
+    setUser({
+      id: adminUser.id,
+      nome: adminUser.nome,
+      email: adminUser.email,
+      role: 'admin',
+      is_master: adminUser.is_master,
     });
-  },
+  }, []);
 
-  loginStudent: (studentInfo: any) => {
+  const loginStudent = useCallback((studentInfo: any) => {
     localStorage.setItem('student_info', JSON.stringify({
       nome: studentInfo.nome,
       email: studentInfo.email,
       telefone: studentInfo.telefone || '',
     }));
-    set({
-      user: {
-        id: studentInfo.email,
-        nome: studentInfo.nome,
-        email: studentInfo.email,
-        role: 'aluno',
-      },
+    setUser({
+      id: studentInfo.email,
+      nome: studentInfo.nome,
+      email: studentInfo.email,
+      role: 'aluno',
     });
-  },
+  }, []);
 
-  logout: () => {
-    // Clear all auth data
+  const logout = useCallback(() => {
     localStorage.removeItem('saas_token');
     localStorage.removeItem('saas_user');
     localStorage.removeItem('student_info');
     localStorage.removeItem('student_remembered');
-    set({ user: null });
-  },
-}));
+    setUser(null);
+  }, []);
+
+  useEffect(() => {
+    checkSession();
+  }, [checkSession]);
+
+  const value = React.useMemo(() => ({
+    user,
+    isLoading,
+    checkSession,
+    loginAdmin,
+    loginStudent,
+    logout,
+  }), [user, isLoading, checkSession, loginAdmin, loginStudent, logout]);
+
+  return React.createElement(AuthContext.Provider, { value }, children);
+}
+
+export function useAuthStore(): AuthState {
+  const ctx = useContext(AuthContext);
+  if (!ctx) throw new Error('useAuthStore must be used within AuthProvider');
+  return ctx;
+}
