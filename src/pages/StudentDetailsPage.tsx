@@ -14,7 +14,7 @@ import {
   XCircle,
   Info
 } from 'lucide-react';
-import { cn, getStudentSlugMap } from '../lib/utils';
+import { cn, getStudentSlugMap, setStudentSlugMap, buildStudentSlug } from '../lib/utils';
 import { useNavigate, useParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import { api } from '../lib/api';
@@ -27,21 +27,10 @@ export function StudentDetailsPage() {
   const [studentData, setStudentData] = React.useState<any>(null);
   const [results, setResults] = React.useState<any[]>([]);
 
-  const resolveEmail = React.useCallback((value: string) => {
-    const decoded = decodeURIComponent(value);
-    if (decoded.includes('@')) return decoded;
-    const map = getStudentSlugMap();
-    return map[decoded] || null;
-  }, []);
-
   React.useEffect(() => {
     if (!slug) return;
-    const email = resolveEmail(slug);
-    if (!email) {
-      setLoading(false);
-      return;
-    }
-    const fetchData = async () => {
+
+    const fetchStudentByEmail = async (email: string) => {
       try {
         const data = await api.get(`/dashboard/students/${encodeURIComponent(email)}`);
         setStudentData(data.student);
@@ -52,8 +41,44 @@ export function StudentDetailsPage() {
         setLoading(false);
       }
     };
-    fetchData();
-  }, [slug, resolveEmail]);
+
+    const resolveAndFetch = async () => {
+      const decoded = decodeURIComponent(slug);
+
+      // If slug is an email, fetch directly
+      if (decoded.includes('@')) {
+        return fetchStudentByEmail(decoded);
+      }
+
+      // Try local slug map first
+      let map = getStudentSlugMap();
+      if (map[decoded]) {
+        return fetchStudentByEmail(map[decoded]);
+      }
+
+      // Slug not in local map — fetch all students to rebuild the map
+      try {
+        const students = await api.get('/dashboard/students');
+        map = getStudentSlugMap();
+        for (const s of students) {
+          const sSlug = buildStudentSlug(s.nome, s.email);
+          map[sSlug] = s.email;
+        }
+        setStudentSlugMap(map);
+
+        if (map[decoded]) {
+          return fetchStudentByEmail(map[decoded]);
+        }
+      } catch (err) {
+        console.error('Error resolving slug:', err);
+      }
+
+      // Still not found
+      setLoading(false);
+    };
+
+    resolveAndFetch();
+  }, [slug]);
 
   if (loading) {
     return (
