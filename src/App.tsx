@@ -24,6 +24,7 @@ const StudentDashboardPage = lazy(() => import('./pages/StudentDashboardPage').t
 const StudentResultDetailPage = lazy(() => import('./pages/StudentResultDetailPage').then(m => ({ default: m.StudentResultDetailPage })));
 const StudentExamsListPage = lazy(() => import('./pages/StudentExamsListPage').then(m => ({ default: m.StudentExamsListPage })));
 const StudentResultsListPage = lazy(() => import('./pages/StudentResultsListPage').then(m => ({ default: m.StudentResultsListPage })));
+const StudentLoginPage = lazy(() => import('./pages/StudentLoginPage').then(m => ({ default: m.StudentLoginPage })));
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage').then(m => ({ default: m.NotFoundPage })));
 function PageLoader() {
   return (
@@ -64,6 +65,7 @@ export default function App() {
           <Route path="/student/start" element={<StudentStartPage />} />
           <Route path="/student/exam" element={<StudentExamPage />} />
           <Route path="/student/result" element={<StudentResultPage />} />
+          <Route path="/aluno/login" element={<StudentLoginPage />} />
           <Route path="/aluno" element={<StudentLayout />}>
             <Route index element={<Navigate to="/aluno/dashboard" replace />} />
             <Route path="dashboard" element={<StudentDashboardPage />} />

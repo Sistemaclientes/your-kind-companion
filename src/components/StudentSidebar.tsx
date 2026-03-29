@@ -46,7 +46,8 @@ export function StudentSidebar({ isOpen, onClose }: StudentSidebarProps) {
 
   const handleLogout = () => {
     localStorage.removeItem('student_info');
-    navigate('/student/start');
+    localStorage.removeItem('student_remembered');
+    navigate('/aluno/login');
   };
 
   const navItems = [
