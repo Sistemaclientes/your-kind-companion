@@ -12,14 +12,43 @@ const FALLBACK_ADMIN = {
 const LOCAL_EXAMS_KEY = 'local_provas';
 const LOCAL_RESULTS_KEY = 'local_resultados';
 const SEED_VERSION_KEY = 'local_provas_seed_version';
-const CURRENT_SEED_VERSION = '2'; // Increment when adding new seed exams
+const CURRENT_SEED_VERSION = '3'; // Increment when adding new seed exams
+
+function generateSlug(title: string): string {
+  return title
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 80);
+}
+
+function ensureLocalExamSlugs(exams: any[]): any[] {
+  let changed = false;
+  const usedSlugs = new Set<string>();
+  for (const exam of exams) {
+    if (!exam.slug) {
+      let slug = generateSlug(exam.titulo);
+      let counter = 1;
+      while (usedSlugs.has(slug)) {
+        slug = `${generateSlug(exam.titulo)}-${counter}`;
+        counter++;
+      }
+      exam.slug = slug;
+      changed = true;
+    }
+    usedSlugs.add(exam.slug);
+  }
+  if (changed) saveLocalExams(exams);
+  return exams;
+}
 
 function getLocalExams(): any[] {
   const stored = localStorage.getItem(LOCAL_EXAMS_KEY);
   const seedVersion = localStorage.getItem(SEED_VERSION_KEY);
   if (!stored || seedVersion !== CURRENT_SEED_VERSION) {
     localStorage.setItem(SEED_VERSION_KEY, CURRENT_SEED_VERSION);
-    // Seed with MS Project exam
     const seed = [
       {
         id: 1, titulo: 'PROVA – MS PROJECT (PRÁTICA)', 
@@ -192,10 +221,15 @@ function getLocalExams(): any[] {
         correctAlts: { 31: 91, 32: 94, 33: 97, 34: 100, 35: 103 }
       }
     ];
+    // Add slugs to seed exams
+    for (const exam of seed) {
+      (exam as any).slug = generateSlug(exam.titulo);
+    }
     localStorage.setItem(LOCAL_EXAMS_KEY, JSON.stringify(seed));
     return seed;
   }
-  return JSON.parse(stored);
+  const parsed = JSON.parse(stored);
+  return ensureLocalExamSlugs(parsed);
 }
 
 function getLocalResults(): any[] {
@@ -240,6 +274,15 @@ function handleFallback(method: string, endpoint: string, data?: any): any {
     return exam;
   }
 
+  // GET PROVA BY SLUG
+  const slugMatch = endpoint.match(/^\/provas\/slug\/(.+)$/);
+  if (method === 'GET' && slugMatch) {
+    const slug = slugMatch[1];
+    const exam = getLocalExams().find(e => (e as any).slug === slug);
+    if (!exam) throw new Error('Prova não encontrada');
+    return exam;
+  }
+
   // CREATE PROVA
   if (method === 'POST' && endpoint === '/provas') {
     const exams = getLocalExams();
@@ -261,8 +304,15 @@ function handleFallback(method: string, endpoint: string, data?: any): any {
       return { id: pId, enunciado: q.enunciado, alternativas: alts };
     });
 
+    const slug = generateSlug(data.titulo);
+    const usedSlugs = new Set(exams.map((e: any) => e.slug).filter(Boolean));
+    let finalSlug = slug;
+    let counter = 1;
+    while (usedSlugs.has(finalSlug)) { finalSlug = `${slug}-${counter}`; counter++; }
+
     const newExam = {
       id: newId, titulo: data.titulo, descricao: data.descricao || '',
+      slug: finalSlug,
       created_by: 1, created_at: new Date().toISOString(), creator_name: 'Admin Master',
       qCount: perguntas.length, studentCount: 0, perguntas, correctAlts
     };

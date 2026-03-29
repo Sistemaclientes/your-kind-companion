@@ -23,12 +23,20 @@ export function StudentStartPage() {
   const [exams, setExams] = React.useState<any[]>([]);
   const [selectedExamId, setSelectedExamId] = React.useState<string>('');
   const [formData, setFormData] = React.useState({ nome: '', email: '', telefone: '' });
+  const [error, setError] = React.useState<string | null>(null);
+  const [loading, setLoading] = React.useState(true);
 
   React.useEffect(() => {
     const fetchData = async () => {
+      setLoading(true);
+      setError(null);
       try {
         if (slug) {
           const exam = await api.get(`/provas/slug/${slug}`);
+          if (!exam || !exam.id) {
+            setError('Prova não encontrada. Verifique o link e tente novamente.');
+            return;
+          }
           setExams([exam]);
           setSelectedExamId(exam.id.toString());
         } else {
@@ -36,8 +44,11 @@ export function StudentStartPage() {
           setExams(data);
           if (data.length > 0) setSelectedExamId(data[0].id.toString());
         }
-      } catch (err) {
-        console.error('Error fetching exams:', err);
+      } catch (err: any) {
+        console.error('[StudentStartPage] Error fetching exam:', err);
+        setError(slug ? 'Prova não encontrada. Verifique o link e tente novamente.' : 'Erro ao carregar provas.');
+      } finally {
+        setLoading(false);
       }
     };
     fetchData();
@@ -54,6 +65,30 @@ export function StudentStartPage() {
   };
 
   const selectedExam = exams.find(e => e.id.toString() === selectedExamId);
+
+  if (error) {
+    return (
+      <div className="min-h-[100dvh] bg-surface flex items-center justify-center p-6 font-sans text-on-surface antialiased">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-center space-y-6 max-w-md"
+        >
+          <div className="w-16 h-16 rounded-2xl bg-error/10 flex items-center justify-center mx-auto">
+            <AlertCircle className="w-8 h-8 text-error" />
+          </div>
+          <h1 className="text-2xl font-black text-on-surface font-headline">Prova não encontrada</h1>
+          <p className="text-on-surface-variant font-medium">{error}</p>
+          <button
+            onClick={() => navigate('/')}
+            className="btn-primary px-8 py-3 rounded-xl font-bold text-sm"
+          >
+            Voltar ao início
+          </button>
+        </motion.div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-[100dvh] bg-surface flex items-center justify-center p-4 sm:p-6 lg:p-8 relative overflow-hidden font-sans text-on-surface antialiased">
