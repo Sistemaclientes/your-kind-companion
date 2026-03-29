@@ -1,5 +1,5 @@
 import React from 'react';
-import { Mail, Lock, Eye, EyeOff, LogIn, AlertCircle, Loader2 } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, LogIn, AlertCircle, Loader2, GraduationCap } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../lib/api';
 
@@ -126,6 +126,40 @@ export function LoginPage() {
               </button>
             </div>
           </form>
+        </div>
+
+        {/* Student Test Access */}
+        <div className="bg-surface-container p-6 rounded-[20px] border border-outline">
+          <button
+            type="button"
+            onClick={() => {
+              // Seed test student with sample results
+              const testStudent = { nome: 'Aluno Teste', email: 'aluno@teste.com', telefone: '(11) 99999-0000' };
+              localStorage.setItem('student_info', JSON.stringify(testStudent));
+
+              // Seed sample results if none exist for this student
+              const existing = JSON.parse(localStorage.getItem('local_resultados') || '[]');
+              const hasTestResults = existing.some((r: any) => r.email_aluno === 'aluno@teste.com');
+              if (!hasTestResults) {
+                const now = new Date();
+                const sampleResults = [
+                  { prova_id: 1, prova_titulo: 'PROVA – MS PROJECT (PRÁTICA)', nome_aluno: 'Aluno Teste', email_aluno: 'aluno@teste.com', pontuacao: 80, acertos: 4, total: 5, data: new Date(now.getTime() - 86400000 * 3).toISOString() },
+                  { prova_id: 2, prova_titulo: 'PROVA – Gestão da Produção Industrial', nome_aluno: 'Aluno Teste', email_aluno: 'aluno@teste.com', pontuacao: 60, acertos: 3, total: 5, data: new Date(now.getTime() - 86400000 * 1).toISOString() },
+                  { prova_id: 4, prova_titulo: 'PROVA – Power BI', nome_aluno: 'Aluno Teste', email_aluno: 'aluno@teste.com', pontuacao: 100, acertos: 5, total: 5, data: now.toISOString() },
+                ];
+                localStorage.setItem('local_resultados', JSON.stringify([...existing, ...sampleResults]));
+              }
+
+              navigate('/aluno/dashboard');
+            }}
+            className="w-full flex items-center justify-center gap-3 py-3.5 rounded-xl border border-primary/20 bg-primary/5 text-primary font-bold text-sm hover:bg-primary/10 transition-all"
+          >
+            <GraduationCap className="w-5 h-5" />
+            Acesso Aluno (Teste)
+          </button>
+          <p className="text-[10px] text-on-surface-variant font-medium text-center mt-3 uppercase tracking-widest">
+            Acesse a dashboard do aluno com dados de exemplo
+          </p>
         </div>
 
         <footer className="flex flex-col items-center gap-6">
