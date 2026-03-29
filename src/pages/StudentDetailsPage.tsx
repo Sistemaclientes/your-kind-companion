@@ -14,21 +14,33 @@ import {
   XCircle,
   Info
 } from 'lucide-react';
-import { cn } from '../lib/utils';
+import { cn, getStudentSlugMap } from '../lib/utils';
 import { useNavigate, useParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import { api } from '../lib/api';
 
 export function StudentDetailsPage() {
   const navigate = useNavigate();
-  const { email } = useParams();
+  const { slug } = useParams();
   const [selectedExam, setSelectedExam] = React.useState<any>(null);
   const [loading, setLoading] = React.useState(true);
   const [studentData, setStudentData] = React.useState<any>(null);
   const [results, setResults] = React.useState<any[]>([]);
 
+  const resolveEmail = React.useCallback((value: string) => {
+    const decoded = decodeURIComponent(value);
+    if (decoded.includes('@')) return decoded;
+    const map = getStudentSlugMap();
+    return map[decoded] || null;
+  }, []);
+
   React.useEffect(() => {
-    if (!email) return;
+    if (!slug) return;
+    const email = resolveEmail(slug);
+    if (!email) {
+      setLoading(false);
+      return;
+    }
     const fetchData = async () => {
       try {
         const data = await api.get(`/dashboard/students/${encodeURIComponent(email)}`);
@@ -41,7 +53,7 @@ export function StudentDetailsPage() {
       }
     };
     fetchData();
-  }, [email]);
+  }, [slug, resolveEmail]);
 
   if (loading) {
     return (

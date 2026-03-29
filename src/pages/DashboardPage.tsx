@@ -10,7 +10,7 @@ import {
 } from 'lucide-react';
 
 import { useNavigate } from 'react-router-dom';
-import { cn } from '../lib/utils';
+import { buildStudentSlug, cn, getStudentSlugMap, setStudentSlugMap } from '../lib/utils';
 import { 
   ResponsiveContainer, 
   AreaChart, 
@@ -59,8 +59,9 @@ export function DashboardPage() {
     { label: 'Média de desempenho', value: `${stats?.metrics.mediaGeral || 0}/100`, trend: '0', icon: TrendingUp, color: 'emerald' },
   ];
 
-  const recentExams: Array<{ id: number | string; title: string; time: string; students: string }> = (stats?.recentResults || []).map((r: any) => ({
+  const recentExams: Array<{ id: number | string; slug?: string; title: string; time: string; students: string }> = (stats?.recentResults || []).map((r: any) => ({
     id: r.prova_id,
+    slug: r.prova_slug || r.slug,
     title: r.prova_titulo,
     time: new Date(r.data).toLocaleDateString(),
     students: r.nome_aluno
@@ -81,7 +82,14 @@ export function DashboardPage() {
     const fetchStudents = async () => {
       try {
         const data = await api.get('/dashboard/students');
-        setStudents(data.slice(0, 8));
+        const map = getStudentSlugMap();
+        const mapped = data.slice(0, 8).map((student: any) => {
+          const slug = buildStudentSlug(student.nome, student.email);
+          map[slug] = student.email;
+          return { ...student, slug };
+        });
+        setStudentSlugMap(map);
+        setStudents(mapped);
       } catch (err) {
         console.error('Error fetching students:', err);
       }
@@ -234,7 +242,7 @@ export function DashboardPage() {
                   <div 
                     key={i} 
                     className="flex items-center gap-3 p-3 rounded-xl hover:bg-primary/5 transition-all cursor-pointer group"
-                    onClick={() => navigate(`/admin/exams/edit/${exam.id}`)}
+                    onClick={() => navigate(exam.slug ? `/admin/exams/editar/${exam.slug}` : '/admin/exams')}
                   >
                     <div className="w-9 h-9 rounded-xl bg-surface-container-high flex items-center justify-center text-on-surface-variant group-hover:bg-primary/10 group-hover:text-primary transition-all shrink-0">
                       <FileText className="w-4 h-4" />
@@ -296,7 +304,7 @@ export function DashboardPage() {
                   <div 
                     key={`${s.email}-${i}`} 
                     className="min-w-[280px] card-saas flex items-center gap-4 cursor-pointer group/card select-none"
-                    onClick={() => navigate(`/admin/students/${encodeURIComponent(s.email)}`)}
+                    onClick={() => navigate(`/admin/students/${s.slug}`)}
                   >
                     <div className="relative shrink-0">
                       <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary font-bold text-lg border border-outline">

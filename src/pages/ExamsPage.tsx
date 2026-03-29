@@ -249,16 +249,18 @@ export function ExamsPage() {
                     <div className="flex items-center gap-2">
                       <button 
                         className="w-8 h-8 rounded-lg bg-surface-container hover:bg-primary/10 text-on-surface-variant hover:text-primary transition-all flex items-center justify-center border border-outline"
-                        onClick={() => navigate(`/admin/exams/edit/${exam.id}`)}
+                        onClick={() => exam.slug ? navigate(`/admin/exams/editar/${exam.slug}`) : alert('Slug da prova indisponível.')}
                       >
                         <Edit className="w-3.5 h-3.5" />
                       </button>
                       <button 
                         className="w-8 h-8 rounded-lg bg-surface-container hover:bg-primary/10 text-on-surface-variant hover:text-primary transition-all flex items-center justify-center border border-outline"
                         onClick={() => {
-                          const url = exam.slug 
-                            ? `${window.location.origin}/prova/${exam.slug}`
-                            : `${window.location.origin}/student/start`;
+                          if (!exam.slug) {
+                            alert('Slug da prova indisponível.');
+                            return;
+                          }
+                          const url = `${window.location.origin}/prova/${exam.slug}`;
                           navigator.clipboard.writeText(url);
                           alert('Link copiado: ' + url);
                         }}
@@ -326,14 +328,14 @@ export function ExamsPage() {
                         <div className="flex items-center justify-end gap-3">
                           <button 
                             className="w-10 h-10 rounded-xl bg-surface-container hover:bg-primary/10 text-on-surface-variant hover:text-primary transition-all flex items-center justify-center border border-outline hover:border-primary/20 btn-icon-saas"
-                            onClick={() => navigate(`/admin/exams/edit/${exam.id}`)}
+                            onClick={() => exam.slug ? navigate(`/admin/exams/editar/${exam.slug}`) : alert('Slug da prova indisponível.')}
                             title="Editar Prova"
                           >
                             <Edit className="w-4 h-4" />
                           </button>
                           <button 
                             className="w-10 h-10 rounded-xl bg-surface-container hover:bg-primary/10 text-on-surface-variant hover:text-primary transition-all flex items-center justify-center border border-outline hover:border-primary/20 btn-icon-saas"
-                            onClick={() => navigate(exam.slug ? `/prova/${exam.slug}` : '/student/start')}
+                            onClick={() => exam.slug ? navigate(`/prova/${exam.slug}`) : alert('Slug da prova indisponível.')}
                             title="Visualizar Prova"
                           >
                             <Eye className="w-4 h-4" />
@@ -341,9 +343,11 @@ export function ExamsPage() {
                           <button 
                             className="w-10 h-10 rounded-xl bg-surface-container hover:bg-primary/10 text-on-surface-variant hover:text-primary transition-all flex items-center justify-center border border-outline hover:border-primary/20 btn-icon-saas"
                             onClick={() => {
-                              const url = exam.slug 
-                                ? `${window.location.origin}/prova/${exam.slug}`
-                                : `${window.location.origin}/student/start`;
+                              if (!exam.slug) {
+                                alert('Slug da prova indisponível.');
+                                return;
+                              }
+                              const url = `${window.location.origin}/prova/${exam.slug}`;
                               navigator.clipboard.writeText(url);
                               alert('Link copiado: ' + url);
                             }}

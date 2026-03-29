@@ -12,7 +12,7 @@ import {
   ChevronDown,
   ArrowUpDown
 } from 'lucide-react';
-import { cn } from '../lib/utils';
+import { buildStudentSlug, cn, getStudentSlugMap, setStudentSlugMap } from '../lib/utils';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import { api } from '../lib/api';
@@ -32,7 +32,14 @@ export function StudentsPage() {
     const fetchStudents = async () => {
       try {
         const data = await api.get('/dashboard/students');
-        setStudents(data);
+        const map = getStudentSlugMap();
+        const mapped = data.map((student: any) => {
+          const slug = buildStudentSlug(student.nome, student.email);
+          map[slug] = student.email;
+          return { ...student, slug };
+        });
+        setStudentSlugMap(map);
+        setStudents(mapped);
       } catch (err) {
         console.error('Error fetching students:', err);
       } finally {
@@ -131,7 +138,7 @@ export function StudentsPage() {
                     <tr 
                       key={i} 
                       className="hover:bg-primary/[0.02] transition-colors group cursor-pointer"
-                      onClick={() => navigate(`/admin/students/${encodeURIComponent(student.email)}`)}
+                      onClick={() => navigate(`/admin/students/${student.slug}`)}
                     >
                       <td className="px-6 py-6">
                         <div className="flex items-center gap-4">

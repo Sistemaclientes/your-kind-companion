@@ -28,7 +28,8 @@ import { Question } from '../types';
 
 export function CreateExamPage() {
   const navigate = useNavigate();
-  const { id } = useParams();
+  const { slug } = useParams();
+  const [examId, setExamId] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'content' | 'settings'>('content');
   const [questions, setQuestions] = useState<Question[]>([
     { id: 1, type: 'multiple', text: '', options: ['', '', '', ''], correct: 0, points: 1, explanation: '' }
@@ -49,10 +50,16 @@ export function CreateExamPage() {
   const [openTypeDropdownId, setOpenTypeDropdownId] = useState<number | null>(null);
 
   React.useEffect(() => {
-    if (id) {
+    if (slug) {
       const fetchExam = async () => {
         try {
-          const exam = await api.get(`/provas/${id}`);
+          let exam: any = null;
+          try {
+            exam = await api.get(`/provas/slug/${slug}`);
+          } catch (slugErr) {
+            exam = await api.get(`/provas/${slug}`);
+          }
+          setExamId(exam?.id?.toString() || null);
           setTitle(exam.titulo);
           setDescription(exam.descricao);
           // Map backend questions to frontend format if necessary
@@ -76,7 +83,7 @@ export function CreateExamPage() {
       };
       fetchExam();
     }
-  }, [id]);
+  }, [slug]);
 
   const handlePublish = async () => {
     if (!title.trim()) {
@@ -101,8 +108,8 @@ export function CreateExamPage() {
         }))
       };
 
-      if (id) {
-        await api.post(`/provas/${id}`, payload); // Assuming update is also POST or I should use PUT
+      if (examId) {
+        await api.post(`/provas/${examId}`, payload); // Assuming update is also POST or I should use PUT
       } else {
         await api.post('/provas', payload);
       }
@@ -228,7 +235,7 @@ export function CreateExamPage() {
               ) : (
                 <Save className="w-4 h-4" />
               )}
-              <span className="hidden sm:inline">{isPublishing ? 'Salvando...' : id ? 'Salvar' : 'Publicar'}</span>
+               <span className="hidden sm:inline">{isPublishing ? 'Salvando...' : examId ? 'Salvar' : 'Publicar'}</span>
             </button>
           </div>
         </div>

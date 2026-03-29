@@ -49,10 +49,11 @@ export default function App() {
             <Route path="dashboard" element={<DashboardPage />} />
             <Route path="exams" element={<ExamsPage />} />
             <Route path="students" element={<StudentsPage />} />
-            <Route path="students/:email" element={<StudentDetailsPage />} />
+            <Route path="students/:slug" element={<StudentDetailsPage />} />
             <Route path="settings" element={<SettingsPage />} />
           </Route>
           <Route path="/admin/exams/new" element={<ProtectedRoute><CreateExamPage /></ProtectedRoute>} />
+          <Route path="/admin/exams/editar/:slug" element={<ProtectedRoute><CreateExamPage /></ProtectedRoute>} />
           <Route path="/admin/exams/edit/:id" element={<ProtectedRoute><CreateExamPage /></ProtectedRoute>} />
           <Route path="/prova/:slug" element={<StudentStartPage />} />
           <Route path="/student/start" element={<StudentStartPage />} />
