@@ -46,6 +46,7 @@ export function ExamsPage() {
         students: '0', // TODO: count real results
         date: new Date(e.created_at).toLocaleDateString('pt-BR'),
         category: 'Geral', // Default for now
+        slug: e.slug,
       }));
       setExams(mapped);
     } catch (err) {
@@ -251,6 +252,19 @@ export function ExamsPage() {
                         onClick={() => navigate(`/admin/exams/edit/${exam.id}`)}
                       >
                         <Edit className="w-3.5 h-3.5" />
+                      </button>
+                      <button 
+                        className="w-8 h-8 rounded-lg bg-surface-container hover:bg-primary/10 text-on-surface-variant hover:text-primary transition-all flex items-center justify-center border border-outline"
+                        onClick={() => {
+                          const url = exam.slug 
+                            ? `${window.location.origin}/prova/${exam.slug}`
+                            : `${window.location.origin}/student/start`;
+                          navigator.clipboard.writeText(url);
+                          alert('Link copiado: ' + url);
+                        }}
+                        title="Copiar Link"
+                      >
+                        <LinkIcon className="w-3.5 h-3.5" />
                       </button>
                       <button 
                         className="w-8 h-8 rounded-lg bg-surface-container hover:bg-error/10 text-on-surface-variant hover:text-error transition-all flex items-center justify-center border border-outline"
