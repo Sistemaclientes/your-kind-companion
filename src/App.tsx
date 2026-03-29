@@ -1,4 +1,4 @@
-import React, { lazy, Suspense, useEffect } from 'react';
+import React, { lazy, Suspense } from 'react';
 import { 
   BrowserRouter as Router, 
   Routes, 
@@ -10,7 +10,7 @@ import { AdminLayout } from './components/AdminLayout';
 import { StudentLayout } from './components/StudentLayout';
 import { RouteTracker } from './components/RouteTracker';
 import { PrivateRoute } from './components/PrivateRoute';
-import { useAuthStore } from './lib/authStore';
+import { AuthProvider, useAuthStore } from './lib/authStore';
 
 // Lazy load pages for better performance
 const DashboardPage = lazy(() => import('./pages/DashboardPage').then(m => ({ default: m.DashboardPage })));
