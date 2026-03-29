@@ -58,7 +58,7 @@ export function StudentStartPage() {
   const selectedExam = exams.find(e => e.id.toString() === selectedExamId);
 
   return (
-    <div className="min-h-screen bg-surface flex items-center justify-center p-6 relative overflow-hidden font-sans text-on-surface antialiased">
+    <div className="min-h-screen bg-surface flex items-center justify-center p-3 sm:p-6 relative overflow-hidden font-sans text-on-surface antialiased">
       <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-[10%] -left-[10%] w-[40%] h-[40%] rounded-full bg-primary/10 blur-[120px]"></div>
         <div className="absolute top-[20%] -right-[5%] w-[30%] h-[50%] rounded-full bg-secondary/10 blur-[100px]"></div>
@@ -66,51 +66,51 @@ export function StudentStartPage() {
         <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'radial-gradient(#0F8B8D 0.5px, transparent 0.5px)', backgroundSize: '24px 24px' }}></div>
       </div>
 
-      <div className="w-full max-w-6xl px-6 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center relative z-10">
+      <div className="w-full max-w-6xl px-2 sm:px-6 grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center relative z-10">
         <motion.div 
           initial={{ opacity: 0, x: -30 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.6 }}
           className="space-y-10"
         >
-          <div className="inline-flex items-center gap-3 px-5 py-2.5 bg-primary/10 text-primary rounded-2xl text-[10px] font-bold uppercase tracking-widest border border-primary/20 shadow-sm">
+          <div className="inline-flex items-center gap-2 sm:gap-3 px-3 sm:px-5 py-2 sm:py-2.5 bg-primary/10 text-primary rounded-2xl text-[9px] sm:text-[10px] font-bold uppercase tracking-widest border border-primary/20 shadow-sm">
             <ShieldCheck className="w-4 h-4" />
             Ambiente Seguro de Avaliação
           </div>
           
           <div className="space-y-6">
-            <h1 className="text-3xl md:text-4xl font-black text-on-surface font-headline leading-[1.15] tracking-tight">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-on-surface font-headline leading-[1.15] tracking-tight">
               {selectedExam ? selectedExam.titulo : 'Carregando...'}
             </h1>
-            <p className="text-lg md:text-xl text-on-surface-variant leading-relaxed font-medium max-w-xl">
+            <p className="text-base sm:text-lg md:text-xl text-on-surface-variant leading-relaxed font-medium max-w-xl">
               {selectedExam ? selectedExam.descricao : 'Bem-vindo à sua avaliação profissional. Prepare-se para demonstrar seus conhecimentos técnicos.'}
             </p>
           </div>
 
-          <div className="grid grid-cols-2 gap-6 max-w-md">
-            <div className="card-saas !p-6 flex items-center gap-5 group">
-              <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center text-primary group-hover:scale-110 transition-transform shadow-sm border border-primary/10">
-                <FileText className="w-7 h-7" />
+          <div className="grid grid-cols-2 gap-3 sm:gap-6 max-w-md">
+            <div className="card-saas !p-4 sm:!p-6 flex items-center gap-3 sm:gap-5 group">
+              <div className="w-10 h-10 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-primary/10 flex items-center justify-center text-primary group-hover:scale-110 transition-transform shadow-sm border border-primary/10">
+                <FileText className="w-5 h-5 sm:w-7 sm:h-7" />
               </div>
               <div>
-                <p className="text-3xl font-black text-on-surface font-headline tracking-tighter">
+                <p className="text-2xl sm:text-3xl font-black text-on-surface font-headline tracking-tighter">
                   {selectedExam ? selectedExam.qCount : '0'}
                 </p>
-                <p className="text-[10px] text-on-surface-variant font-bold uppercase tracking-widest">Questões</p>
+                <p className="text-[9px] sm:text-[10px] text-on-surface-variant font-bold uppercase tracking-widest">Questões</p>
               </div>
             </div>
-            <div className="card-saas !p-6 flex items-center gap-5 group">
-              <div className="w-14 h-14 rounded-2xl bg-secondary/10 flex items-center justify-center text-secondary group-hover:scale-110 transition-transform shadow-sm border border-secondary/10">
-                <Clock className="w-7 h-7" />
+            <div className="card-saas !p-4 sm:!p-6 flex items-center gap-3 sm:gap-5 group">
+              <div className="w-10 h-10 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-secondary/10 flex items-center justify-center text-secondary group-hover:scale-110 transition-transform shadow-sm border border-secondary/10">
+                <Clock className="w-5 h-5 sm:w-7 sm:h-7" />
               </div>
               <div>
-                <p className="text-3xl font-black text-on-surface font-headline tracking-tighter">60</p>
-                <p className="text-[10px] text-on-surface-variant font-bold uppercase tracking-widest">Minutos</p>
+                <p className="text-2xl sm:text-3xl font-black text-on-surface font-headline tracking-tighter">60</p>
+                <p className="text-[9px] sm:text-[10px] text-on-surface-variant font-bold uppercase tracking-widest">Minutos</p>
               </div>
             </div>
           </div>
 
-          <div className="p-8 bg-surface-container-high rounded-[32px] text-on-surface shadow-2xl shadow-primary/5 border border-outline relative overflow-hidden group">
+          <div className="p-5 sm:p-8 bg-surface-container-high rounded-2xl sm:rounded-[32px] text-on-surface shadow-2xl shadow-primary/5 border border-outline relative overflow-hidden group">
             <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-3xl -translate-y-16 translate-x-16"></div>
             <h4 className="font-bold text-lg mb-6 flex items-center gap-3 font-headline">
               <AlertCircle className="w-6 h-6 text-primary" />
@@ -137,12 +137,12 @@ export function StudentStartPage() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="bg-surface-container p-10 md:p-12 rounded-[40px] shadow-2xl shadow-primary/5 border border-outline relative"
+          className="bg-surface-container p-6 sm:p-10 md:p-12 rounded-2xl sm:rounded-[40px] shadow-2xl shadow-primary/5 border border-outline relative"
         >
           <div className="absolute -top-6 -right-6 w-20 h-20 bg-primary/5 rounded-full blur-2xl"></div>
           
           <header className="mb-10">
-            <h3 className="text-3xl font-black text-on-surface font-headline tracking-tight mb-2">Identificação</h3>
+            <h3 className="text-2xl sm:text-3xl font-black text-on-surface font-headline tracking-tight mb-2">Identificação</h3>
             <p className="text-on-surface-variant font-medium">Preencha seus dados para iniciar a avaliação.</p>
           </header>
           
