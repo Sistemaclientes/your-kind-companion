@@ -12,7 +12,7 @@ export function StudentLayout() {
   React.useEffect(() => {
     const info = localStorage.getItem('student_info');
     if (!info) {
-      navigate('/student/start');
+      navigate('/aluno/login');
     }
   }, [navigate]);
 

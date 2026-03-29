@@ -60,6 +60,13 @@ export function StudentStartPage() {
       alert('Por favor, selecione uma prova.');
       return;
     }
+    // Register student for login
+    const registeredStudents = JSON.parse(localStorage.getItem('registered_students') || '[]');
+    const existing = registeredStudents.find((s: any) => s.email === formData.email);
+    if (!existing) {
+      registeredStudents.push({ nome: formData.nome, email: formData.email, telefone: formData.telefone, password: '' });
+      localStorage.setItem('registered_students', JSON.stringify(registeredStudents));
+    }
     localStorage.setItem('student_info', JSON.stringify({ ...formData, examId: selectedExamId }));
     navigate('/student/exam');
   };
