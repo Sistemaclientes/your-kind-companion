@@ -1,4 +1,4 @@
-import React, { lazy, Suspense } from 'react';
+import React, { lazy, Suspense, useEffect } from 'react';
 import { 
   BrowserRouter as Router, 
   Routes, 
@@ -9,6 +9,8 @@ import { LoginPage } from './pages/LoginPage';
 import { AdminLayout } from './components/AdminLayout';
 import { StudentLayout } from './components/StudentLayout';
 import { RouteTracker } from './components/RouteTracker';
+import { PrivateRoute } from './components/PrivateRoute';
+import { useAuthStore } from './lib/authStore';
 
 // Lazy load pages for better performance
 const DashboardPage = lazy(() => import('./pages/DashboardPage').then(m => ({ default: m.DashboardPage })));
@@ -27,6 +29,7 @@ const StudentResultsListPage = lazy(() => import('./pages/StudentResultsListPage
 const StudentLoginPage = lazy(() => import('./pages/StudentLoginPage').then(m => ({ default: m.StudentLoginPage })));
 const StudentProfilePage = lazy(() => import('./pages/StudentProfilePage').then(m => ({ default: m.StudentProfilePage })));
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage').then(m => ({ default: m.NotFoundPage })));
+
 function PageLoader() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-surface">
@@ -38,46 +41,83 @@ function PageLoader() {
   );
 }
 
-function ProtectedRoute({ children }: { children: React.ReactNode }) {
-  const token = localStorage.getItem('saas_token');
-  if (!token) return <Navigate to="/" replace />;
+function AuthInitializer({ children }: { children: React.ReactNode }) {
+  const checkSession = useAuthStore(s => s.checkSession);
+  const isLoading = useAuthStore(s => s.isLoading);
+
+  useEffect(() => {
+    checkSession();
+  }, [checkSession]);
+
+  if (isLoading) {
+    return <PageLoader />;
+  }
+
   return <>{children}</>;
 }
 
 export default function App() {
   return (
     <Router>
-      <RouteTracker />
-      <Suspense fallback={<PageLoader />}>
-        <Routes>
-          <Route path="/" element={<LoginPage />} />
-          <Route path="/admin" element={<ProtectedRoute><AdminLayout /></ProtectedRoute>}>
-            <Route index element={<Navigate to="/admin/dashboard" replace />} />
-            <Route path="dashboard" element={<DashboardPage />} />
-            <Route path="exams" element={<ExamsPage />} />
-            <Route path="students" element={<StudentsPage />} />
-            <Route path="students/:slug" element={<StudentDetailsPage />} />
-            <Route path="settings" element={<SettingsPage />} />
-          </Route>
-          <Route path="/admin/exams/new" element={<ProtectedRoute><CreateExamPage /></ProtectedRoute>} />
-          <Route path="/admin/exams/editar/:slug" element={<ProtectedRoute><CreateExamPage /></ProtectedRoute>} />
-          <Route path="/admin/exams/edit/:id" element={<ProtectedRoute><CreateExamPage /></ProtectedRoute>} />
-          <Route path="/prova/:slug" element={<StudentStartPage />} />
-          <Route path="/student/start" element={<StudentStartPage />} />
-          <Route path="/student/exam" element={<StudentExamPage />} />
-          <Route path="/student/result" element={<StudentResultPage />} />
-          <Route path="/aluno/login" element={<StudentLoginPage />} />
-          <Route path="/aluno" element={<StudentLayout />}>
-            <Route index element={<Navigate to="/aluno/dashboard" replace />} />
-            <Route path="dashboard" element={<StudentDashboardPage />} />
-            <Route path="provas" element={<StudentExamsListPage />} />
-            <Route path="resultados" element={<StudentResultsListPage />} />
-            <Route path="resultado/:id" element={<StudentResultDetailPage />} />
-            <Route path="perfil" element={<StudentProfilePage />} />
-          </Route>
-          <Route path="*" element={<NotFoundPage />} />
-        </Routes>
-      </Suspense>
+      <AuthInitializer>
+        <RouteTracker />
+        <Suspense fallback={<PageLoader />}>
+          <Routes>
+            {/* Public routes */}
+            <Route path="/" element={<LoginPage />} />
+            <Route path="/aluno/login" element={<StudentLoginPage />} />
+
+            {/* Admin routes - protected */}
+            <Route path="/admin" element={
+              <PrivateRoute role="admin">
+                <AdminLayout />
+              </PrivateRoute>
+            }>
+              <Route index element={<Navigate to="/admin/dashboard" replace />} />
+              <Route path="dashboard" element={<DashboardPage />} />
+              <Route path="exams" element={<ExamsPage />} />
+              <Route path="students" element={<StudentsPage />} />
+              <Route path="students/:slug" element={<StudentDetailsPage />} />
+              <Route path="settings" element={<SettingsPage />} />
+            </Route>
+            <Route path="/admin/exams/new" element={
+              <PrivateRoute role="admin"><CreateExamPage /></PrivateRoute>
+            } />
+            <Route path="/admin/exams/editar/:slug" element={
+              <PrivateRoute role="admin"><CreateExamPage /></PrivateRoute>
+            } />
+            <Route path="/admin/exams/edit/:id" element={
+              <PrivateRoute role="admin"><CreateExamPage /></PrivateRoute>
+            } />
+
+            {/* Student exam flow - requires student auth */}
+            <Route path="/prova/:slug" element={<StudentStartPage />} />
+            <Route path="/student/start" element={<StudentStartPage />} />
+            <Route path="/student/exam" element={
+              <PrivateRoute role="aluno"><StudentExamPage /></PrivateRoute>
+            } />
+            <Route path="/student/result" element={
+              <PrivateRoute role="aluno"><StudentResultPage /></PrivateRoute>
+            } />
+
+            {/* Student dashboard - protected */}
+            <Route path="/aluno" element={
+              <PrivateRoute role="aluno">
+                <StudentLayout />
+              </PrivateRoute>
+            }>
+              <Route index element={<Navigate to="/aluno/dashboard" replace />} />
+              <Route path="dashboard" element={<StudentDashboardPage />} />
+              <Route path="provas" element={<StudentExamsListPage />} />
+              <Route path="resultados" element={<StudentResultsListPage />} />
+              <Route path="resultado/:id" element={<StudentResultDetailPage />} />
+              <Route path="perfil" element={<StudentProfilePage />} />
+            </Route>
+
+            <Route path="*" element={<NotFoundPage />} />
+          </Routes>
+        </Suspense>
+      </AuthInitializer>
     </Router>
   );
 }

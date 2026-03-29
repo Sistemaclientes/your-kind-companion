@@ -12,6 +12,7 @@ import {
 import { cn } from '../lib/utils';
 import { useTheme } from '../lib/ThemeContext';
 import { api } from '../lib/api';
+import { useAuthStore } from '../lib/authStore';
 import logoUplife from '../assets/logo-uplife.png';
 
 interface SidebarProps {
@@ -41,8 +42,10 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
     return () => window.removeEventListener('logo-updated', loadLogo);
   }, []);
 
+  const { logout } = useAuthStore();
+
   const handleLogout = () => {
-    api.logout();
+    logout();
     navigate('/', { replace: true });
   };
 

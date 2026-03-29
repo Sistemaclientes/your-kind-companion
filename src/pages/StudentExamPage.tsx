@@ -32,10 +32,7 @@ export function StudentExamPage() {
 
   useEffect(() => {
     const info = localStorage.getItem('student_info');
-    if (!info) {
-      navigate('/student/start');
-      return;
-    }
+    if (!info) return;
     const parsedInfo = JSON.parse(info);
     setStudentInfo(parsedInfo);
 

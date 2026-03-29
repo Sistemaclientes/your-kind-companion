@@ -70,11 +70,11 @@ export function StudentResultPage() {
         {/* Header Actions */}
         <div className="w-full flex justify-start mb-6 sm:mb-8">
           <button 
-            onClick={() => navigate('/')}
+            onClick={() => navigate('/aluno/dashboard')}
             className="flex items-center gap-2 text-on-surface-variant hover:text-primary transition-colors font-bold text-xs uppercase tracking-widest"
           >
             <ChevronLeft className="w-4 h-4" />
-            Sair do Portal
+            Ir para Dashboard
           </button>
         </div>
 
@@ -205,9 +205,9 @@ export function StudentResultPage() {
         >
           <button 
             className="text-on-surface-variant font-black text-[10px] uppercase tracking-[0.2em] hover:text-primary transition-colors"
-            onClick={() => navigate('/admin/exams')}
+            onClick={() => navigate('/aluno/dashboard')}
           >
-            Voltar ao painel de provas
+            Voltar à Dashboard
           </button>
         </motion.div>
       </div>

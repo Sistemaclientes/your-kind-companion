@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { useTheme } from '../lib/ThemeContext';
+import { useAuthStore } from '../lib/authStore';
 import logoUplife from '../assets/logo-uplife.png';
 
 interface StudentSidebarProps {
@@ -63,9 +64,10 @@ export function StudentSidebar({ isOpen, onClose }: StudentSidebarProps) {
     return () => window.removeEventListener('logo-updated', loadLogo);
   }, []);
 
+  const { logout } = useAuthStore();
+
   const handleLogout = () => {
-    localStorage.removeItem('student_info');
-    localStorage.removeItem('student_remembered');
+    logout();
     navigate('/aluno/login');
   };
 
