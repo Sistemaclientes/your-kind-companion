@@ -19,6 +19,8 @@ const CreateExamPage = lazy(() => import('./pages/CreateExamPage').then(m => ({ 
 const StudentStartPage = lazy(() => import('./pages/StudentStartPage').then(m => ({ default: m.StudentStartPage })));
 const StudentExamPage = lazy(() => import('./pages/StudentExamPage').then(m => ({ default: m.StudentExamPage })));
 const StudentResultPage = lazy(() => import('./pages/StudentResultPage').then(m => ({ default: m.StudentResultPage })));
+const StudentDashboardPage = lazy(() => import('./pages/StudentDashboardPage').then(m => ({ default: m.StudentDashboardPage })));
+const StudentResultDetailPage = lazy(() => import('./pages/StudentResultDetailPage').then(m => ({ default: m.StudentResultDetailPage })));
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage').then(m => ({ default: m.NotFoundPage })));
 function PageLoader() {
   return (
@@ -59,6 +61,8 @@ export default function App() {
           <Route path="/student/start" element={<StudentStartPage />} />
           <Route path="/student/exam" element={<StudentExamPage />} />
           <Route path="/student/result" element={<StudentResultPage />} />
+          <Route path="/aluno/dashboard" element={<StudentDashboardPage />} />
+          <Route path="/aluno/resultado/:id" element={<StudentResultDetailPage />} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </Suspense>
