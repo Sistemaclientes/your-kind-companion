@@ -51,7 +51,7 @@ export function StudentLoginPage() {
     const info = localStorage.getItem('student_info');
     const remembered = localStorage.getItem('student_remembered');
     if (info && remembered) {
-      navigate('/aluno/dashboard', { replace: true });
+      navigate(redirectUrl, { replace: true });
     }
   }, [navigate]);
 
@@ -84,7 +84,7 @@ export function StudentLoginPage() {
       localStorage.removeItem('student_remembered');
     }
 
-    navigate('/aluno/dashboard', { replace: true });
+    navigate(redirectUrl, { replace: true });
   };
 
   const handleRegister = (e: React.FormEvent) => {
