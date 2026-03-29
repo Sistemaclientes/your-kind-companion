@@ -41,13 +41,8 @@ function PageLoader() {
   );
 }
 
-function AuthInitializer({ children }: { children: React.ReactNode }) {
-  const checkSession = useAuthStore(s => s.checkSession);
-  const isLoading = useAuthStore(s => s.isLoading);
-
-  useEffect(() => {
-    checkSession();
-  }, [checkSession]);
+function AuthGate({ children }: { children: React.ReactNode }) {
+  const { isLoading } = useAuthStore();
 
   if (isLoading) {
     return <PageLoader />;
@@ -59,7 +54,8 @@ function AuthInitializer({ children }: { children: React.ReactNode }) {
 export default function App() {
   return (
     <Router>
-      <AuthInitializer>
+      <AuthProvider>
+        <AuthGate>
         <RouteTracker />
         <Suspense fallback={<PageLoader />}>
           <Routes>
@@ -117,7 +113,8 @@ export default function App() {
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </Suspense>
-      </AuthInitializer>
+        </AuthGate>
+      </AuthProvider>
     </Router>
   );
 }
