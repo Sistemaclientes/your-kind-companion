@@ -24,9 +24,21 @@ export function StudentStartPage() {
   const [error, setError] = React.useState<string | null>(null);
   const [loading, setLoading] = React.useState(true);
 
-  // Require login to access exam
+  // Require login to access exam (allow admins to preview)
   React.useEffect(() => {
+    const adminToken = localStorage.getItem('saas_token');
+    const adminUser = localStorage.getItem('saas_user');
     const info = localStorage.getItem('student_info');
+
+    // If admin is logged in, allow preview with admin info
+    if (adminToken && adminUser) {
+      try {
+        const parsed = JSON.parse(adminUser);
+        setFormData({ nome: parsed.nome || 'Admin', email: parsed.email || '', telefone: '' });
+      } catch {}
+      return;
+    }
+
     if (!info) {
       const returnUrl = slug ? `/prova/${slug}` : '/student/start';
       navigate(`/aluno/login?redirect=${encodeURIComponent(returnUrl)}`, { replace: true });
