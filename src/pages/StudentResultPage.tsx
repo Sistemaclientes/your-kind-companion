@@ -12,7 +12,8 @@ import {
   Zap,
   ChevronLeft,
   FileCheck,
-  Award
+  Award,
+  BarChart3
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { cn } from '../lib/utils';
@@ -180,11 +181,18 @@ export function StudentResultPage() {
             </div>
           </div>
           <button 
-            onClick={() => navigate('/student/start')}
+            onClick={() => navigate('/aluno/dashboard')}
             className="btn-primary py-3.5 sm:py-4 px-8 sm:px-10 w-full md:w-auto text-sm uppercase tracking-widest group"
           >
+            <BarChart3 className="w-5 h-5" />
+            Minha Dashboard
+          </button>
+          <button 
+            onClick={() => navigate('/student/start')}
+            className="btn-secondary py-3.5 sm:py-4 px-8 sm:px-10 w-full md:w-auto text-sm uppercase tracking-widest group"
+          >
             <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-            Realizar nova avaliação
+            Nova avaliação
           </button>
         </motion.div>
 
