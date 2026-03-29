@@ -29,10 +29,7 @@ export function StudentResultDetailPage() {
     const loadData = async () => {
       try {
         const info = localStorage.getItem('student_info');
-        if (!info) {
-          navigate('/student/start');
-          return;
-        }
+        if (!info) return;
         const parsed = JSON.parse(info);
         const allResults = JSON.parse(localStorage.getItem('local_resultados') || '[]');
         const myResults = allResults.filter((r: any) => r.email_aluno === parsed.email);
