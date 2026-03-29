@@ -44,7 +44,7 @@ export function StudentExamsListPage() {
   return (
     <>
       <TopBar title="Provas Disponíveis" subtitle="Escolha uma prova para realizar" />
-      <div className="pt-[60px] p-4 sm:p-8">
+      <div className="pt-24 px-4 sm:px-8 pb-12 max-w-[1600px] mx-auto">
         <div className="max-w-4xl mx-auto space-y-4 mt-4">
           {loading ? (
             Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-24" />)
