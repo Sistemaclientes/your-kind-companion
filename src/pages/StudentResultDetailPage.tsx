@@ -180,9 +180,9 @@ export function StudentResultDetailPage() {
 
               <div className="space-y-4">
                 {exam.perguntas?.map((question: any, qIdx: number) => {
-                  // Try to find what the student answered
-                  // We don't have per-question answers stored in local results, so we show the questions with correct answers highlighted
                   const correctAltId = exam.correctAlts?.[question.id];
+                  const studentAnswerId = result.respostas?.[question.id];
+                  const studentGotRight = studentAnswerId === correctAltId;
 
                   return (
                     <motion.div
@@ -193,15 +193,30 @@ export function StudentResultDetailPage() {
                       className="card-saas !p-5 sm:!p-6"
                     >
                       <div className="flex items-start gap-3 mb-4">
-                        <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary font-headline font-black text-sm shrink-0">
+                        <div className={cn(
+                          "w-8 h-8 rounded-lg flex items-center justify-center font-headline font-black text-sm shrink-0",
+                          studentGotRight ? "bg-primary/10 text-primary" : "bg-error/10 text-error"
+                        )}>
                           {qIdx + 1}
                         </div>
-                        <p className="text-sm sm:text-base font-bold text-on-surface leading-relaxed">{question.enunciado}</p>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm sm:text-base font-bold text-on-surface leading-relaxed">{question.enunciado}</p>
+                          <span className={cn(
+                            "inline-flex items-center gap-1 mt-1 text-[9px] font-black uppercase tracking-widest",
+                            studentGotRight ? "text-primary" : "text-error"
+                          )}>
+                            {studentGotRight ? <CheckCircle2 className="w-3 h-3" /> : <XCircle className="w-3 h-3" />}
+                            {studentGotRight ? 'Acertou' : 'Errou'}
+                          </span>
+                        </div>
                       </div>
 
                       <div className="space-y-2 ml-11">
                         {question.alternativas?.map((alt: any) => {
                           const isCorrect = alt.id === correctAltId || alt.is_correta;
+                          const isStudentAnswer = alt.id === studentAnswerId;
+                          const isWrongAnswer = isStudentAnswer && !isCorrect;
+
                           return (
                             <div
                               key={alt.id}
@@ -209,17 +224,24 @@ export function StudentResultDetailPage() {
                                 "flex items-center gap-3 px-4 py-3 rounded-xl border text-sm font-medium transition-all",
                                 isCorrect
                                   ? "bg-primary/5 border-primary/20 text-primary"
-                                  : "bg-surface-container-low border-outline text-on-surface-variant"
+                                  : isWrongAnswer
+                                    ? "bg-error/5 border-error/20 text-error"
+                                    : "bg-surface-container-low border-outline text-on-surface-variant"
                               )}
                             >
                               {isCorrect ? (
                                 <CheckCircle2 className="w-4 h-4 text-primary shrink-0" />
+                              ) : isWrongAnswer ? (
+                                <XCircle className="w-4 h-4 text-error shrink-0" />
                               ) : (
                                 <div className="w-4 h-4 rounded-full border-2 border-outline shrink-0" />
                               )}
                               <span>{alt.texto}</span>
                               {isCorrect && (
                                 <span className="ml-auto text-[9px] font-black text-primary uppercase tracking-widest">Correta</span>
+                              )}
+                              {isWrongAnswer && (
+                                <span className="ml-auto text-[9px] font-black text-error uppercase tracking-widest">Sua resposta</span>
                               )}
                             </div>
                           );

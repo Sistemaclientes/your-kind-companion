@@ -143,9 +143,9 @@ export function LoginPage() {
               if (!hasTestResults) {
                 const now = new Date();
                 const sampleResults = [
-                  { prova_id: 1, prova_titulo: 'PROVA – MS PROJECT (PRÁTICA)', nome_aluno: 'Aluno Teste', email_aluno: 'aluno@teste.com', pontuacao: 80, acertos: 4, total: 5, data: new Date(now.getTime() - 86400000 * 3).toISOString() },
-                  { prova_id: 2, prova_titulo: 'PROVA – Gestão da Produção Industrial', nome_aluno: 'Aluno Teste', email_aluno: 'aluno@teste.com', pontuacao: 60, acertos: 3, total: 5, data: new Date(now.getTime() - 86400000 * 1).toISOString() },
-                  { prova_id: 4, prova_titulo: 'PROVA – Power BI', nome_aluno: 'Aluno Teste', email_aluno: 'aluno@teste.com', pontuacao: 100, acertos: 5, total: 5, data: now.toISOString() },
+                  { prova_id: 1, prova_titulo: 'PROVA – MS PROJECT (PRÁTICA)', nome_aluno: 'Aluno Teste', email_aluno: 'aluno@teste.com', pontuacao: 80, acertos: 4, total: 5, data: new Date(now.getTime() - 86400000 * 3).toISOString(), respostas: { 1: 2, 2: 5, 3: 8, 4: 10, 5: 14 } },
+                  { prova_id: 2, prova_titulo: 'PROVA – Gestão da Produção Industrial', nome_aluno: 'Aluno Teste', email_aluno: 'aluno@teste.com', pontuacao: 60, acertos: 3, total: 5, data: new Date(now.getTime() - 86400000 * 1).toISOString(), respostas: { 16: 46, 17: 49, 18: 53, 19: 56, 20: 58 } },
+                  { prova_id: 4, prova_titulo: 'PROVA – Power BI', nome_aluno: 'Aluno Teste', email_aluno: 'aluno@teste.com', pontuacao: 100, acertos: 5, total: 5, data: now.toISOString(), respostas: { 26: 76, 27: 79, 28: 82, 29: 85, 30: 88 } },
                 ];
                 localStorage.setItem('local_resultados', JSON.stringify([...existing, ...sampleResults]));
               }
