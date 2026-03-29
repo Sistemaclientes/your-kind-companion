@@ -1,4 +1,5 @@
 import React from 'react';
+import { toast } from 'sonner';
 import { 
   User, 
   Mail, 
@@ -79,7 +80,7 @@ export function StudentStartPage() {
   const handleStart = (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedExamId) {
-      alert('Por favor, selecione uma prova.');
+      toast.error('Por favor, selecione uma prova.');
       return;
     }
     // Register student for login

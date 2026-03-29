@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { toast } from 'sonner';
 import { 
   ArrowLeft, 
   Plus, 
@@ -87,7 +88,7 @@ export function CreateExamPage() {
 
   const handlePublish = async () => {
     if (!title.trim()) {
-      alert('Por favor, insira um título para a prova.');
+      toast.error('Por favor, insira um título para a prova.');
       setActiveTab('settings');
       return;
     }
@@ -116,7 +117,7 @@ export function CreateExamPage() {
 
       navigate('/admin/exams');
     } catch (err: any) {
-      alert(err.message || 'Erro ao publicar prova');
+      toast.error(err.message || 'Erro ao publicar prova');
     } finally {
       setIsPublishing(false);
     }
