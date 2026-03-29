@@ -223,7 +223,7 @@ function getLocalExams(): any[] {
     ];
     // Add slugs to seed exams
     for (const exam of seed) {
-      exam.slug = generateSlug(exam.titulo);
+      (exam as any).slug = generateSlug(exam.titulo);
     }
     localStorage.setItem(LOCAL_EXAMS_KEY, JSON.stringify(seed));
     return seed;
