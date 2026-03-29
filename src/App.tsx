@@ -25,6 +25,7 @@ const StudentResultDetailPage = lazy(() => import('./pages/StudentResultDetailPa
 const StudentExamsListPage = lazy(() => import('./pages/StudentExamsListPage').then(m => ({ default: m.StudentExamsListPage })));
 const StudentResultsListPage = lazy(() => import('./pages/StudentResultsListPage').then(m => ({ default: m.StudentResultsListPage })));
 const StudentLoginPage = lazy(() => import('./pages/StudentLoginPage').then(m => ({ default: m.StudentLoginPage })));
+const StudentProfilePage = lazy(() => import('./pages/StudentProfilePage').then(m => ({ default: m.StudentProfilePage })));
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage').then(m => ({ default: m.NotFoundPage })));
 function PageLoader() {
   return (
@@ -72,6 +73,7 @@ export default function App() {
             <Route path="provas" element={<StudentExamsListPage />} />
             <Route path="resultados" element={<StudentResultsListPage />} />
             <Route path="resultado/:id" element={<StudentResultDetailPage />} />
+            <Route path="perfil" element={<StudentProfilePage />} />
           </Route>
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
