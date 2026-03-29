@@ -26,6 +26,18 @@ export function StudentStartPage() {
   const [error, setError] = React.useState<string | null>(null);
   const [loading, setLoading] = React.useState(true);
 
+  // Require login to access exam
+  React.useEffect(() => {
+    const info = localStorage.getItem('student_info');
+    if (!info) {
+      const returnUrl = slug ? `/prova/${slug}` : '/student/start';
+      navigate(`/aluno/login?redirect=${encodeURIComponent(returnUrl)}`, { replace: true });
+      return;
+    }
+    const parsed = JSON.parse(info);
+    setFormData({ nome: parsed.nome || '', email: parsed.email || '', telefone: parsed.telefone || '' });
+  }, [slug, navigate]);
+
   React.useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
