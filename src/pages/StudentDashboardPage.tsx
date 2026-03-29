@@ -63,7 +63,8 @@ export function StudentDashboardPage() {
   const overallAccuracy = totalQuestions > 0 ? Math.round((totalCorrect / totalQuestions) * 100) : 0;
   const lastExam = results.length > 0 ? results[results.length - 1] : null;
 
-  const completedExamIds = new Set(results.map(r => r.prova_id));
+  // IDs of exams where student scored >= 70 (approved) — hide from available list
+  const approvedExamIds = new Set(results.filter(r => r.pontuacao >= 70).map(r => r.prova_id));
 
   const handleLogout = () => {
     localStorage.removeItem('student_info');
@@ -192,37 +193,40 @@ export function StudentDashboardPage() {
                   <p className="text-sm text-on-surface-variant font-medium">Nenhuma prova disponível no momento.</p>
                 </div>
               ) : (
-                exams.map((exam: any) => (
-                  <motion.div
-                    key={exam.id}
-                    whileHover={{ scale: 1.01 }}
-                    className="card-saas !p-4 sm:!p-5 flex items-center gap-4 cursor-pointer"
-                    onClick={() => {
-                      if (!exam.slug) {
-                        console.error('Slug indisponível para esta prova');
-                        return;
-                      }
-                      navigate(`/prova/${exam.slug}`);
-                    }}
-                  >
-                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary shrink-0">
-                      <BookOpen className="w-5 h-5 sm:w-6 sm:h-6" />
+                exams.filter((exam: any) => !approvedExamIds.has(exam.id)).length === 0 ? (
+                  <div className="card-saas !p-6 text-center">
+                    <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-3">
+                      <Award className="w-6 h-6 text-primary" />
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm sm:text-base font-bold text-on-surface truncate">{exam.titulo}</p>
-                      <p className="text-xs text-on-surface-variant font-medium truncate">{exam.descricao || 'Sem descrição'}</p>
-                      <div className="flex items-center gap-3 mt-1">
-                        <span className="text-[9px] font-bold text-on-surface-variant uppercase tracking-widest">{exam.qCount || exam.perguntas?.length || 0} questões</span>
-                        {completedExamIds.has(exam.id) && (
-                          <span className="text-[9px] font-bold text-primary uppercase tracking-widest flex items-center gap-1">
-                            <Award className="w-3 h-3" /> Concluída
-                          </span>
-                        )}
+                    <p className="text-sm font-bold text-on-surface mb-1">Parabéns!</p>
+                    <p className="text-xs text-on-surface-variant font-medium">Você foi aprovado em todas as provas disponíveis.</p>
+                  </div>
+                ) : (
+                  exams.filter((exam: any) => !approvedExamIds.has(exam.id)).map((exam: any) => (
+                    <motion.div
+                      key={exam.id}
+                      whileHover={{ scale: 1.01 }}
+                      className="card-saas !p-4 sm:!p-5 flex items-center gap-4 cursor-pointer"
+                      onClick={() => {
+                        if (!exam.slug) {
+                          console.error('Slug indisponível para esta prova');
+                          return;
+                        }
+                        navigate(`/prova/${exam.slug}`);
+                      }}
+                    >
+                      <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary shrink-0">
+                        <BookOpen className="w-5 h-5 sm:w-6 sm:h-6" />
                       </div>
-                    </div>
-                    <ChevronRight className="w-5 h-5 text-on-surface-variant shrink-0" />
-                  </motion.div>
-                ))
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm sm:text-base font-bold text-on-surface truncate">{exam.titulo}</p>
+                        <p className="text-xs text-on-surface-variant font-medium truncate">{exam.descricao || 'Sem descrição'}</p>
+                        <span className="text-[9px] font-bold text-on-surface-variant uppercase tracking-widest">{exam.qCount || exam.perguntas?.length || 0} questões</span>
+                      </div>
+                      <ChevronRight className="w-5 h-5 text-on-surface-variant shrink-0" />
+                    </motion.div>
+                  ))
+                )
               )}
             </div>
           </motion.div>
