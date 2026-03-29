@@ -97,7 +97,7 @@ export function StudentDashboardPage() {
         >
           <div>
             <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black text-on-surface font-headline tracking-tight">
-              Olá, <span className="text-primary">{studentInfo?.nome?.split(' ')[0] || 'Estudante'}</span>
+              Olá, <span className="text-primary">{studentInfo?.nome || 'Estudante'}</span>
             </h1>
             <p className="text-sm text-on-surface-variant font-medium mt-1">{studentInfo?.email}</p>
           </div>
