@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { Camera, User, Mail, Phone, Lock, Save, CheckCircle2, Eye, EyeOff } from 'lucide-react';
+import { toast } from 'sonner';
 import { TopBar } from '../components/TopBar';
 import { phoneMask } from '../lib/masks';
 
@@ -96,6 +97,7 @@ export function StudentProfilePage() {
     }
 
     setSaved(true);
+    toast.success('Perfil atualizado com sucesso!');
     setNewPassword('');
     setConfirmPassword('');
     setTimeout(() => setSaved(false), 3000);
