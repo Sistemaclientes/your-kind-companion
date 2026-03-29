@@ -304,8 +304,15 @@ function handleFallback(method: string, endpoint: string, data?: any): any {
       return { id: pId, enunciado: q.enunciado, alternativas: alts };
     });
 
+    const slug = generateSlug(data.titulo);
+    const usedSlugs = new Set(exams.map((e: any) => e.slug).filter(Boolean));
+    let finalSlug = slug;
+    let counter = 1;
+    while (usedSlugs.has(finalSlug)) { finalSlug = `${slug}-${counter}`; counter++; }
+
     const newExam = {
       id: newId, titulo: data.titulo, descricao: data.descricao || '',
+      slug: finalSlug,
       created_by: 1, created_at: new Date().toISOString(), creator_name: 'Admin Master',
       qCount: perguntas.length, studentCount: 0, perguntas, correctAlts
     };
