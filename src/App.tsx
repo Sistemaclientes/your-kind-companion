@@ -7,6 +7,7 @@ import {
 } from 'react-router-dom';
 import { LoginPage } from './pages/LoginPage';
 import { AdminLayout } from './components/AdminLayout';
+import { RouteTracker } from './components/RouteTracker';
 
 // Lazy load pages for better performance
 const DashboardPage = lazy(() => import('./pages/DashboardPage').then(m => ({ default: m.DashboardPage })));
@@ -18,7 +19,7 @@ const CreateExamPage = lazy(() => import('./pages/CreateExamPage').then(m => ({ 
 const StudentStartPage = lazy(() => import('./pages/StudentStartPage').then(m => ({ default: m.StudentStartPage })));
 const StudentExamPage = lazy(() => import('./pages/StudentExamPage').then(m => ({ default: m.StudentExamPage })));
 const StudentResultPage = lazy(() => import('./pages/StudentResultPage').then(m => ({ default: m.StudentResultPage })));
-
+const NotFoundPage = lazy(() => import('./pages/NotFoundPage').then(m => ({ default: m.NotFoundPage })));
 function PageLoader() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-surface">
@@ -39,6 +40,7 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 export default function App() {
   return (
     <Router>
+      <RouteTracker />
       <Suspense fallback={<PageLoader />}>
         <Routes>
           <Route path="/" element={<LoginPage />} />
@@ -56,7 +58,7 @@ export default function App() {
           <Route path="/student/start" element={<StudentStartPage />} />
           <Route path="/student/exam" element={<StudentExamPage />} />
           <Route path="/student/result" element={<StudentResultPage />} />
-          <Route path="*" element={<Navigate to="/" replace />} />
+          <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </Suspense>
     </Router>
