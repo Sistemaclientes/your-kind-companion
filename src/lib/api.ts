@@ -12,7 +12,7 @@ const FALLBACK_ADMIN = {
 const LOCAL_EXAMS_KEY = 'local_provas';
 const LOCAL_RESULTS_KEY = 'local_resultados';
 const SEED_VERSION_KEY = 'local_provas_seed_version';
-const CURRENT_SEED_VERSION = '2'; // Increment when adding new seed exams
+const CURRENT_SEED_VERSION = '3'; // Increment when adding new seed exams
 
 function generateSlug(title: string): string {
   return title
