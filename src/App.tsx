@@ -7,6 +7,7 @@ import {
 } from 'react-router-dom';
 import { LoginPage } from './pages/LoginPage';
 import { AdminLayout } from './components/AdminLayout';
+import { StudentLayout } from './components/StudentLayout';
 import { RouteTracker } from './components/RouteTracker';
 
 // Lazy load pages for better performance
