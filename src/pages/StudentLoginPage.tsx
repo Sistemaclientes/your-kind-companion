@@ -4,12 +4,14 @@ import { motion, AnimatePresence } from 'motion/react';
 import { Mail, Lock, LogIn, Eye, EyeOff, ShieldCheck, KeyRound, User, Phone, UserPlus } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { phoneMask } from '../lib/masks';
+import { useAuthStore } from '../lib/authStore';
 
 type Tab = 'login' | 'register';
 
 export function StudentLoginPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const { user, loginStudent } = useAuthStore();
   const redirectUrl = searchParams.get('redirect') || '/aluno/dashboard';
   const [tab, setTab] = React.useState<Tab>('login');
 
@@ -46,14 +48,16 @@ export function StudentLoginPage() {
     }
   }, []);
 
-  // Auto-login if student_info exists and was remembered
+  // Auto-login if already authenticated
   React.useEffect(() => {
-    const info = localStorage.getItem('student_info');
-    const remembered = localStorage.getItem('student_remembered');
-    if (info && remembered) {
-      navigate(redirectUrl, { replace: true });
+    if (user) {
+      if (user.role === 'admin') {
+        navigate('/admin/dashboard', { replace: true });
+      } else {
+        navigate(redirectUrl, { replace: true });
+      }
     }
-  }, [navigate]);
+  }, [user, navigate, redirectUrl]);
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -72,11 +76,11 @@ export function StudentLoginPage() {
       return;
     }
 
-    localStorage.setItem('student_info', JSON.stringify({
+    loginStudent({
       nome: student.nome,
       email: student.email,
       telefone: student.telefone || ''
-    }));
+    });
 
     if (rememberMe) {
       localStorage.setItem('student_remembered', JSON.stringify({ email, password }));

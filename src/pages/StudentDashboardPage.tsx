@@ -24,10 +24,7 @@ export function StudentDashboardPage() {
 
   React.useEffect(() => {
     const info = localStorage.getItem('student_info');
-    if (!info) {
-      navigate('/aluno/login');
-      return;
-    }
+    if (!info) return;
     const parsed = JSON.parse(info);
     setStudentInfo(parsed);
 

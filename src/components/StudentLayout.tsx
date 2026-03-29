@@ -1,5 +1,5 @@
 import React from 'react';
-import { Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 import { StudentSidebar } from './StudentSidebar';
 import { Menu, X } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
@@ -7,14 +7,6 @@ import { AnimatePresence, motion } from 'motion/react';
 export function StudentLayout() {
   const [sidebarOpen, setSidebarOpen] = React.useState(false);
   const location = useLocation();
-  const navigate = useNavigate();
-
-  React.useEffect(() => {
-    const info = localStorage.getItem('student_info');
-    if (!info) {
-      navigate('/aluno/login');
-    }
-  }, [navigate]);
 
   return (
     <div className="min-h-screen bg-surface">
