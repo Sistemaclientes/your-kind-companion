@@ -2,7 +2,6 @@ import React from 'react';
 import { 
   User, 
   Mail, 
-  Phone, 
   Play, 
   ShieldCheck, 
   Clock, 
@@ -15,7 +14,6 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { cn } from '../lib/utils';
 import { motion } from 'motion/react';
 import { api } from '../lib/api';
-import { phoneMask } from '../lib/masks';
 
 export function StudentStartPage() {
   const navigate = useNavigate();
@@ -25,6 +23,18 @@ export function StudentStartPage() {
   const [formData, setFormData] = React.useState({ nome: '', email: '', telefone: '' });
   const [error, setError] = React.useState<string | null>(null);
   const [loading, setLoading] = React.useState(true);
+
+  // Require login to access exam
+  React.useEffect(() => {
+    const info = localStorage.getItem('student_info');
+    if (!info) {
+      const returnUrl = slug ? `/prova/${slug}` : '/student/start';
+      navigate(`/aluno/login?redirect=${encodeURIComponent(returnUrl)}`, { replace: true });
+      return;
+    }
+    const parsed = JSON.parse(info);
+    setFormData({ nome: parsed.nome || '', email: parsed.email || '', telefone: parsed.telefone || '' });
+  }, [slug, navigate]);
 
   React.useEffect(() => {
     const fetchData = async () => {
@@ -187,8 +197,8 @@ export function StudentStartPage() {
           <div className="absolute -top-6 -right-6 w-20 h-20 bg-primary/5 rounded-full blur-2xl" />
           
           <header className="mb-6 sm:mb-8">
-            <h3 className="text-xl sm:text-2xl font-black text-on-surface font-headline tracking-tight mb-1">Identificação</h3>
-            <p className="text-sm text-on-surface-variant font-medium">Preencha seus dados para iniciar a avaliação.</p>
+            <h3 className="text-xl sm:text-2xl font-black text-on-surface font-headline tracking-tight mb-1">Olá, {formData.nome}!</h3>
+            <p className="text-sm text-on-surface-variant font-medium">Você está pronto para iniciar a avaliação.</p>
           </header>
           
           <form className="space-y-5 sm:space-y-6" onSubmit={handleStart}>
@@ -215,51 +225,15 @@ export function StudentStartPage() {
               </div>
             </div>
 
-            {/* Name */}
-            <div className="space-y-2">
-              <label className="block text-[10px] font-bold text-on-surface-variant uppercase tracking-[0.15em] ml-1">Nome Completo</label>
-              <div className="relative group">
-                <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-on-surface-variant/40 group-focus-within:text-primary transition-colors" />
-                <input 
-                  className="w-full pl-11 sm:pl-12 pr-4 py-3 sm:py-3.5 bg-surface-container-low border border-outline rounded-xl text-on-surface text-sm sm:text-base font-semibold placeholder:text-on-surface-variant/30 focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all outline-none" 
-                  placeholder="Seu nome completo" 
-                  type="text"
-                  value={formData.nome}
-                  onChange={(e) => setFormData({ ...formData, nome: e.target.value })}
-                  required
-                />
+            {/* Logged-in user info */}
+            <div className="p-4 bg-surface-container-low rounded-xl border border-outline space-y-2">
+              <div className="flex items-center gap-3 text-sm text-on-surface font-semibold">
+                <User className="w-4 h-4 text-primary" />
+                {formData.nome}
               </div>
-            </div>
-
-            {/* Email */}
-            <div className="space-y-2">
-              <label className="block text-[10px] font-bold text-on-surface-variant uppercase tracking-[0.15em] ml-1">E-mail Acadêmico</label>
-              <div className="relative group">
-                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-on-surface-variant/40 group-focus-within:text-primary transition-colors" />
-                <input 
-                  className="w-full pl-11 sm:pl-12 pr-4 py-3 sm:py-3.5 bg-surface-container-low border border-outline rounded-xl text-on-surface text-sm sm:text-base font-semibold placeholder:text-on-surface-variant/30 focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all outline-none" 
-                  placeholder="exemplo@email.com" 
-                  type="email"
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  required
-                />
-              </div>
-            </div>
-
-            {/* Phone */}
-            <div className="space-y-2">
-              <label className="block text-[10px] font-bold text-on-surface-variant uppercase tracking-[0.15em] ml-1">Telefone / WhatsApp</label>
-              <div className="relative group">
-                <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-on-surface-variant/40 group-focus-within:text-primary transition-colors" />
-                <input 
-                  className="w-full pl-11 sm:pl-12 pr-4 py-3 sm:py-3.5 bg-surface-container-low border border-outline rounded-xl text-on-surface text-sm sm:text-base font-semibold placeholder:text-on-surface-variant/30 focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all outline-none" 
-                  placeholder="(00) 00000-0000" 
-                  type="tel"
-                  value={formData.telefone}
-                  onChange={(e) => setFormData({ ...formData, telefone: phoneMask(e.target.value) })}
-                  required
-                />
+              <div className="flex items-center gap-3 text-sm text-on-surface-variant font-medium">
+                <Mail className="w-4 h-4 text-on-surface-variant/50" />
+                {formData.email}
               </div>
             </div>
 

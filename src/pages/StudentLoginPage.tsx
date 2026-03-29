@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import { Mail, Lock, LogIn, Eye, EyeOff, ShieldCheck, KeyRound, User, Phone, UserPlus } from 'lucide-react';
 import { cn } from '../lib/utils';
@@ -9,6 +9,8 @@ type Tab = 'login' | 'register';
 
 export function StudentLoginPage() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const redirectUrl = searchParams.get('redirect') || '/aluno/dashboard';
   const [tab, setTab] = React.useState<Tab>('login');
 
   // Login state
@@ -49,7 +51,7 @@ export function StudentLoginPage() {
     const info = localStorage.getItem('student_info');
     const remembered = localStorage.getItem('student_remembered');
     if (info && remembered) {
-      navigate('/aluno/dashboard', { replace: true });
+      navigate(redirectUrl, { replace: true });
     }
   }, [navigate]);
 
@@ -82,7 +84,7 @@ export function StudentLoginPage() {
       localStorage.removeItem('student_remembered');
     }
 
-    navigate('/aluno/dashboard', { replace: true });
+    navigate(redirectUrl, { replace: true });
   };
 
   const handleRegister = (e: React.FormEvent) => {
