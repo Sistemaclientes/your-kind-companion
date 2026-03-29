@@ -5,6 +5,7 @@ import {
   Route, 
   Navigate 
 } from 'react-router-dom';
+import { Toaster } from 'sonner';
 import { LoginPage } from './pages/LoginPage';
 import { AdminLayout } from './components/AdminLayout';
 import { StudentLayout } from './components/StudentLayout';
@@ -55,6 +56,13 @@ export default function App() {
   return (
     <Router>
       <AuthProvider>
+        <Toaster 
+          position="top-right" 
+          richColors 
+          toastOptions={{
+            className: 'font-semibold',
+          }}
+        />
         <AuthGate>
         <RouteTracker />
         <Suspense fallback={<PageLoader />}>
