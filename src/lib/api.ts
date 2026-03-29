@@ -352,7 +352,8 @@ function handleFallback(method: string, endpoint: string, data?: any): any {
     results.push({
       prova_id: data.prova_id, prova_titulo: exam.titulo,
       nome_aluno: data.nome_aluno, email_aluno: data.email_aluno,
-      pontuacao, acertos, total, data: new Date().toISOString()
+      pontuacao, acertos, total, data: new Date().toISOString(),
+      respostas: data.respostas // store student's answers per question
     });
     saveLocalResults(results);
     return { acertos, total, pontuacao };
