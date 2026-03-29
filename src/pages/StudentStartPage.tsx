@@ -23,12 +23,20 @@ export function StudentStartPage() {
   const [exams, setExams] = React.useState<any[]>([]);
   const [selectedExamId, setSelectedExamId] = React.useState<string>('');
   const [formData, setFormData] = React.useState({ nome: '', email: '', telefone: '' });
+  const [error, setError] = React.useState<string | null>(null);
+  const [loading, setLoading] = React.useState(true);
 
   React.useEffect(() => {
     const fetchData = async () => {
+      setLoading(true);
+      setError(null);
       try {
         if (slug) {
           const exam = await api.get(`/provas/slug/${slug}`);
+          if (!exam || !exam.id) {
+            setError('Prova não encontrada. Verifique o link e tente novamente.');
+            return;
+          }
           setExams([exam]);
           setSelectedExamId(exam.id.toString());
         } else {
@@ -36,8 +44,11 @@ export function StudentStartPage() {
           setExams(data);
           if (data.length > 0) setSelectedExamId(data[0].id.toString());
         }
-      } catch (err) {
-        console.error('Error fetching exams:', err);
+      } catch (err: any) {
+        console.error('[StudentStartPage] Error fetching exam:', err);
+        setError(slug ? 'Prova não encontrada. Verifique o link e tente novamente.' : 'Erro ao carregar provas.');
+      } finally {
+        setLoading(false);
       }
     };
     fetchData();
