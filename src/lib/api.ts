@@ -221,10 +221,15 @@ function getLocalExams(): any[] {
         correctAlts: { 31: 91, 32: 94, 33: 97, 34: 100, 35: 103 }
       }
     ];
+    // Add slugs to seed exams
+    for (const exam of seed) {
+      exam.slug = generateSlug(exam.titulo);
+    }
     localStorage.setItem(LOCAL_EXAMS_KEY, JSON.stringify(seed));
     return seed;
   }
-  return JSON.parse(stored);
+  const parsed = JSON.parse(stored);
+  return ensureLocalExamSlugs(parsed);
 }
 
 function getLocalResults(): any[] {
