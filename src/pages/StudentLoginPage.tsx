@@ -9,6 +9,8 @@ type Tab = 'login' | 'register';
 
 export function StudentLoginPage() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const redirectUrl = searchParams.get('redirect') || '/aluno/dashboard';
   const [tab, setTab] = React.useState<Tab>('login');
 
   // Login state
