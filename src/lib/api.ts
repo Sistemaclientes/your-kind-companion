@@ -379,18 +379,110 @@ function handleFallback(method: string, endpoint: string, data?: any): any {
   // DASHBOARD STUDENTS
   if (method === 'GET' && endpoint === '/dashboard/students') {
     const results = getLocalResults();
+    const registeredStudents = JSON.parse(localStorage.getItem('registered_students') || '[]');
     const grouped: Record<string, any> = {};
+
+    // Add all registered students first
+    for (const s of registeredStudents) {
+      if (!s.email) continue;
+      grouped[s.email] = {
+        email: s.email,
+        nome: s.nome || 'Sem nome',
+        telefone: s.telefone || '',
+        provas_contagem: 0,
+        total_pontuacao: 0,
+        media_pontuacao: 0,
+        ultimo_acesso: null,
+        primeiro_acesso: null,
+      };
+    }
+
+    // Merge with results data
     for (const r of results) {
       if (!grouped[r.email_aluno]) {
-        grouped[r.email_aluno] = { email: r.email_aluno, nome: r.nome_aluno, provas_contagem: 0, total_pontuacao: 0, ultimo_acesso: r.data };
+        grouped[r.email_aluno] = {
+          email: r.email_aluno,
+          nome: r.nome_aluno,
+          provas_contagem: 0,
+          total_pontuacao: 0,
+          ultimo_acesso: r.data,
+          primeiro_acesso: r.data,
+        };
       }
       grouped[r.email_aluno].provas_contagem++;
       grouped[r.email_aluno].total_pontuacao += r.pontuacao;
-      if (r.data > grouped[r.email_aluno].ultimo_acesso) grouped[r.email_aluno].ultimo_acesso = r.data;
+      if (!grouped[r.email_aluno].primeiro_acesso || r.data < grouped[r.email_aluno].primeiro_acesso) {
+        grouped[r.email_aluno].primeiro_acesso = r.data;
+      }
+      if (!grouped[r.email_aluno].ultimo_acesso || r.data > grouped[r.email_aluno].ultimo_acesso) {
+        grouped[r.email_aluno].ultimo_acesso = r.data;
+      }
     }
+
     return Object.values(grouped).map((s: any) => ({
-      ...s, media_pontuacao: s.total_pontuacao / s.provas_contagem
+      ...s,
+      media_pontuacao: s.provas_contagem > 0 ? s.total_pontuacao / s.provas_contagem : 0,
+      ultimo_acesso: s.ultimo_acesso || new Date().toISOString(),
     }));
+  }
+
+  // DASHBOARD STUDENT DETAILS
+  const studentDetailMatch = endpoint.match(/^\/dashboard\/students\/(.+)$/);
+  if (method === 'GET' && studentDetailMatch) {
+    const email = decodeURIComponent(studentDetailMatch[1]);
+    const results = getLocalResults();
+    const registeredStudents = JSON.parse(localStorage.getItem('registered_students') || '[]');
+    const myResults = results.filter(r => r.email_aluno === email);
+    const registered = registeredStudents.find((s: any) => s.email === email);
+
+    const nome = myResults[0]?.nome_aluno || registered?.nome || email;
+    const primeiro_acesso = myResults.length > 0
+      ? myResults.reduce((min: string, r: any) => r.data < min ? r.data : min, myResults[0].data)
+      : new Date().toISOString();
+    const ultimo_acesso = myResults.length > 0
+      ? myResults.reduce((max: string, r: any) => r.data > max ? r.data : max, myResults[0].data)
+      : new Date().toISOString();
+    const media_pontuacao = myResults.length > 0
+      ? myResults.reduce((s: number, r: any) => s + r.pontuacao, 0) / myResults.length
+      : 0;
+
+    const student = {
+      email,
+      nome,
+      provas_contagem: myResults.length,
+      media_pontuacao: Math.round(media_pontuacao),
+      primeiro_acesso,
+      ultimo_acesso,
+    };
+
+    // Build detailed results with exam questions
+    const exams = getLocalExams();
+    const detailedResults = myResults.map((r: any) => {
+      const exam = exams.find((e: any) => e.id === r.prova_id);
+      return {
+        id: r.prova_id,
+        prova_id: r.prova_id,
+        prova_titulo: r.prova_titulo || exam?.titulo || 'Prova',
+        prova_descricao: exam?.descricao || '',
+        pontuacao: r.pontuacao,
+        acertos: r.acertos,
+        total: r.total,
+        data: r.data,
+        perguntas: exam?.perguntas?.map((q: any) => ({
+          id: q.id,
+          enunciado: q.enunciado,
+          resposta_aluno_id: r.respostas?.[q.id],
+          correto: exam.correctAlts?.[q.id] === r.respostas?.[q.id],
+          alternativas: q.alternativas?.map((a: any) => ({
+            id: a.id,
+            texto: a.texto,
+            is_correta: exam.correctAlts?.[q.id] === a.id,
+          })) || [],
+        })) || [],
+      };
+    });
+
+    return { student, results: detailedResults };
   }
 
   // CHANGE PASSWORD
