@@ -2,7 +2,6 @@ import React from 'react';
 import { 
   User, 
   Mail, 
-  Phone, 
   Play, 
   ShieldCheck, 
   Clock, 
@@ -15,7 +14,6 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { cn } from '../lib/utils';
 import { motion } from 'motion/react';
 import { api } from '../lib/api';
-import { phoneMask } from '../lib/masks';
 
 export function StudentStartPage() {
   const navigate = useNavigate();
