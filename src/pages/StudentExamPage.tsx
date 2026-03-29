@@ -112,6 +112,22 @@ export function StudentExamPage() {
         email_aluno: studentInfo.email
       });
       localStorage.setItem('last_result', JSON.stringify(result));
+
+      // Save to local_resultados so dashboard/exams list can filter completed exams
+      const localResults = JSON.parse(localStorage.getItem('local_resultados') || '[]');
+      localResults.push({
+        prova_id: exam.id,
+        prova_titulo: exam.titulo,
+        nome_aluno: studentInfo.nome,
+        email_aluno: studentInfo.email,
+        pontuacao: result.pontuacao ?? result.score ?? 0,
+        acertos: result.acertos ?? result.correct ?? 0,
+        total: result.total ?? exam.perguntas?.length ?? 0,
+        data: new Date().toISOString(),
+        respostas: answers
+      });
+      localStorage.setItem('local_resultados', JSON.stringify(localResults));
+
       navigate('/student/result');
     } catch (err) {
       alert('Erro ao enviar respostas. Tente novamente.');
