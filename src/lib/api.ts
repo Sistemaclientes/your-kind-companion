@@ -274,6 +274,15 @@ function handleFallback(method: string, endpoint: string, data?: any): any {
     return exam;
   }
 
+  // GET PROVA BY SLUG
+  const slugMatch = endpoint.match(/^\/provas\/slug\/(.+)$/);
+  if (method === 'GET' && slugMatch) {
+    const slug = slugMatch[1];
+    const exam = getLocalExams().find(e => (e as any).slug === slug);
+    if (!exam) throw new Error('Prova não encontrada');
+    return exam;
+  }
+
   // CREATE PROVA
   if (method === 'POST' && endpoint === '/provas') {
     const exams = getLocalExams();
