@@ -335,7 +335,10 @@ export function ExamsPage() {
                           </button>
                           <button 
                             className="w-10 h-10 rounded-xl bg-surface-container hover:bg-primary/10 text-on-surface-variant hover:text-primary transition-all flex items-center justify-center border border-outline hover:border-primary/20 btn-icon-saas"
-                            onClick={() => exam.slug ? navigate(`/prova/${exam.slug}`) : alert('Slug da prova indisponível.')}
+                            onClick={() => {
+                              if (!exam.slug) { alert('Slug da prova indisponível.'); return; }
+                              window.open(`${window.location.origin}/prova/${exam.slug}`, '_blank');
+                            }}
                             title="Visualizar Prova"
                           >
                             <Eye className="w-4 h-4" />
