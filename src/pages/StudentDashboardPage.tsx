@@ -64,7 +64,7 @@ export function StudentDashboardPage() {
   return (
     <>
       <TopBar title={`Olá, ${studentInfo?.nome || 'Estudante'}`} subtitle={studentInfo?.email} />
-      <div className="pt-[60px] p-4 sm:p-8">
+      <div className="pt-24 px-4 sm:px-8 pb-12 max-w-[1600px] mx-auto">
         {/* Stats Cards */}
         <motion.div
           variants={containerVariants}
