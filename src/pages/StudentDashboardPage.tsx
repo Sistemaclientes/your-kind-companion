@@ -227,7 +227,6 @@ export function StudentDashboardPage() {
                     </motion.div>
                   ))
                 )
-                ))
               )}
             </div>
           </motion.div>
