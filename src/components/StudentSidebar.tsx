@@ -6,7 +6,8 @@ import {
   BarChart3, 
   LogOut,
   Sun,
-  Moon
+  Moon,
+  UserCircle
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { useTheme } from '../lib/ThemeContext';
@@ -23,10 +24,28 @@ export function StudentSidebar({ isOpen, onClose }: StudentSidebarProps) {
   const [currentTime, setCurrentTime] = React.useState(new Date());
   const [customLogo, setCustomLogo] = React.useState<string | null>(null);
 
-  const studentInfo = React.useMemo(() => {
+  const [studentInfo, setStudentInfo] = React.useState<any>(() => {
     try {
       return JSON.parse(localStorage.getItem('student_info') || 'null');
     } catch { return null; }
+  });
+
+  const [avatar, setAvatar] = React.useState<string | null>(null);
+
+  // Listen for profile updates
+  React.useEffect(() => {
+    const handleUpdate = () => {
+      try {
+        const info = JSON.parse(localStorage.getItem('student_info') || 'null');
+        setStudentInfo(info);
+        if (info?.email) {
+          setAvatar(localStorage.getItem(`student_avatar_${info.email}`));
+        }
+      } catch {}
+    };
+    handleUpdate();
+    window.addEventListener('student-profile-updated', handleUpdate);
+    return () => window.removeEventListener('student-profile-updated', handleUpdate);
   }, []);
 
   React.useEffect(() => {
@@ -54,6 +73,7 @@ export function StudentSidebar({ isOpen, onClose }: StudentSidebarProps) {
     { icon: LayoutDashboard, label: 'Dashboard', path: '/aluno/dashboard' },
     { icon: BookOpen, label: 'Provas', path: '/aluno/provas' },
     { icon: BarChart3, label: 'Resultados', path: '/aluno/resultados' },
+    { icon: UserCircle, label: 'Meu Perfil', path: '/aluno/perfil' },
   ];
 
   return (
@@ -124,9 +144,13 @@ export function StudentSidebar({ isOpen, onClose }: StudentSidebarProps) {
 
         <div className="p-3.5 bg-surface-container-high/50 rounded-2xl border border-outline mt-1">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary to-primary-container flex items-center justify-center text-on-primary text-xs font-bold shadow-lg shadow-primary/20">
-              {studentInfo?.nome?.charAt(0)?.toUpperCase() || 'A'}
-            </div>
+            {avatar ? (
+              <img src={avatar} alt="Avatar" className="w-9 h-9 rounded-xl object-cover" />
+            ) : (
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary to-primary-container flex items-center justify-center text-on-primary text-xs font-bold shadow-lg shadow-primary/20">
+                {studentInfo?.nome?.charAt(0)?.toUpperCase() || 'A'}
+              </div>
+            )}
             <div className="overflow-hidden flex-1">
               <p className="text-sm font-semibold truncate text-on-surface">{studentInfo?.nome || 'Aluno'}</p>
               <p className="text-[10px] text-on-surface-variant font-medium truncate">{studentInfo?.email || ''}</p>
