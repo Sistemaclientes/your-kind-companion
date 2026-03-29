@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { toast } from 'sonner';
 import { 
   Clock, 
   ChevronLeft, 
@@ -127,7 +128,7 @@ export function StudentExamPage() {
 
       navigate('/student/result');
     } catch (err) {
-      alert('Erro ao enviar respostas. Tente novamente.');
+      toast.error('Erro ao enviar respostas. Tente novamente.');
     }
   };
 

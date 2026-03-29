@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { toast } from 'sonner';
 import { TopBar } from '../components/TopBar';
 import { 
   Settings as SettingsIcon, 
@@ -45,11 +46,11 @@ export function SettingsPage() {
     const file = e.target.files?.[0];
     if (!file) return;
     if (file.size > 2 * 1024 * 1024) {
-      alert('O arquivo deve ter no máximo 2MB.');
+      toast.error('O arquivo deve ter no máximo 2MB.');
       return;
     }
     if (!['image/png', 'image/jpeg'].includes(file.type)) {
-      alert('Apenas PNG ou JPG são permitidos.');
+      toast.error('Apenas PNG ou JPG são permitidos.');
       return;
     }
     const reader = new FileReader();
@@ -99,7 +100,7 @@ export function SettingsPage() {
       setShowSuccess(true);
       setTimeout(() => setShowSuccess(false), 3000);
     } catch (err: any) {
-      alert(err.message || 'Erro ao criar administrador');
+      toast.error(err.message || 'Erro ao criar administrador');
     } finally {
       setIsCreatingAdmin(false);
     }
@@ -111,7 +112,7 @@ export function SettingsPage() {
       await api.delete(`/admins/${id}`);
       fetchAdmins();
     } catch (err: any) {
-      alert(err.message || 'Erro ao excluir administrador');
+      toast.error(err.message || 'Erro ao excluir administrador');
     }
   };
 
