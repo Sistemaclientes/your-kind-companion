@@ -66,6 +66,30 @@ export function StudentStartPage() {
 
   const selectedExam = exams.find(e => e.id.toString() === selectedExamId);
 
+  if (error) {
+    return (
+      <div className="min-h-[100dvh] bg-surface flex items-center justify-center p-6 font-sans text-on-surface antialiased">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-center space-y-6 max-w-md"
+        >
+          <div className="w-16 h-16 rounded-2xl bg-error/10 flex items-center justify-center mx-auto">
+            <AlertCircle className="w-8 h-8 text-error" />
+          </div>
+          <h1 className="text-2xl font-black text-on-surface font-headline">Prova não encontrada</h1>
+          <p className="text-on-surface-variant font-medium">{error}</p>
+          <button
+            onClick={() => navigate('/')}
+            className="btn-primary px-8 py-3 rounded-xl font-bold text-sm"
+          >
+            Voltar ao início
+          </button>
+        </motion.div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-[100dvh] bg-surface flex items-center justify-center p-4 sm:p-6 lg:p-8 relative overflow-hidden font-sans text-on-surface antialiased">
       {/* Background Effects */}
