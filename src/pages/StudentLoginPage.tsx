@@ -85,7 +85,7 @@ export function StudentLoginPage() {
     }
   };
 
-  const handleRegister = (e: React.FormEvent) => {
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setRegError('');
 
@@ -99,30 +99,26 @@ export function StudentLoginPage() {
       return;
     }
 
-    const registeredStudents = JSON.parse(localStorage.getItem('registered_students') || '[]');
-    const existing = registeredStudents.find((s: any) => s.email === regEmail);
+    try {
+      await api.post('/student/register', {
+        nome: regName,
+        email: regEmail,
+        telefone: regPhone,
+        senha: regPassword
+      });
 
-    if (existing) {
-      setRegError('Este e-mail já está cadastrado. Faça login.');
-      return;
+      setRegSuccess(true);
+
+      setTimeout(() => {
+        setEmail(regEmail);
+        setPassword(regPassword);
+        setTab('login');
+        setRegSuccess(false);
+        setRegName(''); setRegEmail(''); setRegPhone(''); setRegPassword(''); setRegConfirmPassword('');
+      }, 1500);
+    } catch (err: any) {
+      setRegError(err.message || 'Erro ao cadastrar. Tente novamente.');
     }
-
-    registeredStudents.push({
-      nome: regName,
-      email: regEmail,
-      telefone: regPhone,
-      password: regPassword
-    });
-    localStorage.setItem('registered_students', JSON.stringify(registeredStudents));
-    setRegSuccess(true);
-
-    setTimeout(() => {
-      setEmail(regEmail);
-      setPassword(regPassword);
-      setTab('login');
-      setRegSuccess(false);
-      setRegName(''); setRegEmail(''); setRegPhone(''); setRegPassword(''); setRegConfirmPassword('');
-    }, 1500);
   };
 
   const handleForgotPassword = (e: React.FormEvent) => {
