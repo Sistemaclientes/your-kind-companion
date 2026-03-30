@@ -126,6 +126,7 @@ export function StudentsPage() {
               <thead>
                 <tr className="bg-surface-container/50 border-b border-outline">
                   <th className="px-6 py-5 text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">Aluno</th>
+                  <th className="px-6 py-5 text-[10px] font-bold text-on-surface-variant uppercase tracking-widest text-center">Status</th>
                   <th className="px-6 py-5 text-[10px] font-bold text-on-surface-variant uppercase tracking-widest text-center">Provas Realizadas</th>
                   <th className="px-6 py-5 text-[10px] font-bold text-on-surface-variant uppercase tracking-widest text-center">Média Geral</th>
                   <th className="px-6 py-5 text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">Último Acesso</th>
