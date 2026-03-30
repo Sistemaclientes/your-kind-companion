@@ -68,6 +68,15 @@ export function initDB() {
       data DATETIME DEFAULT CURRENT_TIMESTAMP,
       FOREIGN KEY (prova_id) REFERENCES provas(id) ON DELETE CASCADE
     );
+
+    CREATE TABLE IF NOT EXISTS alunos (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      nome TEXT NOT NULL,
+      email TEXT UNIQUE NOT NULL,
+      telefone TEXT,
+      senha TEXT NOT NULL,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
   `);
 
   // Ensure is_protected column exists (migration)

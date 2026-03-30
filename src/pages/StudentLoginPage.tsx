@@ -5,6 +5,7 @@ import { Mail, Lock, LogIn, Eye, EyeOff, ShieldCheck, KeyRound, User, Phone, Use
 import { cn } from '../lib/utils';
 import { phoneMask } from '../lib/masks';
 import { useAuthStore } from '../lib/authStore';
+import { api } from '../lib/api';
 
 type Tab = 'login' | 'register';
 
@@ -59,39 +60,32 @@ export function StudentLoginPage() {
     }
   }, [user, navigate, redirectUrl]);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
 
-    const registeredStudents = JSON.parse(localStorage.getItem('registered_students') || '[]');
-    const student = registeredStudents.find((s: any) => s.email === email);
+    try {
+      const data = await api.post('/student/login', { email, senha: password });
 
-    if (!student) {
-      setError('E-mail não encontrado. Cadastre-se primeiro.');
-      return;
+      loginStudent({
+        nome: data.student.nome,
+        email: data.student.email,
+        telefone: data.student.telefone || ''
+      });
+
+      if (rememberMe) {
+        localStorage.setItem('student_remembered', JSON.stringify({ email, password }));
+      } else {
+        localStorage.removeItem('student_remembered');
+      }
+
+      navigate(redirectUrl, { replace: true });
+    } catch (err: any) {
+      setError(err.message || 'Email ou senha inválidos.');
     }
-
-    if (student.password && student.password !== password) {
-      setError('Senha incorreta. Tente novamente.');
-      return;
-    }
-
-    loginStudent({
-      nome: student.nome,
-      email: student.email,
-      telefone: student.telefone || ''
-    });
-
-    if (rememberMe) {
-      localStorage.setItem('student_remembered', JSON.stringify({ email, password }));
-    } else {
-      localStorage.removeItem('student_remembered');
-    }
-
-    navigate(redirectUrl, { replace: true });
   };
 
-  const handleRegister = (e: React.FormEvent) => {
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setRegError('');
 
@@ -105,30 +99,26 @@ export function StudentLoginPage() {
       return;
     }
 
-    const registeredStudents = JSON.parse(localStorage.getItem('registered_students') || '[]');
-    const existing = registeredStudents.find((s: any) => s.email === regEmail);
+    try {
+      await api.post('/student/register', {
+        nome: regName,
+        email: regEmail,
+        telefone: regPhone,
+        senha: regPassword
+      });
 
-    if (existing) {
-      setRegError('Este e-mail já está cadastrado. Faça login.');
-      return;
+      setRegSuccess(true);
+
+      setTimeout(() => {
+        setEmail(regEmail);
+        setPassword(regPassword);
+        setTab('login');
+        setRegSuccess(false);
+        setRegName(''); setRegEmail(''); setRegPhone(''); setRegPassword(''); setRegConfirmPassword('');
+      }, 1500);
+    } catch (err: any) {
+      setRegError(err.message || 'Erro ao cadastrar. Tente novamente.');
     }
-
-    registeredStudents.push({
-      nome: regName,
-      email: regEmail,
-      telefone: regPhone,
-      password: regPassword
-    });
-    localStorage.setItem('registered_students', JSON.stringify(registeredStudents));
-    setRegSuccess(true);
-
-    setTimeout(() => {
-      setEmail(regEmail);
-      setPassword(regPassword);
-      setTab('login');
-      setRegSuccess(false);
-      setRegName(''); setRegEmail(''); setRegPhone(''); setRegPassword(''); setRegConfirmPassword('');
-    }, 1500);
   };
 
   const handleForgotPassword = (e: React.FormEvent) => {

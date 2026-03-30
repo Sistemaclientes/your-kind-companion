@@ -108,6 +108,55 @@ app.delete('/api/admins/:id', adminMiddleware, masterMiddleware, (req: any, res)
   res.json({ message: 'Administrador removido' });
 });
 
+// --- Student Auth ---
+
+app.post('/api/student/register', (req, res) => {
+  const { nome, email, telefone, senha } = req.body;
+
+  if (!nome || !email || !senha) {
+    return res.status(400).json({ error: 'Nome, email e senha são obrigatórios' });
+  }
+
+  if (senha.length < 4) {
+    return res.status(400).json({ error: 'Senha deve ter pelo menos 4 caracteres' });
+  }
+
+  try {
+    const hashedPassword = authService.hashPassword(String(senha));
+    db.prepare('INSERT INTO alunos (nome, email, telefone, senha) VALUES (?, ?, ?, ?)')
+      .run(String(nome).trim(), String(email).trim().toLowerCase(), String(telefone || '').trim(), hashedPassword);
+    res.json({ message: 'Cadastro realizado com sucesso' });
+  } catch (err: any) {
+    if (err.message?.includes('UNIQUE')) {
+      return res.status(400).json({ error: 'Este e-mail já está cadastrado.' });
+    }
+    res.status(500).json({ error: 'Erro ao cadastrar aluno' });
+  }
+});
+
+app.post('/api/student/login', (req, res) => {
+  const { email, senha } = req.body;
+
+  if (!email || !senha) {
+    return res.status(400).json({ error: 'Email e senha são obrigatórios' });
+  }
+
+  const student = db.prepare('SELECT * FROM alunos WHERE email = ?').get(String(email).trim().toLowerCase()) as any;
+
+  if (!student || !authService.comparePassword(String(senha), student.senha)) {
+    return res.status(401).json({ error: 'Email ou senha inválidos' });
+  }
+
+  res.json({
+    student: {
+      id: student.id,
+      nome: student.nome,
+      email: student.email,
+      telefone: student.telefone
+    }
+  });
+});
+
 // --- Exam Management ---
 
 app.post('/api/provas', adminMiddleware, (req: any, res) => {
@@ -302,14 +351,26 @@ app.get('/api/dashboard/stats', adminMiddleware, (req, res) => {
 
 app.get('/api/dashboard/students', adminMiddleware, (req, res) => {
   try {
+    // Get all registered students + their exam stats (if any)
     const students = db.prepare(`
-      SELECT email_aluno as email, nome_aluno as nome, 
-             COUNT(*) as provas_contagem, 
-             AVG(pontuacao) as media_pontuacao,
-             MAX(data) as ultimo_acesso
-      FROM resultados 
-      GROUP BY email_aluno
-      ORDER BY ultimo_acesso DESC
+      SELECT 
+        a.email,
+        a.nome,
+        a.telefone,
+        a.created_at as data_cadastro,
+        COALESCE(r.provas_contagem, 0) as provas_contagem,
+        COALESCE(r.media_pontuacao, 0) as media_pontuacao,
+        COALESCE(r.ultimo_acesso, a.created_at) as ultimo_acesso
+      FROM alunos a
+      LEFT JOIN (
+        SELECT email_aluno as email,
+               COUNT(*) as provas_contagem,
+               AVG(pontuacao) as media_pontuacao,
+               MAX(data) as ultimo_acesso
+        FROM resultados
+        GROUP BY email_aluno
+      ) r ON r.email = a.email
+      ORDER BY a.created_at DESC
     `).all();
     res.json(students);
   } catch (err) {
