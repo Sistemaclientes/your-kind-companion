@@ -5,6 +5,7 @@ import { Mail, Lock, LogIn, Eye, EyeOff, ShieldCheck, KeyRound, User, Phone, Use
 import { cn } from '../lib/utils';
 import { phoneMask } from '../lib/masks';
 import { useAuthStore } from '../lib/authStore';
+import { api } from '../lib/api';
 
 type Tab = 'login' | 'register';
 
