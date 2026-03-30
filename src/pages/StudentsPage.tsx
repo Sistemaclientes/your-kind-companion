@@ -181,7 +181,7 @@ export function StudentsPage() {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={5} className="px-6 py-20 text-center text-on-surface-variant font-medium">
+                    <td colSpan={6} className="px-6 py-20 text-center text-on-surface-variant font-medium">
                       Nenhum aluno encontrado.
                     </td>
                   </tr>
