@@ -60,36 +60,29 @@ export function StudentLoginPage() {
     }
   }, [user, navigate, redirectUrl]);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
 
-    const registeredStudents = JSON.parse(localStorage.getItem('registered_students') || '[]');
-    const student = registeredStudents.find((s: any) => s.email === email);
+    try {
+      const data = await api.post('/student/login', { email, senha: password });
 
-    if (!student) {
-      setError('E-mail não encontrado. Cadastre-se primeiro.');
-      return;
+      loginStudent({
+        nome: data.student.nome,
+        email: data.student.email,
+        telefone: data.student.telefone || ''
+      });
+
+      if (rememberMe) {
+        localStorage.setItem('student_remembered', JSON.stringify({ email, password }));
+      } else {
+        localStorage.removeItem('student_remembered');
+      }
+
+      navigate(redirectUrl, { replace: true });
+    } catch (err: any) {
+      setError(err.message || 'Email ou senha inválidos.');
     }
-
-    if (student.password && student.password !== password) {
-      setError('Senha incorreta. Tente novamente.');
-      return;
-    }
-
-    loginStudent({
-      nome: student.nome,
-      email: student.email,
-      telefone: student.telefone || ''
-    });
-
-    if (rememberMe) {
-      localStorage.setItem('student_remembered', JSON.stringify({ email, password }));
-    } else {
-      localStorage.removeItem('student_remembered');
-    }
-
-    navigate(redirectUrl, { replace: true });
   };
 
   const handleRegister = (e: React.FormEvent) => {
