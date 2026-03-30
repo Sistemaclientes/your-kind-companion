@@ -53,9 +53,9 @@ export function StudentsPage() {
     let result = [...students];
     
     if (statusFilter === 'Ativos') {
-      result = result.filter(s => s.provas_contagem > 0);
+      result = result.filter(s => s.status === 'Ativo');
     } else if (statusFilter === 'Inativos') {
-      result = result.filter(s => s.provas_contagem === 0);
+      result = result.filter(s => s.status === 'Cadastrado');
     }
     
     if (searchQuery) {
@@ -126,6 +126,7 @@ export function StudentsPage() {
               <thead>
                 <tr className="bg-surface-container/50 border-b border-outline">
                   <th className="px-6 py-5 text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">Aluno</th>
+                  <th className="px-6 py-5 text-[10px] font-bold text-on-surface-variant uppercase tracking-widest text-center">Status</th>
                   <th className="px-6 py-5 text-[10px] font-bold text-on-surface-variant uppercase tracking-widest text-center">Provas Realizadas</th>
                   <th className="px-6 py-5 text-[10px] font-bold text-on-surface-variant uppercase tracking-widest text-center">Média Geral</th>
                   <th className="px-6 py-5 text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">Último Acesso</th>
@@ -151,6 +152,14 @@ export function StudentsPage() {
                           </div>
                         </div>
                       </td>
+                      <td className="px-6 py-6 text-center">
+                        <span className={cn(
+                          "px-3 py-1.5 text-[10px] font-bold rounded-xl uppercase tracking-widest shadow-sm",
+                          student.status === 'Ativo' ? "bg-green-500/10 text-green-600" : "bg-blue-500/10 text-blue-600"
+                        )}>
+                          {student.status}
+                        </span>
+                      </td>
                       <td className="px-6 py-6 text-center text-on-surface font-semibold">
                         {student.provas_contagem}
                       </td>
@@ -172,7 +181,7 @@ export function StudentsPage() {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={5} className="px-6 py-20 text-center text-on-surface-variant font-medium">
+                    <td colSpan={6} className="px-6 py-20 text-center text-on-surface-variant font-medium">
                       Nenhum aluno encontrado.
                     </td>
                   </tr>

@@ -324,7 +324,7 @@ app.post('/api/responder-prova', (req, res) => {
 app.get('/api/dashboard/stats', adminMiddleware, (req, res) => {
   try {
     const totalProvas = db.prepare('SELECT COUNT(*) as count FROM provas').get() as any;
-    const totalAlunos = db.prepare('SELECT COUNT(DISTINCT email_aluno) as count FROM resultados').get() as any;
+    const totalAlunos = db.prepare('SELECT COUNT(*) as count FROM alunos').get() as any;
     const provasRealizadas = db.prepare('SELECT COUNT(*) as count FROM resultados').get() as any;
     const mediaGeral = db.prepare('SELECT AVG(pontuacao) as avg FROM resultados').get() as any;
 
@@ -360,7 +360,8 @@ app.get('/api/dashboard/students', adminMiddleware, (req, res) => {
         a.created_at as data_cadastro,
         COALESCE(r.provas_contagem, 0) as provas_contagem,
         COALESCE(r.media_pontuacao, 0) as media_pontuacao,
-        COALESCE(r.ultimo_acesso, a.created_at) as ultimo_acesso
+        COALESCE(r.ultimo_acesso, a.created_at) as ultimo_acesso,
+        CASE WHEN r.provas_contagem > 0 THEN 'Ativo' ELSE 'Cadastrado' END as status
       FROM alunos a
       LEFT JOIN (
         SELECT email_aluno as email,
