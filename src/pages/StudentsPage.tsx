@@ -53,9 +53,9 @@ export function StudentsPage() {
     let result = [...students];
     
     if (statusFilter === 'Ativos') {
-      result = result.filter(s => s.provas_contagem > 0);
+      result = result.filter(s => s.status === 'Ativo');
     } else if (statusFilter === 'Inativos') {
-      result = result.filter(s => s.provas_contagem === 0);
+      result = result.filter(s => s.status === 'Cadastrado');
     }
     
     if (searchQuery) {
