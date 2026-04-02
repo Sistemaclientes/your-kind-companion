@@ -1,0 +1,1 @@
+INSERT INTO public.alunos (nome, email, telefone) VALUES ('Jonas', 'jonas.ok@hotmail.com', '');
