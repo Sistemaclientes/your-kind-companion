@@ -68,9 +68,9 @@ export function StudentLoginPage() {
       const data = await api.post('/student/login', { email, senha: password });
 
       loginStudent({
-        nome: data.student.nome,
-        email: data.student.email,
-        telefone: data.student.telefone || ''
+        nome: data.nome,
+        email: data.email,
+        telefone: data.telefone || ''
       });
 
       if (rememberMe) {
