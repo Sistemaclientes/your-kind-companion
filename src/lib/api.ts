@@ -423,6 +423,7 @@ function handleFallback(method: string, endpoint: string, data?: any): any {
       ...s,
       media_pontuacao: s.provas_contagem > 0 ? s.total_pontuacao / s.provas_contagem : 0,
       ultimo_acesso: s.ultimo_acesso || new Date().toISOString(),
+      status: s.provas_contagem > 0 ? 'Ativo' : 'Cadastrado',
     }));
   }
 
