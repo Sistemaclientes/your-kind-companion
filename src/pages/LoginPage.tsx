@@ -7,11 +7,12 @@ import { useAuthStore } from '../lib/authStore';
 export function LoginPage() {
   const navigate = useNavigate();
   const { user, loginAdmin } = useAuthStore();
-  const [email, setEmail] = React.useState('');
-  const [password, setPassword] = React.useState('');
+  const [email, setEmail] = React.useState(() => localStorage.getItem('admin_remembered_email') || '');
+  const [password, setPassword] = React.useState(() => localStorage.getItem('admin_remembered_pw') || '');
   const [error, setError] = React.useState('');
   const [isLoading, setIsLoading] = React.useState(false);
   const [showPassword, setShowPassword] = React.useState(false);
+  const [remember, setRemember] = React.useState(() => !!localStorage.getItem('admin_remembered_email'));
 
   // Redirect if already logged in
   React.useEffect(() => {
