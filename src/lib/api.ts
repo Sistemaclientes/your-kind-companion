@@ -423,6 +423,7 @@ function handleFallback(method: string, endpoint: string, data?: any): any {
       ...s,
       media_pontuacao: s.provas_contagem > 0 ? s.total_pontuacao / s.provas_contagem : 0,
       ultimo_acesso: s.ultimo_acesso || new Date().toISOString(),
+      status: s.provas_contagem > 0 ? 'Ativo' : 'Cadastrado',
     }));
   }
 
@@ -483,6 +484,33 @@ function handleFallback(method: string, endpoint: string, data?: any): any {
     });
 
     return { student, results: detailedResults };
+  }
+
+  // STUDENT REGISTER
+  if (method === 'POST' && endpoint === '/student/register') {
+    const registeredStudents = JSON.parse(localStorage.getItem('registered_students') || '[]');
+    if (registeredStudents.some((s: any) => s.email === data.email?.toLowerCase())) {
+      throw new Error('Este e-mail já está cadastrado.');
+    }
+    registeredStudents.push({
+      nome: data.nome,
+      email: data.email?.toLowerCase(),
+      telefone: data.telefone || '',
+      senha: data.senha,
+      created_at: new Date().toISOString(),
+    });
+    localStorage.setItem('registered_students', JSON.stringify(registeredStudents));
+    return { message: 'Cadastro realizado com sucesso' };
+  }
+
+  // STUDENT LOGIN
+  if (method === 'POST' && endpoint === '/student/login') {
+    const registeredStudents = JSON.parse(localStorage.getItem('registered_students') || '[]');
+    const student = registeredStudents.find((s: any) => s.email === data.email?.toLowerCase());
+    if (!student || student.senha !== data.senha) {
+      throw new Error('Email ou senha inválidos');
+    }
+    return { nome: student.nome, email: student.email, telefone: student.telefone };
   }
 
   // CHANGE PASSWORD
