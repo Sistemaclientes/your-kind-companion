@@ -119,7 +119,18 @@ export function LoginPage() {
               </div>
             </div>
 
-            <div className="pt-4">
+            <div className="flex items-center gap-2">
+              <input
+                id="remember"
+                type="checkbox"
+                checked={remember}
+                onChange={(e) => setRemember(e.target.checked)}
+                className="w-4 h-4 rounded border-outline text-primary focus:ring-primary/20 accent-primary cursor-pointer"
+              />
+              <label htmlFor="remember" className="text-xs text-on-surface-variant font-medium cursor-pointer select-none">Lembrar senha</label>
+            </div>
+
+            <div className="pt-2">
               <button 
                 className="w-full btn-primary py-4 px-4 text-sm tracking-wide disabled:opacity-50 disabled:cursor-not-allowed" 
                 type="submit"
