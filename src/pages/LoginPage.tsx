@@ -7,11 +7,12 @@ import { useAuthStore } from '../lib/authStore';
 export function LoginPage() {
   const navigate = useNavigate();
   const { user, loginAdmin } = useAuthStore();
-  const [email, setEmail] = React.useState('');
-  const [password, setPassword] = React.useState('');
+  const [email, setEmail] = React.useState(() => localStorage.getItem('admin_remembered_email') || '');
+  const [password, setPassword] = React.useState(() => localStorage.getItem('admin_remembered_pw') || '');
   const [error, setError] = React.useState('');
   const [isLoading, setIsLoading] = React.useState(false);
   const [showPassword, setShowPassword] = React.useState(false);
+  const [remember, setRemember] = React.useState(() => !!localStorage.getItem('admin_remembered_email'));
 
   // Redirect if already logged in
   React.useEffect(() => {
@@ -32,6 +33,13 @@ export function LoginPage() {
     
     try {
       const data = await api.login({ email: email.trim(), password });
+      if (remember) {
+        localStorage.setItem('admin_remembered_email', email.trim());
+        localStorage.setItem('admin_remembered_pw', password);
+      } else {
+        localStorage.removeItem('admin_remembered_email');
+        localStorage.removeItem('admin_remembered_pw');
+      }
       loginAdmin(data.token, data.user);
       navigate('/admin/dashboard');
     } catch (err: any) {
@@ -111,7 +119,18 @@ export function LoginPage() {
               </div>
             </div>
 
-            <div className="pt-4">
+            <div className="flex items-center gap-2">
+              <input
+                id="remember"
+                type="checkbox"
+                checked={remember}
+                onChange={(e) => setRemember(e.target.checked)}
+                className="w-4 h-4 rounded border-outline text-primary focus:ring-primary/20 accent-primary cursor-pointer"
+              />
+              <label htmlFor="remember" className="text-xs text-on-surface-variant font-medium cursor-pointer select-none">Lembrar senha</label>
+            </div>
+
+            <div className="pt-2">
               <button 
                 className="w-full btn-primary py-4 px-4 text-sm tracking-wide disabled:opacity-50 disabled:cursor-not-allowed" 
                 type="submit"
