@@ -33,6 +33,13 @@ export function LoginPage() {
     
     try {
       const data = await api.login({ email: email.trim(), password });
+      if (remember) {
+        localStorage.setItem('admin_remembered_email', email.trim());
+        localStorage.setItem('admin_remembered_pw', password);
+      } else {
+        localStorage.removeItem('admin_remembered_email');
+        localStorage.removeItem('admin_remembered_pw');
+      }
       loginAdmin(data.token, data.user);
       navigate('/admin/dashboard');
     } catch (err: any) {
