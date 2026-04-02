@@ -31,7 +31,7 @@ export function CreateExamPage() {
   const navigate = useNavigate();
   const { slug } = useParams();
   const [examId, setExamId] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<'content' | 'settings'>('content');
+  const [activeTab, setActiveTab] = useState<'content' | 'settings'>('settings');
   const [questions, setQuestions] = useState<Question[]>([
     { id: 1, type: 'multiple', text: '', options: ['', '', '', ''], correct: 0, points: 1, explanation: '' }
   ]);
