@@ -31,7 +31,7 @@ export function CreateExamPage() {
   const navigate = useNavigate();
   const { slug } = useParams();
   const [examId, setExamId] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<'content' | 'settings'>('content');
+  const [activeTab, setActiveTab] = useState<'content' | 'settings'>('settings');
   const [questions, setQuestions] = useState<Question[]>([
     { id: 1, type: 'multiple', text: '', options: ['', '', '', ''], correct: 0, points: 1, explanation: '' }
   ]);
@@ -178,18 +178,6 @@ export function CreateExamPage() {
             </div>
             <nav className="flex items-center gap-4 sm:gap-8 ml-2 sm:ml-4">
               <button 
-                onClick={() => setActiveTab('content')}
-                className={cn(
-                  "text-xs sm:text-sm font-bold transition-all relative py-5 sm:py-7 group",
-                  activeTab === 'content' ? "text-primary" : "text-on-surface-variant hover:text-on-surface"
-                )}
-              >
-                Questões
-                {activeTab === 'content' && (
-                  <motion.div layoutId="tab-underline" className="absolute bottom-0 left-0 right-0 h-1 bg-primary rounded-t-full" />
-                )}
-              </button>
-              <button 
                 onClick={() => setActiveTab('settings')}
                 className={cn(
                   "text-xs sm:text-sm font-bold transition-all relative py-5 sm:py-7 group whitespace-nowrap",
@@ -198,6 +186,18 @@ export function CreateExamPage() {
               >
                 Config.
                 {activeTab === 'settings' && (
+                  <motion.div layoutId="tab-underline" className="absolute bottom-0 left-0 right-0 h-1 bg-primary rounded-t-full" />
+                )}
+              </button>
+              <button 
+                onClick={() => setActiveTab('content')}
+                className={cn(
+                  "text-xs sm:text-sm font-bold transition-all relative py-5 sm:py-7 group",
+                  activeTab === 'content' ? "text-primary" : "text-on-surface-variant hover:text-on-surface"
+                )}
+              >
+                Questões
+                {activeTab === 'content' && (
                   <motion.div layoutId="tab-underline" className="absolute bottom-0 left-0 right-0 h-1 bg-primary rounded-t-full" />
                 )}
               </button>
