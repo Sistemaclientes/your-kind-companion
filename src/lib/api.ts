@@ -513,6 +513,27 @@ function handleFallback(method: string, endpoint: string, data?: any): any {
     return { nome: student.nome, email: student.email, telefone: student.telefone };
   }
 
+  // ADMIN FORGOT PASSWORD
+  if (method === 'POST' && endpoint === '/admin/forgot-password') {
+    if (data.email?.toLowerCase() === FALLBACK_ADMIN.email) {
+      return { message: 'Conta verificada' };
+    }
+    const storedAdmins = JSON.parse(localStorage.getItem('local_admins') || '[]');
+    if (storedAdmins.some((a: any) => a.email === data.email?.toLowerCase())) {
+      return { message: 'Conta verificada' };
+    }
+    throw new Error('E-mail não encontrado no sistema');
+  }
+
+  // ADMIN RESET PASSWORD
+  if (method === 'POST' && endpoint === '/admin/reset-password') {
+    if (data.email?.toLowerCase() === FALLBACK_ADMIN.email) {
+      localStorage.setItem('admin_master_password', data.new_password);
+      return { message: 'Senha redefinida com sucesso' };
+    }
+    throw new Error('E-mail não encontrado');
+  }
+
   // CHANGE PASSWORD
   if (method === 'PUT' && endpoint === '/admins/change-password') {
     const storedPassword = localStorage.getItem('admin_master_password') || FALLBACK_ADMIN.password;

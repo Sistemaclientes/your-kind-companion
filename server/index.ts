@@ -108,6 +108,29 @@ app.delete('/api/admins/:id', adminMiddleware, masterMiddleware, (req: any, res)
   res.json({ message: 'Administrador removido' });
 });
 
+// --- Admin Forgot/Reset Password ---
+
+app.post('/api/admin/forgot-password', (req, res) => {
+  const { email } = req.body;
+  if (!email) return res.status(400).json({ error: 'Informe o e-mail' });
+  const admin = db.prepare('SELECT id FROM admins WHERE email = ?').get(String(email).trim().toLowerCase()) as any;
+  if (!admin) return res.status(404).json({ error: 'E-mail não encontrado no sistema' });
+  res.json({ message: 'Conta verificada' });
+});
+
+app.post('/api/admin/reset-password', (req, res) => {
+  const { email, new_password } = req.body;
+  if (!email || !new_password) return res.status(400).json({ error: 'Dados incompletos' });
+  if (new_password.length < 6) return res.status(400).json({ error: 'Senha deve ter pelo menos 6 caracteres' });
+  
+  const admin = db.prepare('SELECT id FROM admins WHERE email = ?').get(String(email).trim().toLowerCase()) as any;
+  if (!admin) return res.status(404).json({ error: 'E-mail não encontrado' });
+  
+  const hashed = authService.hashPassword(new_password);
+  db.prepare('UPDATE admins SET senha = ? WHERE id = ?').run(hashed, admin.id);
+  res.json({ message: 'Senha redefinida com sucesso' });
+});
+
 // --- Student Auth ---
 
 app.post('/api/student/register', (req, res) => {
