@@ -117,7 +117,7 @@ export function StudentsPage() {
             <p className="text-on-surface-variant font-medium mt-1">Visualize e gerencie todos os estudantes que já realizaram provas.</p>
           </div>
           <div className="flex items-center gap-3">
-            <button className="btn-secondary px-5 py-2.5 flex items-center gap-2">
+            <button onClick={handleExport} className="btn-secondary px-5 py-2.5 flex items-center gap-2">
               <Download className="w-4 h-4 text-primary" />
               Exportar
             </button>
