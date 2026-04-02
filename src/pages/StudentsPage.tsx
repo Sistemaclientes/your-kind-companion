@@ -85,6 +85,26 @@ export function StudentsPage() {
     }
   };
 
+  const handleExport = () => {
+    const headers = ['Nome', 'Email', 'Status', 'Provas Realizadas', 'Média Geral', 'Último Acesso'];
+    const rows = filteredStudents.map(s => [
+      s.nome,
+      s.email,
+      s.status || (s.provas_contagem > 0 ? 'Ativo' : 'Cadastrado'),
+      s.provas_contagem,
+      `${Math.round(s.media_pontuacao)}%`,
+      new Date(s.ultimo_acesso).toLocaleDateString('pt-BR'),
+    ]);
+    const csv = [headers, ...rows].map(r => r.map((v: any) => `"${String(v).replace(/"/g, '""')}"`).join(',')).join('\n');
+    const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `alunos_${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   if (loading) return null;
 
   return (
@@ -97,7 +117,7 @@ export function StudentsPage() {
             <p className="text-on-surface-variant font-medium mt-1">Visualize e gerencie todos os estudantes que já realizaram provas.</p>
           </div>
           <div className="flex items-center gap-3">
-            <button className="btn-secondary px-5 py-2.5 flex items-center gap-2">
+            <button onClick={handleExport} className="btn-secondary px-5 py-2.5 flex items-center gap-2">
               <Download className="w-4 h-4 text-primary" />
               Exportar
             </button>
