@@ -57,6 +57,42 @@ async function handleRoute(method: string, endpoint: string, data?: any): Promis
     return newCategoria;
   }
 
+  // UPDATE CATEGORIA
+  const categoriaUpdateMatch = endpoint.match(/^\/categorias\/([a-f0-9-]+)$/);
+  if (method === 'PUT' && categoriaUpdateMatch) {
+    const id = categoriaUpdateMatch[1];
+    const slug = generateSlug(data.nome);
+    const { data: updatedCategoria, error } = await supabase
+      .from('categorias')
+      .update({ 
+        nome: data.nome, 
+        slug,
+        cor: data.cor,
+        icon: data.icon,
+        descricao: data.descricao
+      })
+      .eq('id', id)
+      .select()
+      .single();
+    
+    if (error) throw new Error(error.message);
+    return updatedCategoria;
+  }
+
+  // DELETE CATEGORIA
+  const categoriaDeleteMatch = endpoint.match(/^\/categorias\/([a-f0-9-]+)$/);
+  if (method === 'DELETE' && categoriaDeleteMatch) {
+    const id = categoriaDeleteMatch[1];
+    const { error } = await supabase
+      .from('categorias')
+      .delete()
+      .eq('id', id);
+    
+    if (error) throw new Error(error.message);
+    return { message: 'Categoria excluída com sucesso' };
+  }
+
+
   // GET PROVAS
   if (method === 'GET' && endpoint === '/provas') {
     const { data: provas, error } = await supabase
