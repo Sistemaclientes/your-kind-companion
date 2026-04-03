@@ -1,4 +1,4 @@
-const Database = require('better-sqlite3');
+import Database from 'better-sqlite3';
 const db = new Database('database.sqlite');
 const count = db.prepare('SELECT COUNT(*) as count FROM alunos').get().count;
 console.log('Alunos:', count);
