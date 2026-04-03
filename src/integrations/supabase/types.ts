@@ -14,7 +14,198 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      admins: {
+        Row: {
+          created_at: string | null
+          email: string
+          id: string
+          is_master: boolean | null
+          nome: string
+          senha: string
+        }
+        Insert: {
+          created_at?: string | null
+          email: string
+          id?: string
+          is_master?: boolean | null
+          nome: string
+          senha: string
+        }
+        Update: {
+          created_at?: string | null
+          email?: string
+          id?: string
+          is_master?: boolean | null
+          nome?: string
+          senha?: string
+        }
+        Relationships: []
+      }
+      alternativas: {
+        Row: {
+          id: string
+          is_correta: boolean | null
+          pergunta_id: string
+          texto: string
+        }
+        Insert: {
+          id?: string
+          is_correta?: boolean | null
+          pergunta_id: string
+          texto: string
+        }
+        Update: {
+          id?: string
+          is_correta?: boolean | null
+          pergunta_id?: string
+          texto?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "alternativas_pergunta_id_fkey"
+            columns: ["pergunta_id"]
+            isOneToOne: false
+            referencedRelation: "perguntas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      alunos: {
+        Row: {
+          created_at: string | null
+          email: string
+          id: string
+          nome: string
+          telefone: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          email: string
+          id?: string
+          nome: string
+          telefone?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          email?: string
+          id?: string
+          nome?: string
+          telefone?: string | null
+        }
+        Relationships: []
+      }
+      perguntas: {
+        Row: {
+          enunciado: string
+          id: string
+          ordem: number | null
+          prova_id: string
+        }
+        Insert: {
+          enunciado: string
+          id?: string
+          ordem?: number | null
+          prova_id: string
+        }
+        Update: {
+          enunciado?: string
+          id?: string
+          ordem?: number | null
+          prova_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "perguntas_prova_id_fkey"
+            columns: ["prova_id"]
+            isOneToOne: false
+            referencedRelation: "provas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      provas: {
+        Row: {
+          created_at: string | null
+          created_by: string | null
+          descricao: string | null
+          id: string
+          slug: string | null
+          titulo: string
+        }
+        Insert: {
+          created_at?: string | null
+          created_by?: string | null
+          descricao?: string | null
+          id?: string
+          slug?: string | null
+          titulo: string
+        }
+        Update: {
+          created_at?: string | null
+          created_by?: string | null
+          descricao?: string | null
+          id?: string
+          slug?: string | null
+          titulo?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "provas_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "admins"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      resultados: {
+        Row: {
+          acertos: number | null
+          aluno_id: string
+          data: string | null
+          id: string
+          pontuacao: number | null
+          prova_id: string
+          respostas: Json | null
+          total: number | null
+        }
+        Insert: {
+          acertos?: number | null
+          aluno_id: string
+          data?: string | null
+          id?: string
+          pontuacao?: number | null
+          prova_id: string
+          respostas?: Json | null
+          total?: number | null
+        }
+        Update: {
+          acertos?: number | null
+          aluno_id?: string
+          data?: string | null
+          id?: string
+          pontuacao?: number | null
+          prova_id?: string
+          respostas?: Json | null
+          total?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "resultados_aluno_id_fkey"
+            columns: ["aluno_id"]
+            isOneToOne: false
+            referencedRelation: "alunos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "resultados_prova_id_fkey"
+            columns: ["prova_id"]
+            isOneToOne: false
+            referencedRelation: "provas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
