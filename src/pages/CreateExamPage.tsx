@@ -117,8 +117,14 @@ export function CreateExamPage() {
       const payload = {
         titulo: title,
         descricao: description,
+        categoria_id: categoryId,
+        duracao: duration,
         perguntas: questions.map(q => ({
           enunciado: q.text,
+          tipo: q.type,
+          pontos: q.points,
+          explicacao: q.explanation,
+          imagem_url: q.imagem_url,
           alternativas: q.options.map((opt, idx) => ({
             texto: opt,
             is_correta: idx === q.correct
@@ -127,7 +133,7 @@ export function CreateExamPage() {
       };
 
       if (examId) {
-        await api.post(`/provas/${examId}`, payload); // Assuming update is also POST or I should use PUT
+        await api.put(`/provas/${examId}`, payload);
       } else {
         await api.post('/provas', payload);
       }
