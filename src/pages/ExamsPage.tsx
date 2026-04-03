@@ -127,8 +127,8 @@ export function ExamsPage() {
 
   const stats = [
     { label: 'Total de Provas', value: exams.length.toString(), sub: '+2 este mês', color: 'slate' },
-    { label: 'Alunos Ativos', value: '148', sub: 'Engajamento 92%', color: 'blue' },
-    { label: 'Média Geral', value: '7.4', sub: 'Escala 0-10', color: 'slate' },
+    { label: 'Alunos Ativos', value: '0', sub: 'Engajamento 0%', color: 'blue' },
+    { label: 'Média Geral', value: '0.0', sub: 'Escala 0-10', color: 'slate' },
   ];
 
   return (
