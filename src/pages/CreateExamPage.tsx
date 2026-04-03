@@ -416,29 +416,20 @@ export function CreateExamPage() {
                         Categoria
                       </label>
                       <select 
-                        value={category}
-                        onChange={(e) => setCategory(e.target.value)}
+                        value={categoryId || ''}
+                        onChange={(e) => {
+                          const id = e.target.value;
+                          setCategoryId(id);
+                          const cat = categories.find(c => c.id === id);
+                          if (cat) setCategory(cat.nome);
+                        }}
                         className="input-saas w-full h-14 text-lg font-semibold appearance-none cursor-pointer"
                       >
-                        <option value="Administração">Administração</option>
-                        <option value="Ambiental">Ambiental</option>
-                        <option value="Arquitetura e Engenharia">Arquitetura e Engenharia</option>
-                        <option value="Concursos Públicos">Concursos Públicos</option>
-                        <option value="Contabilidade">Contabilidade</option>
-                        <option value="Cotidiano">Cotidiano</option>
-                        <option value="Cursos Profissionalizantes">Cursos Profissionalizantes</option>
-                        <option value="Desenvolvimento Pessoal">Desenvolvimento Pessoal</option>
-                        <option value="Enfermagem">Enfermagem</option>
-                        <option value="Finanças">Finanças</option>
-                        <option value="Gestão e Liderança">Gestão e Liderança</option>
-                        <option value="Idiomas">Idiomas</option>
-                        <option value="Informática">Informática</option>
-                        <option value="Logística">Logística</option>
-                        <option value="Programação e Desenvolvimento">Programação e Desenvolvimento</option>
-                        <option value="Publicidade e Marketing">Publicidade e Marketing</option>
-                        <option value="Recursos Humanos">Recursos Humanos</option>
-                        <option value="Segurança do Trabalho">Segurança do Trabalho</option>
-                        <option value="Vendas">Vendas</option>
+                        {categories.map((cat) => (
+                          <option key={cat.id} value={cat.id}>
+                            {cat.nome}
+                          </option>
+                        ))}
                       </select>
                     </div>
                   </div>
