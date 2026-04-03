@@ -79,6 +79,7 @@ export type Database = {
           email: string
           id: string
           nome: string
+          senha: string | null
           telefone: string | null
         }
         Insert: {
@@ -86,6 +87,7 @@ export type Database = {
           email: string
           id?: string
           nome: string
+          senha?: string | null
           telefone?: string | null
         }
         Update: {
@@ -93,6 +95,7 @@ export type Database = {
           email?: string
           id?: string
           nome?: string
+          senha?: string | null
           telefone?: string | null
         }
         Relationships: []
@@ -196,6 +199,7 @@ export type Database = {
           id: string
           pergunta_id: string
           prova_id: string
+          resultado_id: string | null
         }
         Insert: {
           alternativa_id: string
@@ -204,6 +208,7 @@ export type Database = {
           id?: string
           pergunta_id: string
           prova_id: string
+          resultado_id?: string | null
         }
         Update: {
           alternativa_id?: string
@@ -212,6 +217,7 @@ export type Database = {
           id?: string
           pergunta_id?: string
           prova_id?: string
+          resultado_id?: string | null
         }
         Relationships: [
           {
@@ -233,6 +239,13 @@ export type Database = {
             columns: ["prova_id"]
             isOneToOne: false
             referencedRelation: "provas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "respostas_aluno_resultado_id_fkey"
+            columns: ["resultado_id"]
+            isOneToOne: false
+            referencedRelation: "resultados"
             referencedColumns: ["id"]
           },
         ]
