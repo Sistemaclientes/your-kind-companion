@@ -33,12 +33,14 @@ export function CreateExamPage() {
   const [examId, setExamId] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'content' | 'settings'>('settings');
   const [questions, setQuestions] = useState<Question[]>([
-    { id: 1, type: 'multiple', text: '', options: ['', '', '', ''], correct: 0, points: 1, explanation: '' }
+    { id: 1, type: 'multiple', text: '', options: ['', '', '', ''], correct: 0, points: 1, explanation: '', imagem_url: '' }
   ]);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [duration, setDuration] = useState(60);
   const [category, setCategory] = useState('Administração');
+  const [categoryId, setCategoryId] = useState<string | null>(null);
+  const [categories, setCategories] = useState<any[]>([]);
   const [settings, setSettings] = useState({
     random: true,
     results: true,
@@ -48,9 +50,23 @@ export function CreateExamPage() {
   const [isSaving, setIsSaving] = useState(false);
   const [isPublishing, setIsPublishing] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
-  const [openTypeDropdownId, setOpenTypeDropdownId] = useState<number | null>(null);
+  const [openTypeDropdownId, setOpenTypeDropdownId] = useState<string | number | null>(null);
 
   React.useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const data = await api.get('/categorias');
+        setCategories(data);
+        if (data.length > 0 && !categoryId) {
+          setCategoryId(data[0].id);
+          setCategory(data[0].nome);
+        }
+      } catch (err) {
+        console.error('Error fetching categories:', err);
+      }
+    };
+    fetchCategories();
+
     if (slug) {
       const fetchExam = async () => {
         try {
@@ -63,18 +79,19 @@ export function CreateExamPage() {
           setExamId(exam?.id?.toString() || null);
           setTitle(exam.titulo);
           setDescription(exam.descricao);
-          // Map backend questions to frontend format if necessary
+          setDuration(exam.duracao || 60);
+          setCategoryId(exam.categoria_id || null);
+          
           if (exam.perguntas) {
             const mappedQuestions = exam.perguntas.map((q: any, idx: number) => ({
               id: q.id || idx + 1,
-              type: 'multiple',
+              type: q.tipo || 'multiple',
               text: q.enunciado,
+              imagem_url: q.imagem_url || '',
               options: q.alternativas.map((a: any) => a.texto),
-              // We'd need to fetch the correct alternative ID from the backend to map it safely
-              // but for now let's assume index 0 if not provided
-              correct: 0, 
-              points: 1,
-              explanation: ''
+              correct: q.alternativas.findIndex((a: any) => a.is_correta),
+              points: q.pontos || 1,
+              explanation: q.explicacao || ''
             }));
             setQuestions(mappedQuestions);
           }
