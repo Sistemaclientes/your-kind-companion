@@ -200,7 +200,15 @@ async function handleRoute(method: string, endpoint: string, data?: any): Promis
     for (const [i, q] of (data.perguntas || []).entries()) {
       const { data: pergunta } = await supabase
         .from('perguntas')
-        .insert({ prova_id: id, enunciado: q.enunciado, ordem: i })
+        .insert({ 
+          prova_id: id, 
+          enunciado: q.enunciado, 
+          ordem: i,
+          tipo: q.tipo || 'multiple',
+          pontos: q.pontos || 1,
+          explicacao: q.explicacao,
+          imagem_url: q.imagem_url
+        })
         .select()
         .single();
       
