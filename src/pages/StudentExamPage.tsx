@@ -240,6 +240,17 @@ export function StudentExamPage() {
                 <h2 className="text-xl md:text-2xl font-bold text-on-surface leading-snug tracking-tight">
                   {currentQuestion?.enunciado}
                 </h2>
+                
+                {currentQuestion?.imagem_url && (
+                  <div className="rounded-[32px] overflow-hidden border border-outline shadow-2xl shadow-primary/10 group/img relative">
+                    <img 
+                      src={currentQuestion.imagem_url} 
+                      alt="Enunciado da questão" 
+                      className="w-full max-h-[400px] object-contain bg-surface-container-low transition-transform duration-700 group-hover/img:scale-[1.02]" 
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none" />
+                  </div>
+                )}
               </div>
 
               <div className="grid grid-cols-1 gap-4">

@@ -28,14 +28,26 @@ async function handleRoute(method: string, endpoint: string, data?: any): Promis
     };
   }
 
+  // GET CATEGORIAS
+  if (method === 'GET' && endpoint === '/categorias') {
+    const { data: categorias, error } = await supabase
+      .from('categorias')
+      .select('*')
+      .order('nome');
+    
+    if (error) throw new Error(error.message);
+    return categorias || [];
+  }
+
   // GET PROVAS
   if (method === 'GET' && endpoint === '/provas') {
     const { data: provas, error } = await supabase
       .from('provas')
       .select(`
         *,
+        categorias ( id, nome, slug, cor, icon ),
         perguntas (
-          id, enunciado, ordem,
+          id, enunciado, ordem, imagem_url,
           alternativas ( id, texto, is_correta )
         )
       `)
@@ -45,6 +57,7 @@ async function handleRoute(method: string, endpoint: string, data?: any): Promis
     
     return (provas || []).map((p: any) => ({
       ...p,
+      categoria: p.categorias?.nome || p.categoria || 'Sem Categoria',
       qCount: p.perguntas?.length || 0,
       studentCount: 0,
     }));

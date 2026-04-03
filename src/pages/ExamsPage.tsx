@@ -43,10 +43,10 @@ export function ExamsPage() {
         id: e.id,
         title: e.titulo,
         subtitle: e.descricao || 'Sem descrição',
-        status: 'Ativa', // Default for now
-        students: '0', // TODO: count real results
+        status: e.status || 'Ativa',
+        students: e.studentCount?.toString() || '0',
         date: new Date(e.created_at).toLocaleDateString('pt-BR'),
-        category: 'Geral', // Default for now
+        category: e.categoria || 'Geral',
         slug: e.slug,
       }));
       setExams(mapped);
