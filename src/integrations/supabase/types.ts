@@ -220,6 +220,7 @@ export type Database = {
           status: string | null
           tentativas_maximas: number | null
           titulo: string
+          updated_at: string | null
         }
         Insert: {
           bloquear_navegacao?: boolean | null
@@ -239,6 +240,7 @@ export type Database = {
           status?: string | null
           tentativas_maximas?: number | null
           titulo: string
+          updated_at?: string | null
         }
         Update: {
           bloquear_navegacao?: boolean | null
@@ -258,6 +260,7 @@ export type Database = {
           status?: string | null
           tentativas_maximas?: number | null
           titulo?: string
+          updated_at?: string | null
         }
         Relationships: [
           {
