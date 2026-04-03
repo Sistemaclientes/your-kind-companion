@@ -1,5 +1,4 @@
-import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
-
+// @ts-nocheck
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
@@ -10,7 +9,7 @@ interface Student {
   email: string;
 }
 
-serve(async (req) => {
+Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
@@ -32,9 +31,10 @@ serve(async (req) => {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 200,
     });
-  } catch (error) {
-    console.error("Erro na função welcome-email:", error.message);
-    return new Response(JSON.stringify({ error: error.message }), {
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : "Unknown error";
+    console.error("Erro na função welcome-email:", message);
+    return new Response(JSON.stringify({ error: message }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 400,
     });
