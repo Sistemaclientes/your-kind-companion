@@ -118,18 +118,21 @@ export type Database = {
       configuracoes: {
         Row: {
           chave: string
+          created_at: string | null
           id: string
           updated_at: string | null
           valor: Json
         }
         Insert: {
           chave: string
+          created_at?: string | null
           id?: string
           updated_at?: string | null
           valor: Json
         }
         Update: {
           chave?: string
+          created_at?: string | null
           id?: string
           updated_at?: string | null
           valor?: Json
@@ -203,6 +206,7 @@ export type Database = {
       }
       provas: {
         Row: {
+          banner_url: string | null
           bloquear_navegacao: boolean | null
           categoria: string | null
           created_at: string | null
@@ -223,6 +227,7 @@ export type Database = {
           updated_at: string | null
         }
         Insert: {
+          banner_url?: string | null
           bloquear_navegacao?: boolean | null
           categoria?: string | null
           created_at?: string | null
@@ -243,6 +248,7 @@ export type Database = {
           updated_at?: string | null
         }
         Update: {
+          banner_url?: string | null
           bloquear_navegacao?: boolean | null
           categoria?: string | null
           created_at?: string | null
