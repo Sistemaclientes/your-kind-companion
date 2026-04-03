@@ -411,26 +411,51 @@ export function CreateExamPage() {
                     </div>
 
                     <div className="space-y-3">
-                      <label className="text-xs font-black uppercase tracking-widest text-on-surface-variant flex items-center gap-2">
-                        <Tag className="w-3.5 h-3.5" />
-                        Categoria
-                      </label>
-                      <select 
-                        value={categoryId || ''}
-                        onChange={(e) => {
-                          const id = e.target.value;
-                          setCategoryId(id);
-                          const cat = categories.find(c => c.id === id);
-                          if (cat) setCategory(cat.nome);
-                        }}
-                        className="input-saas w-full h-14 text-lg font-semibold appearance-none cursor-pointer"
-                      >
-                        {categories.map((cat) => (
-                          <option key={cat.id} value={cat.id}>
-                            {cat.nome}
-                          </option>
-                        ))}
-                      </select>
+                      <div className="flex items-center justify-between">
+                        <label className="text-xs font-black uppercase tracking-widest text-on-surface-variant flex items-center gap-2">
+                          <Tag className="w-3.5 h-3.5" />
+                          Categoria
+                        </label>
+                        <button 
+                          onClick={async () => {
+                            const nome = prompt('Digite o nome da nova categoria:');
+                            if (nome && nome.trim()) {
+                              try {
+                                const newCat = await api.post('/categorias', { nome });
+                                setCategories(prev => [...prev, newCat].sort((a, b) => a.nome.localeCompare(b.nome)));
+                                setCategoryId(newCat.id);
+                                setCategory(newCat.nome);
+                                toast.success('Categoria criada com sucesso!');
+                              } catch (err: any) {
+                                toast.error('Erro ao criar categoria: ' + err.message);
+                              }
+                            }
+                          }}
+                          className="text-[10px] font-black uppercase tracking-widest text-primary hover:text-primary/70 transition-colors flex items-center gap-1"
+                        >
+                          <Plus className="w-3 h-3" />
+                          Nova
+                        </button>
+                      </div>
+                      <div className="relative group">
+                        <select 
+                          value={categoryId || ''}
+                          onChange={(e) => {
+                            const id = e.target.value;
+                            setCategoryId(id);
+                            const cat = categories.find(c => c.id === id);
+                            if (cat) setCategory(cat.nome);
+                          }}
+                          className="input-saas w-full h-14 text-lg font-semibold appearance-none cursor-pointer pr-12"
+                        >
+                          {categories.map((cat) => (
+                            <option key={cat.id} value={cat.id}>
+                              {cat.nome}
+                            </option>
+                          ))}
+                        </select>
+                        <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-on-surface-variant pointer-events-none group-hover:text-primary transition-colors" />
+                      </div>
                     </div>
                   </div>
 

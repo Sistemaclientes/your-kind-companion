@@ -38,6 +38,24 @@ async function handleRoute(method: string, endpoint: string, data?: any): Promis
     if (error) throw new Error(error.message);
     return categorias || [];
   }
+  
+  // CREATE CATEGORIA
+  if (method === 'POST' && endpoint === '/categorias') {
+    const slug = generateSlug(data.nome);
+    const { data: newCategoria, error } = await supabase
+      .from('categorias')
+      .insert({ 
+        nome: data.nome, 
+        slug,
+        cor: data.cor || '#3b82f6',
+        icon: data.icon || 'Tag'
+      })
+      .select()
+      .single();
+    
+    if (error) throw new Error(error.message);
+    return newCategoria;
+  }
 
   // GET PROVAS
   if (method === 'GET' && endpoint === '/provas') {
