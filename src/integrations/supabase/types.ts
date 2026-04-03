@@ -350,6 +350,7 @@ export type Database = {
           prova_id: string
           respostas: Json | null
           status: string | null
+          tentativa_numero: number | null
           total: number | null
           total_time: number | null
         }
@@ -364,6 +365,7 @@ export type Database = {
           prova_id: string
           respostas?: Json | null
           status?: string | null
+          tentativa_numero?: number | null
           total?: number | null
           total_time?: number | null
         }
@@ -378,6 +380,7 @@ export type Database = {
           prova_id?: string
           respostas?: Json | null
           status?: string | null
+          tentativa_numero?: number | null
           total?: number | null
           total_time?: number | null
         }
