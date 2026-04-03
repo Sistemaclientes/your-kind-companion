@@ -20,6 +20,7 @@ export type Database = {
           email: string
           id: string
           is_master: boolean | null
+          is_protected: boolean | null
           nome: string
           senha: string
         }
@@ -28,6 +29,7 @@ export type Database = {
           email: string
           id?: string
           is_master?: boolean | null
+          is_protected?: boolean | null
           nome: string
           senha: string
         }
@@ -36,6 +38,7 @@ export type Database = {
           email?: string
           id?: string
           is_master?: boolean | null
+          is_protected?: boolean | null
           nome?: string
           senha?: string
         }
@@ -185,12 +188,63 @@ export type Database = {
           },
         ]
       }
+      respostas_aluno: {
+        Row: {
+          alternativa_id: string
+          correto: boolean
+          created_at: string | null
+          id: string
+          pergunta_id: string
+          prova_id: string
+        }
+        Insert: {
+          alternativa_id: string
+          correto: boolean
+          created_at?: string | null
+          id?: string
+          pergunta_id: string
+          prova_id: string
+        }
+        Update: {
+          alternativa_id?: string
+          correto?: boolean
+          created_at?: string | null
+          id?: string
+          pergunta_id?: string
+          prova_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "respostas_aluno_alternativa_id_fkey"
+            columns: ["alternativa_id"]
+            isOneToOne: false
+            referencedRelation: "alternativas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "respostas_aluno_pergunta_id_fkey"
+            columns: ["pergunta_id"]
+            isOneToOne: false
+            referencedRelation: "perguntas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "respostas_aluno_prova_id_fkey"
+            columns: ["prova_id"]
+            isOneToOne: false
+            referencedRelation: "provas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       resultados: {
         Row: {
           acertos: number | null
           aluno_id: string
           data: string | null
+          email_aluno: string | null
           id: string
+          nome_aluno: string | null
           pontuacao: number | null
           prova_id: string
           respostas: Json | null
@@ -200,7 +254,9 @@ export type Database = {
           acertos?: number | null
           aluno_id: string
           data?: string | null
+          email_aluno?: string | null
           id?: string
+          nome_aluno?: string | null
           pontuacao?: number | null
           prova_id: string
           respostas?: Json | null
@@ -210,7 +266,9 @@ export type Database = {
           acertos?: number | null
           aluno_id?: string
           data?: string | null
+          email_aluno?: string | null
           id?: string
+          nome_aluno?: string | null
           pontuacao?: number | null
           prova_id?: string
           respostas?: Json | null
