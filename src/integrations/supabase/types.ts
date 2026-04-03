@@ -16,6 +16,7 @@ export type Database = {
     Tables: {
       admins: {
         Row: {
+          active: boolean | null
           avatar_url: string | null
           created_at: string | null
           email: string
@@ -26,6 +27,7 @@ export type Database = {
           senha: string
         }
         Insert: {
+          active?: boolean | null
           avatar_url?: string | null
           created_at?: string | null
           email: string
@@ -36,6 +38,7 @@ export type Database = {
           senha: string
         }
         Update: {
+          active?: boolean | null
           avatar_url?: string | null
           created_at?: string | null
           email?: string
@@ -82,8 +85,10 @@ export type Database = {
           created_at: string | null
           email: string
           id: string
+          last_login: string | null
           nome: string
           senha: string | null
+          status: string | null
           telefone: string | null
         }
         Insert: {
@@ -91,8 +96,10 @@ export type Database = {
           created_at?: string | null
           email: string
           id?: string
+          last_login?: string | null
           nome: string
           senha?: string | null
+          status?: string | null
           telefone?: string | null
         }
         Update: {
@@ -100,8 +107,10 @@ export type Database = {
           created_at?: string | null
           email?: string
           id?: string
+          last_login?: string | null
           nome?: string
           senha?: string | null
+          status?: string | null
           telefone?: string | null
         }
         Relationships: []
@@ -206,6 +215,7 @@ export type Database = {
           nota_corte: number | null
           permitir_revisao: boolean | null
           slug: string | null
+          status: string | null
           titulo: string
         }
         Insert: {
@@ -221,6 +231,7 @@ export type Database = {
           nota_corte?: number | null
           permitir_revisao?: boolean | null
           slug?: string | null
+          status?: string | null
           titulo: string
         }
         Update: {
@@ -236,6 +247,7 @@ export type Database = {
           nota_corte?: number | null
           permitir_revisao?: boolean | null
           slug?: string | null
+          status?: string | null
           titulo?: string
         }
         Relationships: [
@@ -329,6 +341,7 @@ export type Database = {
           prova_id: string
           respostas: Json | null
           total: number | null
+          total_time: number | null
         }
         Insert: {
           acertos?: number | null
@@ -341,6 +354,7 @@ export type Database = {
           prova_id: string
           respostas?: Json | null
           total?: number | null
+          total_time?: number | null
         }
         Update: {
           acertos?: number | null
@@ -353,6 +367,7 @@ export type Database = {
           prova_id?: string
           respostas?: Json | null
           total?: number | null
+          total_time?: number | null
         }
         Relationships: [
           {
