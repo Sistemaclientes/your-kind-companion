@@ -147,15 +147,16 @@ export function CreateExamPage() {
   };
 
   const addQuestion = (type: string = 'multiple', index?: number) => {
-    const newId = Math.max(0, ...questions.map(q => q.id)) + 1;
-    const newQuestion = { 
+    const newId = Math.max(0, ...questions.map(q => typeof q.id === 'number' ? q.id : 0)) + 1;
+    const newQuestion: Question = { 
       id: newId, 
       type, 
       text: '', 
       options: ['', '', '', ''], 
       correct: 0,
       points: 1,
-      explanation: ''
+      explanation: '',
+      imagem_url: ''
     };
 
     if (typeof index === 'number') {
@@ -167,15 +168,15 @@ export function CreateExamPage() {
     }
   };
 
-  const duplicateQuestion = (id: number) => {
+  const duplicateQuestion = (id: number | string) => {
     const questionToCopy = questions.find(q => q.id === id);
     if (questionToCopy) {
-      const newId = Math.max(0, ...questions.map(q => q.id)) + 1;
+      const newId = Math.max(0, ...questions.map(q => typeof q.id === 'number' ? q.id : 0)) + 1;
       setQuestions([...questions, { ...questionToCopy, id: newId }]);
     }
   };
 
-  const removeQuestion = (id: number) => {
+  const removeQuestion = (id: number | string) => {
     if (questions.length > 1) {
       setQuestions(questions.filter(q => q.id !== id));
     }
