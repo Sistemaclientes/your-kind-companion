@@ -68,12 +68,12 @@ export function DashboardPage() {
   }));
 
   const performanceData = [
-    { name: 'Jan', value: 62 },
-    { name: 'Fev', value: 68 },
-    { name: 'Mar', value: 65 },
-    { name: 'Abr', value: 74 },
-    { name: 'Mai', value: 81 },
-    { name: 'Jun', value: stats?.metrics.mediaGeral || 78 },
+    { name: 'Jan', value: 0 },
+    { name: 'Fev', value: 0 },
+    { name: 'Mar', value: 0 },
+    { name: 'Abr', value: 0 },
+    { name: 'Mai', value: 0 },
+    { name: 'Jun', value: Math.round(stats?.metrics.mediaGeral || 0) },
   ];
 
   const [students, setStudents] = React.useState<any[]>([]);
