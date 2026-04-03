@@ -25,6 +25,7 @@ export type Database = {
           is_protected: boolean | null
           nome: string
           senha: string
+          telefone: string | null
         }
         Insert: {
           active?: boolean | null
@@ -36,6 +37,7 @@ export type Database = {
           is_protected?: boolean | null
           nome: string
           senha: string
+          telefone?: string | null
         }
         Update: {
           active?: boolean | null
@@ -47,6 +49,7 @@ export type Database = {
           is_protected?: boolean | null
           nome?: string
           senha?: string
+          telefone?: string | null
         }
         Relationships: []
       }
@@ -139,6 +142,36 @@ export type Database = {
         }
         Relationships: []
       }
+      notificacoes: {
+        Row: {
+          created_at: string | null
+          id: string
+          message: string
+          read: boolean | null
+          title: string
+          type: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          message: string
+          read?: boolean | null
+          title: string
+          type?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          message?: string
+          read?: boolean | null
+          title?: string
+          type?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       perguntas: {
         Row: {
           enunciado: string
@@ -225,6 +258,7 @@ export type Database = {
           tentativas_maximas: number | null
           titulo: string
           updated_at: string | null
+          view_count: number | null
         }
         Insert: {
           banner_url?: string | null
@@ -246,6 +280,7 @@ export type Database = {
           tentativas_maximas?: number | null
           titulo: string
           updated_at?: string | null
+          view_count?: number | null
         }
         Update: {
           banner_url?: string | null
@@ -267,6 +302,7 @@ export type Database = {
           tentativas_maximas?: number | null
           titulo?: string
           updated_at?: string | null
+          view_count?: number | null
         }
         Relationships: [
           {
