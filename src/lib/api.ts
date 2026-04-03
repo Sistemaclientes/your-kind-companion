@@ -114,7 +114,22 @@ async function handleRoute(method: string, endpoint: string, data?: any): Promis
 
     const { data: newProva, error: provaError } = await supabase
       .from('provas')
-      .insert({ titulo: data.titulo, descricao: data.descricao || '', slug })
+      .insert({ 
+        titulo: data.titulo, 
+        descricao: data.descricao || '', 
+        slug,
+        categoria_id: data.categoria_id,
+        duracao: data.duracao || 60,
+        embaralhar_questoes: data.embaralhar_questoes ?? true,
+        mostrar_resultado: data.mostrar_resultado ?? true,
+        permitir_revisao: data.permitir_revisao ?? true,
+        bloquear_navegacao: data.bloquear_navegacao ?? false,
+        nota_corte: data.nota_corte || 7.0,
+        tentativas_maximas: data.tentativas_maximas || 1,
+        feedback_aprovacao: data.feedback_aprovacao,
+        feedback_reprovacao: data.feedback_reprovacao,
+        banner_url: data.banner_url
+      })
       .select()
       .single();
     
