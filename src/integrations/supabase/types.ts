@@ -16,6 +16,7 @@ export type Database = {
     Tables: {
       admins: {
         Row: {
+          avatar_url: string | null
           created_at: string | null
           email: string
           id: string
@@ -25,6 +26,7 @@ export type Database = {
           senha: string
         }
         Insert: {
+          avatar_url?: string | null
           created_at?: string | null
           email: string
           id?: string
@@ -34,6 +36,7 @@ export type Database = {
           senha: string
         }
         Update: {
+          avatar_url?: string | null
           created_at?: string | null
           email?: string
           id?: string
@@ -75,6 +78,7 @@ export type Database = {
       }
       alunos: {
         Row: {
+          avatar_url: string | null
           created_at: string | null
           email: string
           id: string
@@ -83,6 +87,7 @@ export type Database = {
           telefone: string | null
         }
         Insert: {
+          avatar_url?: string | null
           created_at?: string | null
           email: string
           id?: string
@@ -91,6 +96,7 @@ export type Database = {
           telefone?: string | null
         }
         Update: {
+          avatar_url?: string | null
           created_at?: string | null
           email?: string
           id?: string
@@ -100,24 +106,54 @@ export type Database = {
         }
         Relationships: []
       }
+      configuracoes: {
+        Row: {
+          chave: string
+          id: string
+          updated_at: string | null
+          valor: Json
+        }
+        Insert: {
+          chave: string
+          id?: string
+          updated_at?: string | null
+          valor: Json
+        }
+        Update: {
+          chave?: string
+          id?: string
+          updated_at?: string | null
+          valor?: Json
+        }
+        Relationships: []
+      }
       perguntas: {
         Row: {
           enunciado: string
+          explicacao: string | null
           id: string
           ordem: number | null
+          pontos: number | null
           prova_id: string
+          tipo: string | null
         }
         Insert: {
           enunciado: string
+          explicacao?: string | null
           id?: string
           ordem?: number | null
+          pontos?: number | null
           prova_id: string
+          tipo?: string | null
         }
         Update: {
           enunciado?: string
+          explicacao?: string | null
           id?: string
           ordem?: number | null
+          pontos?: number | null
           prova_id?: string
+          tipo?: string | null
         }
         Relationships: [
           {
@@ -158,26 +194,47 @@ export type Database = {
       }
       provas: {
         Row: {
+          bloquear_navegacao: boolean | null
+          categoria: string | null
           created_at: string | null
           created_by: string | null
           descricao: string | null
+          duracao: number | null
+          embaralhar_questoes: boolean | null
           id: string
+          mostrar_resultado: boolean | null
+          nota_corte: number | null
+          permitir_revisao: boolean | null
           slug: string | null
           titulo: string
         }
         Insert: {
+          bloquear_navegacao?: boolean | null
+          categoria?: string | null
           created_at?: string | null
           created_by?: string | null
           descricao?: string | null
+          duracao?: number | null
+          embaralhar_questoes?: boolean | null
           id?: string
+          mostrar_resultado?: boolean | null
+          nota_corte?: number | null
+          permitir_revisao?: boolean | null
           slug?: string | null
           titulo: string
         }
         Update: {
+          bloquear_navegacao?: boolean | null
+          categoria?: string | null
           created_at?: string | null
           created_by?: string | null
           descricao?: string | null
+          duracao?: number | null
+          embaralhar_questoes?: boolean | null
           id?: string
+          mostrar_resultado?: boolean | null
+          nota_corte?: number | null
+          permitir_revisao?: boolean | null
           slug?: string | null
           titulo?: string
         }
@@ -194,6 +251,7 @@ export type Database = {
       respostas_aluno: {
         Row: {
           alternativa_id: string
+          aluno_id: string | null
           correto: boolean
           created_at: string | null
           id: string
@@ -203,6 +261,7 @@ export type Database = {
         }
         Insert: {
           alternativa_id: string
+          aluno_id?: string | null
           correto: boolean
           created_at?: string | null
           id?: string
@@ -212,6 +271,7 @@ export type Database = {
         }
         Update: {
           alternativa_id?: string
+          aluno_id?: string | null
           correto?: boolean
           created_at?: string | null
           id?: string
@@ -225,6 +285,13 @@ export type Database = {
             columns: ["alternativa_id"]
             isOneToOne: false
             referencedRelation: "alternativas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "respostas_aluno_aluno_id_fkey"
+            columns: ["aluno_id"]
+            isOneToOne: false
+            referencedRelation: "alunos"
             referencedColumns: ["id"]
           },
           {
