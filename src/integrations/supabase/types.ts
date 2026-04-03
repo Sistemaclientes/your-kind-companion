@@ -210,12 +210,15 @@ export type Database = {
           descricao: string | null
           duracao: number | null
           embaralhar_questoes: boolean | null
+          feedback_aprovacao: string | null
+          feedback_reprovacao: string | null
           id: string
           mostrar_resultado: boolean | null
           nota_corte: number | null
           permitir_revisao: boolean | null
           slug: string | null
           status: string | null
+          tentativas_maximas: number | null
           titulo: string
         }
         Insert: {
@@ -226,12 +229,15 @@ export type Database = {
           descricao?: string | null
           duracao?: number | null
           embaralhar_questoes?: boolean | null
+          feedback_aprovacao?: string | null
+          feedback_reprovacao?: string | null
           id?: string
           mostrar_resultado?: boolean | null
           nota_corte?: number | null
           permitir_revisao?: boolean | null
           slug?: string | null
           status?: string | null
+          tentativas_maximas?: number | null
           titulo: string
         }
         Update: {
@@ -242,12 +248,15 @@ export type Database = {
           descricao?: string | null
           duracao?: number | null
           embaralhar_questoes?: boolean | null
+          feedback_aprovacao?: string | null
+          feedback_reprovacao?: string | null
           id?: string
           mostrar_resultado?: boolean | null
           nota_corte?: number | null
           permitir_revisao?: boolean | null
           slug?: string | null
           status?: string | null
+          tentativas_maximas?: number | null
           titulo?: string
         }
         Relationships: [
@@ -340,6 +349,7 @@ export type Database = {
           pontuacao: number | null
           prova_id: string
           respostas: Json | null
+          status: string | null
           total: number | null
           total_time: number | null
         }
@@ -353,6 +363,7 @@ export type Database = {
           pontuacao?: number | null
           prova_id: string
           respostas?: Json | null
+          status?: string | null
           total?: number | null
           total_time?: number | null
         }
@@ -366,6 +377,7 @@ export type Database = {
           pontuacao?: number | null
           prova_id?: string
           respostas?: Json | null
+          status?: string | null
           total?: number | null
           total_time?: number | null
         }
