@@ -588,7 +588,23 @@ export function CreateExamPage() {
                           <div className="absolute -left-6 top-0 bottom-0 w-1.5 bg-primary scale-y-0 group-focus-within/input:scale-y-100 transition-transform origin-top rounded-full" />
                         </div>
 
-                        {q.type === 'text' ? (
+                        <div className="space-y-3">
+                          <label className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant flex items-center gap-2">
+                            <ImageIcon className="w-3.5 h-3.5" />
+                            URL da Imagem (Opcional)
+                          </label>
+                          <input 
+                            type="text"
+                            value={q.imagem_url || ''}
+                            onChange={(e) => {
+                              const newQuestions = [...questions];
+                              newQuestions[idx].imagem_url = e.target.value;
+                              setQuestions(newQuestions);
+                            }}
+                            placeholder="https://exemplo.com/imagem.png"
+                            className="input-saas w-full h-12 text-sm"
+                          />
+                        </div>
                           <div className="space-y-3">
                             <label className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant">Resposta esperada (referência)</label>
                             <textarea 
