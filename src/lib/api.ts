@@ -242,8 +242,8 @@ async function handleRoute(method: string, endpoint: string, data?: any): Promis
       .select(`
         id, titulo,
         perguntas (
-          id,
-          alternativas ( id, is_correta )
+          id, enunciado, pontos, explicacao, imagem_url,
+          alternativas ( id, texto, is_correta )
         )
       `)
       .eq('id', data.prova_id)
