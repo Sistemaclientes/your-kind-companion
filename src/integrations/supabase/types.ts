@@ -118,6 +118,39 @@ export type Database = {
         }
         Relationships: []
       }
+      categorias: {
+        Row: {
+          cor: string | null
+          created_at: string
+          descricao: string | null
+          icon: string | null
+          id: string
+          nome: string
+          slug: string
+          updated_at: string
+        }
+        Insert: {
+          cor?: string | null
+          created_at?: string
+          descricao?: string | null
+          icon?: string | null
+          id?: string
+          nome: string
+          slug: string
+          updated_at?: string
+        }
+        Update: {
+          cor?: string | null
+          created_at?: string
+          descricao?: string | null
+          icon?: string | null
+          id?: string
+          nome?: string
+          slug?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       configuracoes: {
         Row: {
           chave: string
@@ -177,6 +210,7 @@ export type Database = {
           enunciado: string
           explicacao: string | null
           id: string
+          imagem_url: string | null
           ordem: number | null
           pontos: number | null
           prova_id: string
@@ -186,6 +220,7 @@ export type Database = {
           enunciado: string
           explicacao?: string | null
           id?: string
+          imagem_url?: string | null
           ordem?: number | null
           pontos?: number | null
           prova_id: string
@@ -195,6 +230,7 @@ export type Database = {
           enunciado?: string
           explicacao?: string | null
           id?: string
+          imagem_url?: string | null
           ordem?: number | null
           pontos?: number | null
           prova_id?: string
@@ -242,6 +278,7 @@ export type Database = {
           banner_url: string | null
           bloquear_navegacao: boolean | null
           categoria: string | null
+          categoria_id: string | null
           created_at: string | null
           created_by: string | null
           descricao: string | null
@@ -264,6 +301,7 @@ export type Database = {
           banner_url?: string | null
           bloquear_navegacao?: boolean | null
           categoria?: string | null
+          categoria_id?: string | null
           created_at?: string | null
           created_by?: string | null
           descricao?: string | null
@@ -286,6 +324,7 @@ export type Database = {
           banner_url?: string | null
           bloquear_navegacao?: boolean | null
           categoria?: string | null
+          categoria_id?: string | null
           created_at?: string | null
           created_by?: string | null
           descricao?: string | null
@@ -305,6 +344,13 @@ export type Database = {
           view_count?: number | null
         }
         Relationships: [
+          {
+            foreignKeyName: "provas_categoria_id_fkey"
+            columns: ["categoria_id"]
+            isOneToOne: false
+            referencedRelation: "categorias"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "provas_created_by_fkey"
             columns: ["created_by"]
