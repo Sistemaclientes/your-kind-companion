@@ -280,14 +280,31 @@ async function handleRoute(method: string, endpoint: string, data?: any): Promis
     const pontuacao = total > 0 ? Math.round((acertos / total) * 100) : 0;
 
     // Save result
-    await supabase.from('resultados').insert({
+    const { data: resultData } = await supabase.from('resultados').insert({
       prova_id: data.prova_id,
       aluno_id: aluno.id,
       pontuacao,
       acertos,
       total,
       respostas: data.respostas || {},
-    });
+      status: 'Finalizado',
+      data: new Date().toISOString()
+    }).select().single();
+
+    if (resultData) {
+      const respostasAluno = (prova.perguntas || []).map((p: any) => ({
+        resultado_id: resultData.id,
+        prova_id: data.prova_id,
+        aluno_id: aluno.id,
+        pergunta_id: p.id,
+        alternativa_id: data.respostas?.[p.id],
+        correto: p.alternativas?.find((a: any) => a.is_correta)?.id === data.respostas?.[p.id]
+      }));
+
+      if (respostasAluno.length > 0) {
+        await supabase.from('respostas_aluno').insert(respostasAluno);
+      }
+    }
 
     return { acertos, total, pontuacao };
   }
