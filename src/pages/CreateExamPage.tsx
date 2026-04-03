@@ -605,6 +605,8 @@ export function CreateExamPage() {
                             className="input-saas w-full h-12 text-sm"
                           />
                         </div>
+
+                        {q.type === 'text' ? (
                           <div className="space-y-3">
                             <label className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant">Resposta esperada (referência)</label>
                             <textarea 
