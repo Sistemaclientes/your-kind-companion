@@ -1,49 +1,59 @@
 
 
-# Plano: Adicionar Fluxo de Reset de Senha (sem alterar login existente)
+# Plano: Adicionar Fluxo de Reset de Senha por Email
 
 ## Analise do Estado Atual
 
-O login atual funciona com autenticacao customizada (senhas em texto puro nas tabelas `admins` e `alunos`). O `authStore` usa localStorage. O sistema NAO usa Supabase Auth (`supabase.auth.*`).
+O login funciona com autenticacao customizada (senhas em texto puro nas tabelas `admins` e `alunos`, sessao via localStorage). O sistema **NAO usa Supabase Auth** (`supabase.auth.*`) -- os usuarios nao existem em `auth.users`.
 
-Problemas encontrados:
-- **Admin forgot password**: chama API que apenas verifica se email existe -- nao envia email
-- **Student forgot password**: literalmente nao faz nada (apenas muda state local)
-- **Nao existe** `/auth/callback` nem `/update-password`
-- A pagina `/confirmar-email` chama API inexistente
+**Problemas encontrados:**
+- Admin "Esqueci senha": chama API que apenas verifica se email existe no banco -- nenhum email e enviado
+- Student "Esqueci senha": literalmente nao faz nada (`setForgotSent(true)` sem chamar API)
+- Pagina `/confirmar-email` chama API inexistente
 
-## Restricao
-
-Como o sistema NAO usa Supabase Auth para login, nao e possivel usar `supabase.auth.resetPasswordForEmail()`. Os usuarios nao existem em `auth.users`.
-
-## Abordagem (sem quebrar nada)
-
-Usar Edge Function + tabela de tokens para enviar emails de reset reais.
-
-### 1. Criar tabela `password_reset_tokens` (migracao)
-- Colunas: `id`, `email`, `token`, `user_type` (admin/student), `expires_at`, `used`
-- Token expira em 1 hora
-
-### 2. Criar Edge Function `send-reset-email`
-- Gera token, salva no banco, envia email com link de reset
-- Usa transactional email do Lovable
-
-### 3. Corrigir `auth.service.ts`
-- Forgot password: chamar Edge Function que envia email real
-- Reset password: validar token antes de atualizar senha
-- Adicionar suporte para admin e student
-
-### 4. Corrigir `LoginPage.tsx` e `StudentLoginPage.tsx`
-- Forgot password agora chama API real
-- Manter toda a UI e logica de login intacta
-
-### 5. Atualizar `api.ts` com novas rotas
-
-### 6. Limpar `ConfirmEmailPage.tsx` quebrada
+**Restricao critica:** Como os usuarios nao estao no `auth.users`, nao e possivel usar `supabase.auth.resetPasswordForEmail()` sem migrar todo o login. A solucao usa Edge Function + tokens proprios.
 
 ## O que NAO sera alterado
 - Login existente (admin e aluno)
-- authStore / logica de sessao
-- Rotas existentes
+- `authStore` / logica de sessao
+- Rotas ja existentes
 - Design global
+
+## Etapas
+
+### 1. Criar tabela `password_reset_tokens` (migracao SQL)
+Armazena tokens temporarios com expiracao de 1 hora, tipo de usuario (admin/student), e flag `used`.
+
+### 2. Configurar email transacional
+Usar o sistema de email transacional do Lovable para enviar os emails de reset com link seguro.
+
+### 3. Criar Edge Function `send-reset-email`
+Recebe email + tipo de usuario, verifica se existe no banco, gera token UUID, salva na tabela, envia email com link `{origin}/redefinir-senha?token={token}&email={email}`.
+
+### 4. Atualizar `auth.service.ts`
+- `forgotAdminPassword` e novo `forgotStudentPassword`: chamam a Edge Function
+- `resetAdminPassword` e novo `resetStudentPassword`: validam token antes de atualizar senha
+
+### 5. Corrigir `LoginPage.tsx` (admin)
+- `handleForgotSubmit`: agora chama o servico que realmente envia email
+- `handleResetSubmit`: valida token da URL antes de resetar
+- Manter toda a UI existente
+
+### 6. Corrigir `StudentLoginPage.tsx`
+- `handleForgotPassword`: chamar API real que envia email
+- Adicionar view de reset com campos nova senha + confirmacao
+- Manter toda a UI de login/cadastro intacta
+
+### 7. Atualizar `api.ts`
+- Adicionar rotas para student forgot/reset password
+
+### 8. Limpar `ConfirmEmailPage.tsx` quebrada
+- Remover pagina e rota do `App.tsx`
+
+## Detalhes Tecnicos
+- Tokens UUID gerados com `gen_random_uuid()` no Postgres
+- Expiracao de 1 hora, single-use (marcado `used = true` apos consumo)
+- Email enviado via transactional email (Edge Function)
+- Link de reset inclui token e email como query params
+- RLS na tabela de tokens para seguranca
 
