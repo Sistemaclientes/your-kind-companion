@@ -19,7 +19,7 @@ function Skeleton({ className }: { className?: string }) {
 
 export function StudentResultDetailPage() {
   const navigate = useNavigate();
-  const { id } = useParams();
+  const { slug } = useParams();
   const [result, setResult] = React.useState<any>(null);
   const [exam, setExam] = React.useState<any>(null);
   const [loading, setLoading] = React.useState(true);
