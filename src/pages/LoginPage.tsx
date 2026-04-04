@@ -37,7 +37,7 @@ export function LoginPage() {
   React.useEffect(() => {
     if (user) {
       if (user.role === 'admin') navigate('/admin/dashboard', { replace: true });
-      else navigate('/aluno/dashboard', { replace: true });
+      else navigate('/student/dashboard', { replace: true });
     }
   }, [user, navigate]);
 
