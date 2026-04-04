@@ -312,6 +312,7 @@ export type Database = {
           status: string | null
           tentativas_maximas: number | null
           titulo: string
+          total_questoes: number | null
           updated_at: string | null
           view_count: number | null
         }
@@ -338,6 +339,7 @@ export type Database = {
           status?: string | null
           tentativas_maximas?: number | null
           titulo: string
+          total_questoes?: number | null
           updated_at?: string | null
           view_count?: number | null
         }
@@ -364,6 +366,7 @@ export type Database = {
           status?: string | null
           tentativas_maximas?: number | null
           titulo?: string
+          total_questoes?: number | null
           updated_at?: string | null
           view_count?: number | null
         }
@@ -462,6 +465,7 @@ export type Database = {
           aluno_id: string
           data: string | null
           email_aluno: string | null
+          finalizado_em: string | null
           id: string
           nome_aluno: string | null
           pontuacao: number | null
@@ -478,6 +482,7 @@ export type Database = {
           aluno_id: string
           data?: string | null
           email_aluno?: string | null
+          finalizado_em?: string | null
           id?: string
           nome_aluno?: string | null
           pontuacao?: number | null
@@ -494,6 +499,7 @@ export type Database = {
           aluno_id?: string
           data?: string | null
           email_aluno?: string | null
+          finalizado_em?: string | null
           id?: string
           nome_aluno?: string | null
           pontuacao?: number | null
