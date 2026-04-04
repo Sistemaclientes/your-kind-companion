@@ -178,15 +178,16 @@ app.post('/api/student/register', async (req, res) => {
     const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(); // 24h
 
     db.prepare(`
-      INSERT INTO alunos (nome, email, telefone, senha, confirmation_token, token_expires_at, email_confirmed) 
-      VALUES (?, ?, ?, ?, ?, ?, 0)
+      INSERT INTO alunos (nome, email, telefone, senha, confirmation_token, token_expires_at, email_confirmed, cpf) 
+      VALUES (?, ?, ?, ?, ?, ?, 0, ?)
     `).run(
       String(nome).trim(), 
       String(email).trim().toLowerCase(), 
       String(telefone || '').trim(), 
       hashedPassword,
       token,
-      expiresAt
+      expiresAt,
+      cpf ? String(cpf).trim() : null
     );
 
     // Send confirmation email
