@@ -663,6 +663,7 @@ export type Database = {
       }
     }
     Functions: {
+      check_is_admin: { Args: never; Returns: boolean }
       get_my_role: { Args: never; Returns: string }
     }
     Enums: {
