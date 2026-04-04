@@ -296,7 +296,7 @@ export function StudentExamPage() {
       </main>
 
       {/* Bottom Navigation */}
-      <footer className="h-24 bg-surface-container border-t border-outline flex items-center justify-between px-6 md:px-10 sticky bottom-0 z-50 backdrop-blur-md bg-surface-container/90">
+      <footer className="h-24 bg-surface-container border-t border-outline flex items-center justify-center px-6 md:px-10 sticky bottom-0 z-50 backdrop-blur-md bg-surface-container/90">
         <div className="flex items-center gap-3 md:gap-4">
           <button 
             onClick={handlePrev}
@@ -312,29 +312,6 @@ export function StudentExamPage() {
           >
             <span className="hidden sm:inline">{currentQuestionIdx === totalQuestions - 1 ? 'Revisar' : 'Próxima'}</span>
             <ChevronRight className="w-5 h-5" />
-          </button>
-        </div>
-
-        <div className="flex items-center gap-3">
-          <button 
-            onClick={toggleFlag}
-            className={cn(
-              "w-12 h-12 rounded-2xl flex items-center justify-center transition-all border shadow-sm",
-              flaggedQuestions.includes(currentQuestionIdx)
-                ? "bg-secondary/10 text-secondary border-secondary/20"
-                : "bg-surface-container-low text-on-surface-variant border-outline hover:text-primary hover:border-primary/20"
-            )}
-            title="Marcar para revisão"
-          >
-            <Flag className={cn("w-5 h-5", flaggedQuestions.includes(currentQuestionIdx) && "fill-secondary")} />
-          </button>
-          <div className="hidden sm:block h-8 w-px bg-outline"></div>
-          <button 
-            onClick={() => setShowMap(true)}
-            className="flex items-center gap-3 px-6 py-3.5 rounded-2xl bg-surface-container-low border border-outline text-on-surface font-bold text-xs uppercase tracking-widest hover:bg-surface-container-high transition-all shadow-sm hover:scale-[1.03] active:scale-[0.98]"
-          >
-            <LayoutGrid className="w-5 h-5 text-primary" />
-            <span className="hidden md:inline">Mapa de Questões</span>
           </button>
         </div>
       </footer>
