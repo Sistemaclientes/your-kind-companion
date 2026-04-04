@@ -533,20 +533,6 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "fk_resultados_prova"
-            columns: ["prova_id"]
-            isOneToOne: false
-            referencedRelation: "provas"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_resultados_prova"
-            columns: ["prova_id"]
-            isOneToOne: false
-            referencedRelation: "vw_provas_stats"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "resultados_aluno_id_fkey"
             columns: ["aluno_id"]
             isOneToOne: false

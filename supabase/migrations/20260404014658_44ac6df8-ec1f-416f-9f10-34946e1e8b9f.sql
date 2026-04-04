@@ -1,0 +1,1 @@
+ALTER TABLE public.resultados DROP CONSTRAINT IF EXISTS fk_resultados_prova;
