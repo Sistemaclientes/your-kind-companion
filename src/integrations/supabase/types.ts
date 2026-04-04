@@ -635,6 +635,7 @@ export type Database = {
     Views: {
       vw_provas_stats: {
         Row: {
+          avg_score: number | null
           categoria_cor: string | null
           categoria_icon: string | null
           categoria_id: string | null
@@ -643,6 +644,7 @@ export type Database = {
           descricao: string | null
           dificuldade: string | null
           id: string | null
+          max_score: number | null
           slug: string | null
           status: string | null
           studentcount: number | null
@@ -650,6 +652,7 @@ export type Database = {
           titulo: string | null
           total_pontos: number | null
           total_questoes: number | null
+          total_submissions: number | null
         }
         Relationships: [
           {
