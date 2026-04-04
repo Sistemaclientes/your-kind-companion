@@ -274,6 +274,14 @@ app.post('/api/student/login', (req, res) => {
     return res.status(401).json({ error: 'Email ou senha inválidos' });
   }
 
+  if (!student.email_confirmed) {
+    return res.status(403).json({ 
+      error: 'E-mail não confirmado', 
+      unconfirmed: true,
+      email: student.email 
+    });
+  }
+
   res.json({
     student: {
       id: student.id,
@@ -283,6 +291,7 @@ app.post('/api/student/login', (req, res) => {
     }
   });
 });
+
 
 // --- Exam Management ---
 
