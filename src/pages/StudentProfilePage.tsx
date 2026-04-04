@@ -180,6 +180,12 @@ export function StudentProfilePage() {
                 <Phone className={iconClass} />
                 <input className={inputClass} type="tel" placeholder="(00) 00000-0000" value={telefone} onChange={(e) => setTelefone(phoneMask(e.target.value))} />
               </div>
+            <div className="space-y-2">
+              <label className={labelClass}>CPF</label>
+              <div className="relative group">
+                <User className={iconClass} />
+                <input className={inputClass} type="text" placeholder="000.000.000-00" value={cpf} onChange={(e) => setCpf(e.target.value)} />
+              </div>
             </div>
 
             <div className="border-t border-outline pt-5 mt-5">
