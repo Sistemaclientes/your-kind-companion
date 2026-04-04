@@ -562,6 +562,13 @@ export type Database = {
             referencedRelation: "resultados"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "respostas_aluno_resultado_id_fkey"
+            columns: ["resultado_id"]
+            isOneToOne: false
+            referencedRelation: "vw_ranking_alunos"
+            referencedColumns: ["resultado_id"]
+          },
         ]
       }
       resultados: {
@@ -687,6 +694,45 @@ export type Database = {
             columns: ["categoria_id"]
             isOneToOne: false
             referencedRelation: "categorias"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      vw_ranking_alunos: {
+        Row: {
+          acertos: number | null
+          aluno_avatar: string | null
+          aluno_email: string | null
+          aluno_id: string | null
+          aluno_nome: string | null
+          data_conclusao: string | null
+          pontuacao: number | null
+          posicao: number | null
+          prova_id: string | null
+          prova_titulo: string | null
+          resultado_id: string | null
+          total: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "resultados_aluno_id_fkey"
+            columns: ["aluno_id"]
+            isOneToOne: false
+            referencedRelation: "alunos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "resultados_prova_id_fkey"
+            columns: ["prova_id"]
+            isOneToOne: false
+            referencedRelation: "provas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "resultados_prova_id_fkey"
+            columns: ["prova_id"]
+            isOneToOne: false
+            referencedRelation: "vw_provas_stats"
             referencedColumns: ["id"]
           },
         ]
