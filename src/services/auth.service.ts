@@ -92,25 +92,68 @@ export const authService = {
     return { message: 'Cadastro realizado com sucesso!' };
   },
 
-  async forgotAdminPassword(email: string) {
-    const { data: admin } = await supabase
-      .from('admins')
-      .select('id')
+  async forgotPassword(email: string, userType: 'admin' | 'student') {
+    const { data, error } = await supabase.functions.invoke('send-reset-email', {
+      body: {
+        email: email.trim().toLowerCase(),
+        user_type: userType,
+        origin: window.location.origin,
+      },
+    });
+
+    if (error) throw new Error('Erro ao processar solicitação. Tente novamente.');
+    return data;
+  },
+
+  async resetPassword(email: string, token: string, newPassword: string, userType: 'admin' | 'student') {
+    const table = userType === 'admin' ? 'admins' : 'alunos';
+
+    // Validate token
+    const { data: user, error: fetchError } = await supabase
+      .from(table)
+      .select('id, reset_token, reset_expires')
       .eq('email', email.trim().toLowerCase())
       .single();
 
-    if (!admin) throw new Error('E-mail não encontrado no sistema');
-    return { message: 'Conta verificada' };
+    if (fetchError || !user) throw new Error('Usuário não encontrado.');
+
+    if (!user.reset_token || user.reset_token !== token) {
+      throw new Error('Token inválido ou já utilizado.');
+    }
+
+    if (user.reset_expires && new Date(user.reset_expires) < new Date()) {
+      throw new Error('Token expirado. Solicite um novo link de redefinição.');
+    }
+
+    // Update password and clear token
+    const { error: updateError } = await supabase
+      .from(table)
+      .update({
+        senha: newPassword,
+        reset_token: null,
+        reset_expires: null,
+      })
+      .eq('id', user.id);
+
+    if (updateError) throw new Error('Erro ao redefinir senha. Tente novamente.');
+
+    return { message: 'Senha redefinida com sucesso!' };
   },
 
-  async resetAdminPassword(email: string, newPassword: string) {
-    const { error } = await supabase
-      .from('admins')
-      .update({ senha: newPassword })
-      .eq('email', email.trim().toLowerCase());
+  async forgotAdminPassword(email: string) {
+    return this.forgotPassword(email, 'admin');
+  },
 
-    if (error) throw new Error(error.message);
-    return { message: 'Senha redefinida com sucesso' };
+  async forgotStudentPassword(email: string) {
+    return this.forgotPassword(email, 'student');
+  },
+
+  async resetAdminPassword(email: string, token: string, newPassword: string) {
+    return this.resetPassword(email, token, newPassword, 'admin');
+  },
+
+  async resetStudentPassword(email: string, token: string, newPassword: string) {
+    return this.resetPassword(email, token, newPassword, 'student');
   },
 
   async changeAdminPassword(adminId: string, currentPassword: string, newPassword: string) {
