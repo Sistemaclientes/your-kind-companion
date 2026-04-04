@@ -13,34 +13,37 @@ Migrar a autenticação para o **Supabase Auth nativo** (`supabase.auth.*`), que
 ## Etapas
 
 ### 1. Reescrever `auth.service.ts` com Supabase Auth
-- Login admin/aluno: `supabase.auth.signInWithPassword()`
-- Cadastro aluno: `supabase.auth.signUp()` com metadata (nome, telefone, cpf)
-- Esqueci senha: `supabase.auth.resetPasswordForEmail()` com `redirectTo` correto
-- Logout: `supabase.auth.signOut()`
+- Login admin/aluno via `supabase.auth.signInWithPassword()`
+- Cadastro aluno via `supabase.auth.signUp()` com metadata (nome, telefone, cpf)
+- Esqueci senha via `supabase.auth.resetPasswordForEmail()` com `redirectTo` para `/update-password`
+- Logout via `supabase.auth.signOut()`
 
 ### 2. Reescrever `authStore.ts` com sessão Supabase
-- Usar `supabase.auth.onAuthStateChange()` ao invés de localStorage manual
-- Buscar role do usuário na tabela `profiles` (já existente)
-- Remover gerenciamento manual de tokens
+- Usar `supabase.auth.onAuthStateChange()` para gerenciar sessão
+- Buscar role do usuário na tabela `profiles` (já existente com coluna `role`)
+- Remover gerenciamento manual de localStorage tokens
 
 ### 3. Criar novas páginas
-- **`/auth/callback`** — Captura redirecionamentos do Supabase (confirmação de email, recovery). Detecta `type=recovery` para redirecionar ao formulário de nova senha
-- **`/update-password`** — Formulário para definir nova senha com `supabase.auth.updateUser({ password })`
+- **`/auth/callback`** — Captura redirecionamentos do Supabase Auth (confirmação de email, password recovery). Detecta `type=recovery` para redirecionar ao formulário de nova senha, senão redireciona conforme role do usuário.
+- **`/update-password`** — Formulário para definir nova senha com validação, usando `supabase.auth.updateUser({ password })`
 
 ### 4. Atualizar páginas existentes
-- **`LoginPage.tsx`** — Substituir login e forgot password por chamadas Supabase Auth
+- **`LoginPage.tsx`** — Substituir login customizado e forgot password por chamadas Supabase Auth nativas
 - **`StudentLoginPage.tsx`** — Substituir login, cadastro e forgot password por Supabase Auth
 - **Remover `ConfirmEmailPage.tsx`** (substituída por `/auth/callback`)
 
 ### 5. Atualizar rotas em `App.tsx`
 - Adicionar `/auth/callback` e `/update-password`
 - Remover `/confirmar-email`
+- Manter redirects legados
 
 ### 6. Atualizar `api.ts`
-- Atualizar rotas de autenticação para usar os novos métodos
+- Atualizar rotas de autenticação para delegar aos novos métodos Supabase Auth
 
-## Observação
-- O trigger `handle_new_user()` já cria perfis e vincula às tabelas `alunos`/`admins` — sem necessidade de migração de banco
-- Emails de reset e confirmação são enviados automaticamente pelo Supabase
-- Contas admin existentes precisarão ser recriadas no Supabase Auth (migração única)
+## Detalhes Técnicos
+
+- O trigger `handle_new_user()` no banco já cria perfis automaticamente e vincula às tabelas `alunos`/`admins` no signup -- nenhuma migração de banco necessária
+- Emails de reset de senha e confirmação de cadastro são enviados automaticamente pelo Supabase Auth
+- Contas admin existentes na tabela `admins` precisarão ser recriadas no Supabase Auth (migração única, documentada para o usuário)
+- A tabela `profiles` já possui coluna `role` que será usada para determinar o tipo de acesso (admin/student)
 
