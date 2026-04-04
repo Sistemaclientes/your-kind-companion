@@ -507,6 +507,8 @@ async function handleRoute(method: string, endpoint: string, data?: any): Promis
       nome: data.nome,
       email: emailLower,
       telefone: data.telefone || '',
+      senha: data.senha || '',
+      status: 'Aguardando Confirmação'
     });
 
     if (error) throw new Error(error.message);
@@ -522,7 +524,31 @@ async function handleRoute(method: string, endpoint: string, data?: any): Promis
       .single();
     
     if (error || !aluno) throw new Error('Email não encontrado. Cadastre-se primeiro.');
-    return { nome: aluno.nome, email: aluno.email, telefone: aluno.telefone };
+    
+    // Check if password matches (this app seems to store plain text or simple hashes?)
+    if (data.senha && aluno.senha !== data.senha) {
+      throw new Error('Senha incorreta.');
+    }
+
+    if (aluno.status === 'Aguardando Confirmação') {
+      throw new Error('Confirme seu cadastro no e-mail enviado antes de realizar o login.');
+    }
+    
+    return { id: aluno.id, nome: aluno.nome, email: aluno.email, telefone: aluno.telefone };
+  }
+
+  // UPDATE STUDENT STATUS (ADMIN)
+  if (method === 'PATCH' && endpoint.startsWith('/admin/students/status/')) {
+    const email = decodeURIComponent(endpoint.split('/').pop() || '');
+    const { status } = data;
+    
+    const { error } = await supabase
+      .from('alunos')
+      .update({ status })
+      .eq('email', email);
+      
+    if (error) throw new Error(error.message);
+    return { message: 'Status atualizado com sucesso' };
   }
 
   // ADMIN FORGOT PASSWORD
@@ -617,6 +643,7 @@ export const api = {
   get: (endpoint: string) => handleRoute('GET', endpoint),
   post: (endpoint: string, data: any) => handleRoute('POST', endpoint, data),
   put: (endpoint: string, data: any) => handleRoute('PUT', endpoint, data),
+  patch: (endpoint: string, data: any) => handleRoute('PATCH', endpoint, data),
   delete: (endpoint: string) => handleRoute('DELETE', endpoint),
 
   login: async (credentials: { email: string; password: string }) => {
