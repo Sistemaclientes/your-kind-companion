@@ -30,6 +30,7 @@ export type Database = {
           reset_expires: string | null
           reset_token: string | null
           senha: string
+          slug: string | null
           telefone: string | null
           updated_at: string | null
         }
@@ -48,6 +49,7 @@ export type Database = {
           reset_expires?: string | null
           reset_token?: string | null
           senha: string
+          slug?: string | null
           telefone?: string | null
           updated_at?: string | null
         }
@@ -66,6 +68,7 @@ export type Database = {
           reset_expires?: string | null
           reset_token?: string | null
           senha?: string
+          slug?: string | null
           telefone?: string | null
           updated_at?: string | null
         }
@@ -577,6 +580,7 @@ export type Database = {
           pontuacao: number | null
           prova_id: string
           respostas: Json | null
+          slug: string | null
           status: string | null
           tentativa_numero: number | null
           total: number | null
@@ -599,6 +603,7 @@ export type Database = {
           pontuacao?: number | null
           prova_id: string
           respostas?: Json | null
+          slug?: string | null
           status?: string | null
           tentativa_numero?: number | null
           total?: number | null
@@ -621,6 +626,7 @@ export type Database = {
           pontuacao?: number | null
           prova_id?: string
           respostas?: Json | null
+          slug?: string | null
           status?: string | null
           tentativa_numero?: number | null
           total?: number | null
