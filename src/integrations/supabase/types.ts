@@ -270,6 +270,7 @@ export type Database = {
           ordem: number | null
           pontos: number | null
           prova_id: string
+          status: string | null
           tags: string[] | null
           tipo: string | null
           updated_at: string | null
@@ -284,6 +285,7 @@ export type Database = {
           ordem?: number | null
           pontos?: number | null
           prova_id: string
+          status?: string | null
           tags?: string[] | null
           tipo?: string | null
           updated_at?: string | null
@@ -298,6 +300,7 @@ export type Database = {
           ordem?: number | null
           pontos?: number | null
           prova_id?: string
+          status?: string | null
           tags?: string[] | null
           tipo?: string | null
           updated_at?: string | null
@@ -363,6 +366,7 @@ export type Database = {
           data_fim: string | null
           data_inicio: string | null
           descricao: string | null
+          dificuldade: string | null
           duracao: number | null
           embaralhar_alternativas: boolean | null
           embaralhar_questoes: boolean | null
@@ -376,6 +380,7 @@ export type Database = {
           permitir_revisao: boolean | null
           slug: string | null
           status: string | null
+          tags: string[] | null
           tentativas_maximas: number | null
           titulo: string
           total_pontos: number | null
@@ -392,6 +397,7 @@ export type Database = {
           data_fim?: string | null
           data_inicio?: string | null
           descricao?: string | null
+          dificuldade?: string | null
           duracao?: number | null
           embaralhar_alternativas?: boolean | null
           embaralhar_questoes?: boolean | null
@@ -405,6 +411,7 @@ export type Database = {
           permitir_revisao?: boolean | null
           slug?: string | null
           status?: string | null
+          tags?: string[] | null
           tentativas_maximas?: number | null
           titulo: string
           total_pontos?: number | null
@@ -421,6 +428,7 @@ export type Database = {
           data_fim?: string | null
           data_inicio?: string | null
           descricao?: string | null
+          dificuldade?: string | null
           duracao?: number | null
           embaralhar_alternativas?: boolean | null
           embaralhar_questoes?: boolean | null
@@ -434,6 +442,7 @@ export type Database = {
           permitir_revisao?: boolean | null
           slug?: string | null
           status?: string | null
+          tags?: string[] | null
           tentativas_maximas?: number | null
           titulo?: string
           total_pontos?: number | null
@@ -632,10 +641,12 @@ export type Database = {
           categoria_nome: string | null
           created_at: string | null
           descricao: string | null
+          dificuldade: string | null
           id: string | null
           slug: string | null
           status: string | null
           studentcount: number | null
+          tags: string[] | null
           titulo: string | null
           total_pontos: number | null
           total_questoes: number | null
