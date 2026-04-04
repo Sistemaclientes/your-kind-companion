@@ -405,7 +405,7 @@ async function handleRoute(method: string, endpoint: string, data?: any): Promis
       }
     }
 
-    return { acertos, total, pontuacao };
+    return { acertos, total, pontuacao, slug: resultData?.slug };
   }
 
   // DASHBOARD STATS
