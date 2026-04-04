@@ -182,7 +182,15 @@ export function StudentDetailsPage() {
                 </div>
               </div>
             </div>
-          </div>
+                </div>
+                {studentData.cpf && (
+                  <div className="flex items-center gap-4 text-sm text-on-surface-variant font-medium">
+                    <div className="w-9 h-9 rounded-xl bg-surface-container flex items-center justify-center text-primary/70 border border-outline">
+                      <ShieldCheck className="w-4 h-4" />
+                    </div>
+                    <span className="truncate">CPF: {studentData.cpf}</span>
+                  </div>
+                )}
 
           {/* Stats and History */}
           <div className="lg:col-span-8 space-y-8">
