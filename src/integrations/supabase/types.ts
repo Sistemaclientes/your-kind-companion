@@ -25,6 +25,8 @@ export type Database = {
           is_protected: boolean | null
           last_login: string | null
           nome: string
+          reset_expires: string | null
+          reset_token: string | null
           senha: string
           telefone: string | null
           updated_at: string | null
@@ -39,6 +41,8 @@ export type Database = {
           is_protected?: boolean | null
           last_login?: string | null
           nome: string
+          reset_expires?: string | null
+          reset_token?: string | null
           senha: string
           telefone?: string | null
           updated_at?: string | null
@@ -53,6 +57,8 @@ export type Database = {
           is_protected?: boolean | null
           last_login?: string | null
           nome?: string
+          reset_expires?: string | null
+          reset_token?: string | null
           senha?: string
           telefone?: string | null
           updated_at?: string | null
