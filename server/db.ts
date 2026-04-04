@@ -93,6 +93,11 @@ export function initDB() {
   try { db.exec(`ALTER TABLE alunos ADD COLUMN email_confirmed BOOLEAN DEFAULT 0`); } catch (e) {}
   try { db.exec(`ALTER TABLE alunos ADD COLUMN confirmation_token TEXT`); } catch (e) {}
   try { db.exec(`ALTER TABLE alunos ADD COLUMN token_expires_at DATETIME`); } catch (e) {}
+  try { db.exec(`ALTER TABLE alunos ADD COLUMN cpf TEXT UNIQUE`); } catch (e) {}
+  try { db.exec(`ALTER TABLE resultados ADD COLUMN aluno_id INTEGER`); } catch (e) {}
+  try { db.exec(`ALTER TABLE resultados ADD COLUMN respostas TEXT`); } catch (e) {}
+  try { db.exec(`ALTER TABLE resultados ADD COLUMN status TEXT`); } catch (e) {}
+  try { db.exec(`ALTER TABLE resultados ADD COLUMN total_time INTEGER`); } catch (e) {}
 
   // Seed or update Admin Master with specified credentials
   const masterEmail = 'suprememidias.ok@gmail.com';
