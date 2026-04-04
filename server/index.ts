@@ -117,24 +117,45 @@ app.delete('/api/admins/:id', adminMiddleware, masterMiddleware, (req: any, res)
 
 // --- Admin Forgot/Reset Password ---
 
-app.post('/api/admin/forgot-password', (req, res) => {
+app.post('/api/admin/forgot-password', async (req, res) => {
   const { email } = req.body;
   if (!email) return res.status(400).json({ error: 'Informe o e-mail' });
-  const admin = db.prepare('SELECT id FROM admins WHERE email = ?').get(String(email).trim().toLowerCase()) as any;
+  
+  const admin = db.prepare('SELECT id, nome, email FROM admins WHERE email = ?').get(String(email).trim().toLowerCase()) as any;
   if (!admin) return res.status(404).json({ error: 'E-mail não encontrado no sistema' });
-  res.json({ message: 'Conta verificada' });
+  
+  try {
+    const token = crypto.randomBytes(20).toString('hex');
+    const expires = new Date(Date.now() + 3600000).toISOString(); // 1h
+    
+    db.prepare('UPDATE admins SET reset_token = ?, reset_expires = ? WHERE id = ?')
+      .run(token, expires, admin.id);
+      
+    await emailService.sendPasswordReset(admin.email, admin.nome, token);
+    res.json({ message: 'E-mail de redefinição enviado com sucesso' });
+  } catch (err) {
+    console.error('Error in forgot password:', err);
+    res.status(500).json({ error: 'Erro ao processar solicitação' });
+  }
 });
 
 app.post('/api/admin/reset-password', (req, res) => {
-  const { email, new_password } = req.body;
-  if (!email || !new_password) return res.status(400).json({ error: 'Dados incompletos' });
+  const { email, token, new_password } = req.body;
+  if (!email || !token || !new_password) return res.status(400).json({ error: 'Dados incompletos' });
   if (new_password.length < 6) return res.status(400).json({ error: 'Senha deve ter pelo menos 6 caracteres' });
   
-  const admin = db.prepare('SELECT id FROM admins WHERE email = ?').get(String(email).trim().toLowerCase()) as any;
-  if (!admin) return res.status(404).json({ error: 'E-mail não encontrado' });
+  const admin = db.prepare('SELECT id, reset_token, reset_expires FROM admins WHERE email = ?').get(String(email).trim().toLowerCase()) as any;
+  
+  if (!admin || admin.reset_token !== token) {
+    return res.status(400).json({ error: 'Token inválido ou expirado' });
+  }
+  
+  if (new Date(admin.reset_expires) < new Date()) {
+    return res.status(400).json({ error: 'Token expirado' });
+  }
   
   const hashed = authService.hashPassword(new_password);
-  db.prepare('UPDATE admins SET senha = ? WHERE id = ?').run(hashed, admin.id);
+  db.prepare('UPDATE admins SET senha = ?, reset_token = NULL, reset_expires = NULL WHERE id = ?').run(hashed, admin.id);
   res.json({ message: 'Senha redefinida com sucesso' });
 });
 
