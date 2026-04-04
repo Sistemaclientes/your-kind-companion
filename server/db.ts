@@ -75,8 +75,12 @@ export function initDB() {
       email TEXT UNIQUE NOT NULL,
       telefone TEXT,
       senha TEXT NOT NULL,
+      email_confirmed BOOLEAN DEFAULT 0,
+      confirmation_token TEXT,
+      token_expires_at DATETIME,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     );
+
   `);
 
   // Ensure is_protected column exists (migration)
