@@ -31,6 +31,7 @@ export function StudentProfilePage() {
     setNome(parsed.nome || '');
     setEmail(parsed.email || '');
     setTelefone(parsed.telefone || '');
+    setCpf(parsed.cpf || '');
 
     // Load avatar
     const savedAvatar = localStorage.getItem(`student_avatar_${parsed.email}`);
