@@ -527,6 +527,66 @@ async function handleRoute(method: string, endpoint: string, data?: any): Promis
     return { student, results: detailedResults };
   }
 
+  // GET STUDENT RESULTS
+  if (method === 'GET' && endpoint === '/resultados') {
+    const info = localStorage.getItem('student_info');
+    if (!info) return [];
+    const parsed = JSON.parse(info);
+    
+    const { data: aluno } = await supabase
+      .from('alunos')
+      .select('id')
+      .eq('email', parsed.email?.toLowerCase())
+      .single();
+      
+    if (!aluno) return [];
+
+    const { data: results, error } = await supabase
+      .from('resultados')
+      .select('*, provas(titulo, slug)')
+      .eq('aluno_id', aluno.id)
+      .order('data', { ascending: false });
+    
+    if (error) throw new Error(error.message);
+    return (results || []).map(r => ({
+      ...r,
+      prova_titulo: r.provas?.titulo,
+      prova_slug: r.provas?.slug
+    }));
+  }
+
+  // GET RESULT BY SLUG
+  const resultSlugMatch = endpoint.match(/^\/resultados\/slug\/(.+)$/);
+  if (method === 'GET' && resultSlugMatch) {
+    const slug = resultSlugMatch[1];
+    const { data: result, error } = await supabase
+      .from('resultados')
+      .select('*, provas(*, perguntas(*, alternativas(*)))')
+      .eq('slug', slug)
+      .single();
+    
+    if (error || !result) throw new Error('Resultado não encontrado');
+    
+    // Prepare question data with correct answers for the detail view
+    const correctAlts: Record<string, string> = {};
+    if (result.provas?.perguntas) {
+      result.provas.perguntas.forEach((q: any) => {
+        const correct = q.alternativas?.find((a: any) => a.is_correta);
+        if (correct) correctAlts[q.id] = correct.id;
+      });
+    }
+
+    return {
+      ...result,
+      prova_titulo: result.provas?.titulo,
+      prova_slug: result.provas?.slug,
+      exam: {
+        ...result.provas,
+        correctAlts
+      }
+    };
+  }
+
   // STUDENT REGISTER
   if (method === 'POST' && endpoint === '/student/register') {
     const emailLower = data.email?.toLowerCase();
