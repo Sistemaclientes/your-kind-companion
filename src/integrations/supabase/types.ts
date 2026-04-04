@@ -584,9 +584,11 @@ export type Database = {
           created_at: string
           data: string | null
           data_conclusao: string | null
+          duracao_segundos: number | null
           email_aluno: string | null
           finalizado_em: string | null
           id: string
+          navegador_info: string | null
           nome_aluno: string | null
           nota_corte: number | null
           pontos_obtidos: number | null
@@ -608,9 +610,11 @@ export type Database = {
           created_at?: string
           data?: string | null
           data_conclusao?: string | null
+          duracao_segundos?: number | null
           email_aluno?: string | null
           finalizado_em?: string | null
           id?: string
+          navegador_info?: string | null
           nome_aluno?: string | null
           nota_corte?: number | null
           pontos_obtidos?: number | null
@@ -632,9 +636,11 @@ export type Database = {
           created_at?: string
           data?: string | null
           data_conclusao?: string | null
+          duracao_segundos?: number | null
           email_aluno?: string | null
           finalizado_em?: string | null
           id?: string
+          navegador_info?: string | null
           nome_aluno?: string | null
           nota_corte?: number | null
           pontos_obtidos?: number | null
@@ -676,6 +682,15 @@ export type Database = {
       }
     }
     Views: {
+      vw_dashboard_stats: {
+        Row: {
+          media_geral: number | null
+          total_alunos: number | null
+          total_provas: number | null
+          total_resultados: number | null
+        }
+        Relationships: []
+      }
       vw_provas_stats: {
         Row: {
           avg_score: number | null
