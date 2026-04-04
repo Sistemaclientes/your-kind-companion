@@ -75,6 +75,10 @@ BEGIN
     VALUES (${escape(prova.titulo)}, ${escape(prova.descricao)}, '${adminId}', 'Ativa', '${slug}')
     ON CONFLICT (slug) DO UPDATE SET titulo = EXCLUDED.titulo
     RETURNING id INTO v_prova_id;
+
+    -- Clean up existing questions to avoid duplicates
+    DELETE FROM public.perguntas WHERE prova_id = v_prova_id;
+
 `);
 
     const perguntas = db.prepare("SELECT * FROM perguntas WHERE prova_id = ?").all(prova.id);
