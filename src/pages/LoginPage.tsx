@@ -103,7 +103,14 @@ export function LoginPage() {
     setIsLoading(true);
     setResetError('');
     try {
-      await api.post('/admin/reset-password', { email: forgotEmail.trim(), new_password: newPassword });
+      const emailParam = searchParams.get('email') || forgotEmail.trim();
+      const tokenParam = searchParams.get('token');
+      
+      await api.post('/admin/reset-password', { 
+        email: emailParam, 
+        token: tokenParam,
+        new_password: newPassword 
+      });
       setResetSuccess(true);
       setTimeout(() => {
         setView('login');
