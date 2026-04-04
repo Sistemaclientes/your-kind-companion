@@ -38,9 +38,9 @@ Migrar toda a autenticação para o **Supabase Auth nativo** (`supabase.auth.*`)
 
 ### 6. Atualizar `api.ts` para delegar aos novos métodos
 
-## Observações Técnicas
-- O trigger `handle_new_user()` no banco já cria perfis automaticamente e vincula `alunos`/`admins` — sem migração de banco necessária
+## Detalhes Técnicos
+- O trigger `handle_new_user()` no banco já cria perfis automaticamente e vincula `alunos`/`admins` — **sem migração de banco necessária**
 - Emails de reset e confirmação são enviados automaticamente pelo Supabase Auth
-- Contas admin existentes precisarão ser recriadas no Supabase Auth (migração única — será documentado)
+- Contas admin existentes precisarão ser recriadas no Supabase Auth (migração única — será documentado para o usuário)
 - A tabela `profiles` já possui coluna `role` para determinar admin vs student
 
