@@ -4,12 +4,12 @@
 
 ## Analise do Estado Atual
 
-O login funciona com autenticacao customizada (senhas em texto puro nas tabelas `admins` e `alunos`, sessao via localStorage). O sistema **NAO usa Supabase Auth** -- os usuarios nao existem em `auth.users`.
+O login funciona com autenticacao customizada (senhas em texto puro nas tabelas `admins` e `alunos`, sessao via localStorage). O sistema NAO usa Supabase Auth -- os usuarios nao existem em `auth.users`.
 
 **Problemas encontrados:**
-- **Admin "Esqueci senha"** (`LoginPage.tsx`): chama `api.post('/admin/forgot-password')` que apenas verifica se o email existe no banco. Nenhum email e enviado, mas a UI mostra "Email enviado!"
-- **Student "Esqueci senha"** (`StudentLoginPage.tsx`): `handleForgotPassword` apenas faz `setForgotSent(true)` -- literalmente nao chama nenhuma API
-- **Pagina `/confirmar-email`**: chama API inexistente (removida com o backend Node)
+- **Admin "Esqueci senha"** (`LoginPage.tsx` linha 80): chama `api.post('/admin/forgot-password')` que apenas verifica se o email existe no banco. Nenhum email e enviado, mas a UI mostra "Email enviado!"
+- **Student "Esqueci senha"** (`StudentLoginPage.tsx` linha 154): `handleForgotPassword` apenas faz `setForgotSent(true)` -- literalmente nao chama nenhuma API
+- **Pagina `/confirmar-email`**: chama `api.get('/confirmar-email?token=...')` que nao existe (API removida com o backend Node)
 
 **Restricao critica:** Como os usuarios nao existem em `auth.users`, NAO e possivel usar `supabase.auth.resetPasswordForEmail()` sem migrar todo o login. A solucao usa Edge Function + tokens proprios para enviar emails reais.
 
@@ -43,7 +43,7 @@ Recebe email + user_type + origin. Verifica existencia do usuario no banco, gera
 - Adicionar view de reset (nova senha + confirmacao + validacao)
 - Detectar token na URL para mostrar view de reset automaticamente
 
-### 7. Atualizar `api.ts` com novas rotas
+### 7. Atualizar `api.ts` com novas rotas (`student/forgot-password`, `student/reset-password`)
 
 ### 8. Remover `ConfirmEmailPage.tsx` quebrada e rota `/confirmar-email`
 
@@ -51,4 +51,5 @@ Recebe email + user_type + origin. Verifica existencia do usuario no banco, gera
 - Tokens UUID via `gen_random_uuid()`, single-use, expiracao 1h
 - Email via sistema de email transacional integrado
 - RLS na tabela de tokens (apenas service_role pode inserir/ler)
+- Nenhuma alteracao no fluxo de login existente
 
