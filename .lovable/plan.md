@@ -7,51 +7,43 @@
 O login atual funciona com autenticacao customizada (senhas em texto puro nas tabelas `admins` e `alunos`). O `authStore` usa localStorage. O sistema NAO usa Supabase Auth (`supabase.auth.*`).
 
 Problemas encontrados:
-- **Admin forgot password** (`LoginPage.tsx` linha 80): chama `api.post('/admin/forgot-password')` que apenas verifica se o email existe no banco -- nao envia nenhum email. Depois mostra "Email enviado!" mas nada foi enviado.
-- **Admin reset password** (`LoginPage.tsx` linha 109): chama `api.post('/admin/reset-password')` que atualiza a senha diretamente no banco -- funciona mas sem email/token real.
-- **Student forgot password** (`StudentLoginPage.tsx` linha 154): `handleForgotPassword` apenas faz `setForgotSent(true)` -- literalmente nao faz nada. Nenhuma API e chamada.
-- **Nao existe** `/auth/callback` nem `/update-password`.
-- A pagina `/confirmar-email` chama `api.get('/confirmar-email?token=...')` que nao existe.
+- **Admin forgot password**: chama API que apenas verifica se email existe -- nao envia email
+- **Student forgot password**: literalmente nao faz nada (apenas muda state local)
+- **Nao existe** `/auth/callback` nem `/update-password`
+- A pagina `/confirmar-email` chama API inexistente
 
-## Restricao Critica
+## Restricao
 
-Como o sistema NAO usa Supabase Auth para login (usa senhas em texto puro), **nao e possivel usar `supabase.auth.resetPasswordForEmail()`** sem migrar o login inteiro para Supabase Auth. Os usuarios nao existem em `auth.users`.
+Como o sistema NAO usa Supabase Auth para login, nao e possivel usar `supabase.auth.resetPasswordForEmail()`. Os usuarios nao existem em `auth.users`.
 
-## Abordagem Realista (sem quebrar nada)
+## Abordagem (sem quebrar nada)
 
-Usar uma **Edge Function do Supabase** para enviar emails de reset de senha via o sistema de email ja existente, gerando tokens temporarios armazenados no banco.
+Usar Edge Function + tabela de tokens para enviar emails de reset reais.
 
 ### 1. Criar tabela `password_reset_tokens` (migracao)
-- Colunas: `id`, `email`, `token` (uuid), `expires_at`, `used`, `created_at`
+- Colunas: `id`, `email`, `token`, `user_type` (admin/student), `expires_at`, `used`
 - Token expira em 1 hora
 
 ### 2. Criar Edge Function `send-reset-email`
-- Recebe email, gera token, salva no banco
-- Envia email com link `{origin}/redefinir-senha?token={token}&email={email}`
-- Usa o Lovable email system (transactional email)
+- Gera token, salva no banco, envia email com link de reset
+- Usa transactional email do Lovable
 
 ### 3. Corrigir `auth.service.ts`
-- `forgotAdminPassword`: chamar a Edge Function ao inves de apenas verificar se email existe
-- `resetAdminPassword`: validar token antes de atualizar senha
-- Adicionar `forgotStudentPassword` e `resetStudentPassword` com a mesma logica
+- Forgot password: chamar Edge Function que envia email real
+- Reset password: validar token antes de atualizar senha
+- Adicionar suporte para admin e student
 
-### 4. Corrigir `LoginPage.tsx` (admin forgot password)
-- `handleForgotSubmit`: chamar o novo metodo que envia email de verdade
-- `handleResetSubmit`: validar token antes de resetar
+### 4. Corrigir `LoginPage.tsx` e `StudentLoginPage.tsx`
+- Forgot password agora chama API real
+- Manter toda a UI e logica de login intacta
 
-### 5. Corrigir `StudentLoginPage.tsx` (student forgot password)
-- `handleForgotPassword`: chamar API real que envia email
-- Adicionar tela de reset de senha para o aluno
+### 5. Atualizar `api.ts` com novas rotas
 
-### 6. Atualizar `api.ts`
-- Adicionar rota para student forgot/reset password
+### 6. Limpar `ConfirmEmailPage.tsx` quebrada
 
-### 7. Remover `ConfirmEmailPage.tsx` (quebrada)
-- Remover rota `/confirmar-email` do `App.tsx`
-
-## Resultado
-- Emails de reset de senha enviados de verdade (admin e aluno)
-- Tokens seguros com expiracao
-- Sem alterar login, authStore, rotas existentes ou logica de sessao
-- UX com loading states e feedback visual
+## O que NAO sera alterado
+- Login existente (admin e aluno)
+- authStore / logica de sessao
+- Rotas existentes
+- Design global
 
