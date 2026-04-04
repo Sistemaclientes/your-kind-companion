@@ -181,29 +181,29 @@ app.post('/api/student/register', async (req, res) => {
   }
 });
 
-app.get('/confirmar-email', (req, res) => {
+app.get('/api/confirmar-email', (req, res) => {
   const { token } = req.query;
 
   if (!token) {
-    return res.status(400).send('Token de confirmação não fornecido.');
+    return res.status(400).json({ error: 'Token de confirmação não fornecido.' });
   }
 
   const student = db.prepare('SELECT id, nome, email_confirmed FROM alunos WHERE confirmation_token = ?').get(token) as any;
 
   if (!student) {
-    return res.status(404).send('Token inválido ou usuário não encontrado.');
+    return res.status(404).json({ error: 'Token inválido ou usuário não encontrado.' });
   }
 
   if (student.email_confirmed) {
-    return res.redirect(`${process.env.VITE_APP_URL || 'http://localhost:3000'}/login?message=email_already_confirmed`);
+    return res.json({ message: 'E-mail já confirmado!', alreadyConfirmed: true });
   }
 
   // Update status
   db.prepare('UPDATE alunos SET email_confirmed = 1, confirmation_token = NULL WHERE id = ?').run(student.id);
 
-  // Redirect to success page or login
-  res.redirect(`${process.env.VITE_APP_URL || 'http://localhost:3000'}/login?message=email_confirmed_success`);
+  res.json({ message: 'E-mail confirmado com sucesso!' });
 });
+
 
 app.post('/api/student/resend-confirmation', async (req, res) => {
   const { email } = req.body;

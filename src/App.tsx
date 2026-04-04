@@ -72,6 +72,8 @@ export default function App() {
             {/* Public routes */}
             <Route path="/" element={<LoginPage />} />
             <Route path="/aluno/login" element={<StudentLoginPage />} />
+            <Route path="/confirmar-email" element={<ConfirmEmailPage />} />
+
 
             {/* Admin routes - protected */}
             <Route path="/admin" element={

@@ -14,8 +14,9 @@ function generateSlug(title: string): string {
 
 async function handleRoute(method: string, endpoint: string, data?: any): Promise<any> {
   // Try local server first for specific endpoints
-  const localEndpoints = ['/student/register', '/student/login', '/student/resend-confirmation', '/admin/bulk-resend-confirmation'];
-  if (localEndpoints.includes(endpoint)) {
+  const localEndpoints = ['/student/register', '/student/login', '/student/resend-confirmation', '/admin/bulk-resend-confirmation', '/confirmar-email'];
+  if (localEndpoints.includes(endpoint) || endpoint.startsWith('/confirmar-email')) {
+
     try {
       const response = await fetch(`${API_BASE_URL}${endpoint}`, {
         method,
