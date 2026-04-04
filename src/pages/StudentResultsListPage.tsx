@@ -4,6 +4,7 @@ import { motion } from 'motion/react';
 import { Trophy, Eye, BarChart3 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { TopBar } from '../components/TopBar';
+import { api } from '../lib/api';
 
 function Skeleton({ className }: { className?: string }) {
   return <div className={cn("skeleton", className)} />;
@@ -15,14 +16,17 @@ export function StudentResultsListPage() {
   const [loading, setLoading] = React.useState(true);
 
   React.useEffect(() => {
-    const info = localStorage.getItem('student_info');
-    if (!info) return;
-    const parsed = JSON.parse(info);
-
-    const allResults = JSON.parse(localStorage.getItem('local_resultados') || '[]');
-    const myResults = allResults.filter((r: any) => r.email_aluno === parsed.email);
-    setResults(myResults);
-    setLoading(false);
+    const fetchData = async () => {
+      try {
+        const data = await api.get('/resultados');
+        setResults(data);
+      } catch (err) {
+        console.error('Error fetching results:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
   }, []);
 
   return (
@@ -41,13 +45,12 @@ export function StudentResultsListPage() {
               <p className="text-sm text-on-surface-variant font-medium">Comece fazendo uma prova disponível.</p>
             </div>
           ) : (
-            [...results].reverse().map((result, idx) => {
-              const realIdx = results.length - 1 - idx;
+            results.map((result) => {
               const isApproved = result.pontuacao >= 70;
               const dateStr = result.data ? new Date(result.data).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' }) : '—';
               return (
                 <motion.div
-                  key={realIdx}
+                  key={result.id}
                   whileHover={{ scale: 1.01 }}
                   className="card-saas !p-5"
                 >
@@ -72,7 +75,7 @@ export function StudentResultsListPage() {
                       </div>
                     </div>
                     <button
-                      onClick={() => navigate(`/aluno/resultado/${realIdx}`)}
+                      onClick={() => navigate(`/aluno/resultado/${result.slug}`)}
                       className="flex items-center gap-1.5 px-4 py-2 rounded-xl border border-outline text-on-surface-variant font-bold text-[10px] uppercase tracking-widest hover:bg-surface-container-high hover:text-primary transition-all shrink-0"
                     >
                       <Eye className="w-3.5 h-3.5" />

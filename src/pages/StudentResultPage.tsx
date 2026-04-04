@@ -13,7 +13,8 @@ import {
   ChevronLeft,
   FileCheck,
   Award,
-  BarChart3
+  BarChart3,
+  Eye
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { cn } from '../lib/utils';
@@ -180,20 +181,31 @@ export function StudentResultPage() {
               <p className="text-on-surface-variant text-sm font-medium">Sua certificação oficial está pronta para download.</p>
             </div>
           </div>
-          <button 
-            onClick={() => navigate('/aluno/dashboard')}
-            className="btn-primary py-3.5 sm:py-4 px-8 sm:px-10 w-full md:w-auto text-sm uppercase tracking-widest group"
-          >
-            <BarChart3 className="w-5 h-5" />
-            Minha Dashboard
-          </button>
-          <button 
-            onClick={() => navigate('/student/start')}
-            className="btn-secondary py-3.5 sm:py-4 px-8 sm:px-10 w-full md:w-auto text-sm uppercase tracking-widest group"
-          >
-            <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-            Nova avaliação
-          </button>
+          <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+            {result?.slug && (
+              <button 
+                onClick={() => navigate(`/aluno/resultado/${result.slug}`)}
+                className="btn-secondary py-3.5 sm:py-4 px-8 sm:px-10 w-full text-sm uppercase tracking-widest group"
+              >
+                <Eye className="w-5 h-5" />
+                Ver Detalhes
+              </button>
+            )}
+            <button 
+              onClick={() => navigate('/aluno/dashboard')}
+              className="btn-primary py-3.5 sm:py-4 px-8 sm:px-10 w-full text-sm uppercase tracking-widest group"
+            >
+              <BarChart3 className="w-5 h-5" />
+              Dashboard
+            </button>
+            <button 
+              onClick={() => navigate('/student/start')}
+              className="btn-secondary py-3.5 sm:py-4 px-8 sm:px-10 w-full text-sm uppercase tracking-widest group"
+            >
+              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              Nova Prova
+            </button>
+          </div>
         </motion.div>
 
         {/* Footer Actions */}

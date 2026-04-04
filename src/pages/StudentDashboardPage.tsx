@@ -30,9 +30,8 @@ export function StudentDashboardPage() {
 
     const fetchData = async () => {
       try {
-        const allResults = JSON.parse(localStorage.getItem('local_resultados') || '[]');
-        const myResults = allResults.filter((r: any) => r.email_aluno === parsed.email);
-        setResults(myResults);
+        const data = await api.get('/resultados');
+        setResults(data);
       } catch (err) {
         console.error('Error loading dashboard:', err);
       } finally {
@@ -129,12 +128,15 @@ export function StudentDashboardPage() {
           >
             <h2 className="text-lg font-black text-on-surface font-headline tracking-tight mb-4">Últimos Resultados</h2>
             <div className="space-y-3">
-              {[...results].reverse().slice(0, 5).map((result, idx) => {
-                const realIdx = results.length - 1 - idx;
+              {results.slice(0, 5).map((result) => {
                 const isApproved = result.pontuacao >= 70;
                 const dateStr = result.data ? new Date(result.data).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' }) : '—';
                 return (
-                  <div key={realIdx} className="card-saas !p-4 flex items-center gap-4">
+                  <div 
+                    key={result.id} 
+                    onClick={() => navigate(`/aluno/resultado/${result.slug}`)}
+                    className="card-saas !p-4 flex items-center gap-4 cursor-pointer hover:bg-surface-container-high transition-colors group"
+                  >
                     <div className={cn(
                       "w-10 h-10 rounded-xl flex items-center justify-center shrink-0 font-headline font-black text-lg",
                       isApproved ? "bg-primary/10 text-primary" : "bg-error/10 text-error"
