@@ -482,6 +482,7 @@ export type Database = {
           titulo: string
           total_pontos: number | null
           total_questoes: number | null
+          turma_id: string | null
           updated_at: string | null
           view_count: number | null
         }
@@ -514,6 +515,7 @@ export type Database = {
           titulo: string
           total_pontos?: number | null
           total_questoes?: number | null
+          turma_id?: string | null
           updated_at?: string | null
           view_count?: number | null
         }
@@ -546,6 +548,7 @@ export type Database = {
           titulo?: string
           total_pontos?: number | null
           total_questoes?: number | null
+          turma_id?: string | null
           updated_at?: string | null
           view_count?: number | null
         }
@@ -563,6 +566,20 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "admins"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "provas_turma_id_fkey"
+            columns: ["turma_id"]
+            isOneToOne: false
+            referencedRelation: "turmas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "provas_turma_id_fkey"
+            columns: ["turma_id"]
+            isOneToOne: false
+            referencedRelation: "vw_turmas_performance"
+            referencedColumns: ["turma_id"]
           },
         ]
       }
@@ -620,6 +637,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "alunos"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "respostas_aluno_aluno_id_fkey"
+            columns: ["aluno_id"]
+            isOneToOne: false
+            referencedRelation: "vw_alunos_stats"
+            referencedColumns: ["aluno_id"]
           },
           {
             foreignKeyName: "respostas_aluno_pergunta_id_fkey"
@@ -746,6 +770,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "resultados_aluno_id_fkey"
+            columns: ["aluno_id"]
+            isOneToOne: false
+            referencedRelation: "vw_alunos_stats"
+            referencedColumns: ["aluno_id"]
+          },
+          {
             foreignKeyName: "resultados_prova_id_fkey"
             columns: ["prova_id"]
             isOneToOne: false
@@ -804,6 +835,40 @@ export type Database = {
       }
     }
     Views: {
+      vw_alunos_stats: {
+        Row: {
+          aluno_id: string | null
+          cpf: string | null
+          created_at: string | null
+          email: string | null
+          media_pontuacao: number | null
+          nome: string | null
+          primeiro_acesso: string | null
+          provas_contagem: number | null
+          slug: string | null
+          status: string | null
+          telefone: string | null
+          turma_id: string | null
+          turma_nome: string | null
+          ultimo_acesso: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "alunos_turma_id_fkey"
+            columns: ["turma_id"]
+            isOneToOne: false
+            referencedRelation: "turmas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "alunos_turma_id_fkey"
+            columns: ["turma_id"]
+            isOneToOne: false
+            referencedRelation: "vw_turmas_performance"
+            referencedColumns: ["turma_id"]
+          },
+        ]
+      }
       vw_dashboard_stats: {
         Row: {
           media_geral: number | null
@@ -849,6 +914,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "alunos"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "resultados_aluno_id_fkey"
+            columns: ["aluno_id"]
+            isOneToOne: false
+            referencedRelation: "vw_alunos_stats"
+            referencedColumns: ["aluno_id"]
           },
           {
             foreignKeyName: "resultados_prova_id_fkey"
