@@ -600,6 +600,16 @@ async function handleRoute(method: string, endpoint: string, data?: any): Promis
     return { message: 'Administrador removido' };
   }
 
+  // LOGOUT ALL STUDENTS
+  if (method === 'POST' && endpoint === '/admin/students/logout-all') {
+    const { error } = await supabase
+      .from('alunos')
+      .update({ must_reconfirm: true });
+    
+    if (error) throw new Error(error.message);
+    return { message: 'Todos os alunos foram deslogados' };
+  }
+
   return {};
 }
 
