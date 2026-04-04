@@ -483,6 +483,7 @@ export type Database = {
           pergunta_id: string
           pontos_pergunta: number | null
           prova_id: string
+          resposta_texto: string | null
           resultado_id: string | null
           updated_at: string | null
         }
@@ -495,6 +496,7 @@ export type Database = {
           pergunta_id: string
           pontos_pergunta?: number | null
           prova_id: string
+          resposta_texto?: string | null
           resultado_id?: string | null
           updated_at?: string | null
         }
@@ -507,6 +509,7 @@ export type Database = {
           pergunta_id?: string
           pontos_pergunta?: number | null
           prova_id?: string
+          resposta_texto?: string | null
           resultado_id?: string | null
           updated_at?: string | null
         }
