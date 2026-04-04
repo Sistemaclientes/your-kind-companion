@@ -2,48 +2,44 @@
 
 # Plano: Corrigir Sistema de Autenticação e Emails
 
-## Problemas Atuais
+## Problema
 
-O sistema de autenticação é **inteiramente customizado e inseguro**: senhas armazenadas em texto puro nas tabelas `admins` e `alunos`, sem integração com Supabase Auth. O fluxo de "esqueci senha" apenas atualiza o banco diretamente sem enviar emails. A página `/confirmar-email` chama uma rota de API que não existe. **Nenhum email é enviado de fato.**
+O sistema de autenticação atual é **completamente customizado e inseguro**: senhas em texto puro, sem integração com Supabase Auth, nenhum email é de fato enviado (nem reset de senha, nem confirmação de cadastro). A página `/confirmar-email` chama uma API inexistente.
 
 ## Solução
 
-Migrar a autenticação para o **Supabase Auth nativo** (`supabase.auth.*`), que oferece envio automático de emails (reset de senha, confirmação de cadastro), hashing seguro de senhas, sessões JWT e tokens seguros.
+Migrar toda a autenticação para o **Supabase Auth nativo**, que fornece automaticamente: envio de emails (reset, confirmação), hashing seguro, sessões JWT e tokens seguros.
 
-## Etapas
+## Etapas de Implementação
 
-### 1. Reescrever `auth.service.ts` com Supabase Auth
-- Login admin/aluno via `supabase.auth.signInWithPassword()`
-- Cadastro aluno via `supabase.auth.signUp()` com metadata (nome, telefone, cpf)
-- Esqueci senha via `supabase.auth.resetPasswordForEmail()` com `redirectTo` para `/update-password`
-- Logout via `supabase.auth.signOut()`
+### 1. Reescrever `auth.service.ts`
+- Login (admin e aluno): `supabase.auth.signInWithPassword()`
+- Cadastro aluno: `supabase.auth.signUp()` com metadata
+- Esqueci senha: `supabase.auth.resetPasswordForEmail()` com `redirectTo` para `/update-password`
+- Logout: `supabase.auth.signOut()`
 
-### 2. Reescrever `authStore.ts` com sessão Supabase
+### 2. Reescrever `authStore.ts`
 - Usar `supabase.auth.onAuthStateChange()` para gerenciar sessão
-- Buscar role do usuário na tabela `profiles` (já existente com coluna `role`)
-- Remover gerenciamento manual de localStorage tokens
+- Buscar role na tabela `profiles` (já existente)
+- Remover localStorage manual de tokens
 
 ### 3. Criar novas páginas
-- **`/auth/callback`** — Captura redirecionamentos do Supabase Auth (confirmação de email, password recovery). Detecta `type=recovery` para redirecionar ao formulário de nova senha, senão redireciona conforme role do usuário.
-- **`/update-password`** — Formulário para definir nova senha com validação, usando `supabase.auth.updateUser({ password })`
+- **`/auth/callback`** — Captura redirects do Supabase (confirmação de email, recovery)
+- **`/update-password`** — Formulário para nova senha com `supabase.auth.updateUser()`
 
 ### 4. Atualizar páginas existentes
-- **`LoginPage.tsx`** — Substituir login customizado e forgot password por chamadas Supabase Auth nativas
-- **`StudentLoginPage.tsx`** — Substituir login, cadastro e forgot password por Supabase Auth
-- **Remover `ConfirmEmailPage.tsx`** (substituída por `/auth/callback`)
+- **`LoginPage.tsx`** e **`StudentLoginPage.tsx`** — Usar Supabase Auth nativo
+- Remover `ConfirmEmailPage.tsx`
 
 ### 5. Atualizar rotas em `App.tsx`
 - Adicionar `/auth/callback` e `/update-password`
 - Remover `/confirmar-email`
-- Manter redirects legados
 
 ### 6. Atualizar `api.ts`
-- Atualizar rotas de autenticação para delegar aos novos métodos Supabase Auth
+- Delegar rotas de auth aos novos métodos
 
-## Detalhes Técnicos
-
-- O trigger `handle_new_user()` no banco já cria perfis automaticamente e vincula às tabelas `alunos`/`admins` no signup -- nenhuma migração de banco necessária
-- Emails de reset de senha e confirmação de cadastro são enviados automaticamente pelo Supabase Auth
-- Contas admin existentes na tabela `admins` precisarão ser recriadas no Supabase Auth (migração única, documentada para o usuário)
-- A tabela `profiles` já possui coluna `role` que será usada para determinar o tipo de acesso (admin/student)
+## Observações
+- O trigger `handle_new_user()` já cria profiles automaticamente — sem migração de banco
+- Emails são enviados automaticamente pelo Supabase Auth
+- Contas admin existentes precisarão ser recriadas no Supabase Auth (migração única)
 
