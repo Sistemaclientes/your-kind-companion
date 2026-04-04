@@ -122,7 +122,7 @@ export function StudentsPage() {
               onClick={async () => {
                 if (confirm('Deseja realmente deslogar todos os alunos? Eles receberão um e-mail de confirmação.')) {
                   try {
-                    await api.post('/admin/students/logout-all');
+                    await api.post('/admin/students/logout-all', {});
                     alert('Todos os alunos foram deslogados e e-mails de confirmação foram simulados no servidor.');
                     window.location.reload();
                   } catch (err) {
