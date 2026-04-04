@@ -7,9 +7,9 @@
 O login funciona com autenticacao customizada (senhas em texto puro nas tabelas `admins` e `alunos`, sessao via localStorage). O sistema **NAO usa Supabase Auth** -- os usuarios nao existem em `auth.users`.
 
 **Problemas encontrados:**
-- **Admin "Esqueci senha"**: chama API que apenas verifica se email existe no banco -- nenhum email e enviado, mas a UI mostra "Email enviado!"
-- **Student "Esqueci senha"**: literalmente nao faz nada (`setForgotSent(true)` sem chamar API)
-- **Pagina `/confirmar-email`**: chama API inexistente
+- **Admin "Esqueci senha"** (`LoginPage.tsx`): chama `api.post('/admin/forgot-password')` que apenas verifica se email existe no banco -- nenhum email e enviado, mas a UI mostra "Email enviado!"
+- **Student "Esqueci senha"** (`StudentLoginPage.tsx`): `handleForgotPassword` apenas faz `setForgotSent(true)` -- literalmente nao chama nenhuma API
+- **Pagina `/confirmar-email`**: chama API inexistente (removida com o backend Node)
 
 **Restricao critica:** Como os usuarios nao existem em `auth.users`, NAO e possivel usar `supabase.auth.resetPasswordForEmail()`. A solucao usa Edge Function + tokens proprios.
 
