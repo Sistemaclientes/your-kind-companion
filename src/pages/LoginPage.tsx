@@ -311,20 +311,6 @@ export function LoginPage() {
           </AnimatePresence>
         </div>
 
-        {/* Student Access */}
-        <div className="bg-surface-container p-6 rounded-[20px] border border-outline">
-          <button
-            type="button"
-            onClick={() => navigate('/student/login')}
-            className="w-full flex items-center justify-center gap-3 py-3.5 rounded-xl border border-primary/20 bg-primary/5 text-primary font-bold text-sm hover:bg-primary/10 transition-all"
-          >
-            <GraduationCap className="w-5 h-5" />
-            Acesso Aluno
-          </button>
-          <p className="text-[10px] text-on-surface-variant font-medium text-center mt-3 uppercase tracking-widest">
-            Faça login ou cadastre-se como aluno
-          </p>
-        </div>
 
         <footer className="flex flex-col items-center gap-6">
           <div className="flex gap-8 text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">
