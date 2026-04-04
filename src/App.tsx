@@ -119,7 +119,7 @@ export default function App() {
               <Route path="dashboard" element={<StudentDashboardPage />} />
               <Route path="provas" element={<StudentExamsListPage />} />
               <Route path="resultados" element={<StudentResultsListPage />} />
-              <Route path="resultado/:id" element={<StudentResultDetailPage />} />
+              <Route path="resultado/:slug" element={<StudentResultDetailPage />} />
               <Route path="perfil" element={<StudentProfilePage />} />
             </Route>
 
