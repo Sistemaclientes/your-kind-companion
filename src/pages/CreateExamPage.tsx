@@ -119,6 +119,10 @@ export function CreateExamPage() {
         descricao: description,
         categoria_id: categoryId,
         duracao: duration,
+        embaralhar_questoes: settings.random,
+        mostrar_resultado: settings.results,
+        permitir_revisao: settings.review,
+        bloquear_navegacao: settings.lock,
         perguntas: questions.map(q => ({
           enunciado: q.text,
           tipo: q.type,

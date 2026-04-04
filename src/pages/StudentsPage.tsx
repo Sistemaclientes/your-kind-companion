@@ -10,7 +10,8 @@ import {
   Filter,
   Check,
   ChevronDown,
-  ArrowUpDown
+  ArrowUpDown,
+  LogOut
 } from 'lucide-react';
 import { buildStudentSlug, cn, getStudentSlugMap, setStudentSlugMap } from '../lib/utils';
 import { useNavigate } from 'react-router-dom';
@@ -121,7 +122,7 @@ export function StudentsPage() {
               onClick={async () => {
                 if (confirm('Deseja realmente deslogar todos os alunos? Eles receberão um e-mail de confirmação.')) {
                   try {
-                    await api.post('/admin/students/logout-all');
+                    await api.post('/admin/students/logout-all', {});
                     alert('Todos os alunos foram deslogados e e-mails de confirmação foram simulados no servidor.');
                     window.location.reload();
                   } catch (err) {
@@ -131,7 +132,7 @@ export function StudentsPage() {
               }} 
               className="btn-secondary px-5 py-2.5 flex items-center gap-2 text-red-600 hover:bg-red-50"
             >
-              <LogIn className="w-4 h-4" />
+              <LogOut className="w-4 h-4" />
               Deslogar Todos
             </button>
             <button onClick={handleExport} className="btn-secondary px-5 py-2.5 flex items-center gap-2">
