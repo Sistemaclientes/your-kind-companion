@@ -380,6 +380,14 @@ export function StudentLoginPage() {
                   </div>
 
                   <div className="space-y-2">
+                    <label className={labelClass}>CPF</label>
+                    <div className="relative group">
+                      <User className={iconClass} />
+                      <input className={inputClass} placeholder="000.000.000-00" type="text" value={regCpf} onChange={(e) => setRegCpf(e.target.value)} required />
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
                     <label className={labelClass}>Senha</label>
                     <div className="relative group">
                       <Lock className={iconClass} />
