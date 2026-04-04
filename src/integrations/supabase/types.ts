@@ -362,6 +362,7 @@ export type Database = {
           status: string | null
           tentativas_maximas: number | null
           titulo: string
+          total_pontos: number | null
           total_questoes: number | null
           updated_at: string | null
           view_count: number | null
@@ -390,6 +391,7 @@ export type Database = {
           status?: string | null
           tentativas_maximas?: number | null
           titulo: string
+          total_pontos?: number | null
           total_questoes?: number | null
           updated_at?: string | null
           view_count?: number | null
@@ -418,6 +420,7 @@ export type Database = {
           status?: string | null
           tentativas_maximas?: number | null
           titulo?: string
+          total_pontos?: number | null
           total_questoes?: number | null
           updated_at?: string | null
           view_count?: number | null
@@ -447,6 +450,7 @@ export type Database = {
           created_at: string | null
           id: string
           pergunta_id: string
+          pontos_pergunta: number | null
           prova_id: string
           resultado_id: string | null
           updated_at: string | null
@@ -458,6 +462,7 @@ export type Database = {
           created_at?: string | null
           id?: string
           pergunta_id: string
+          pontos_pergunta?: number | null
           prova_id: string
           resultado_id?: string | null
           updated_at?: string | null
@@ -469,6 +474,7 @@ export type Database = {
           created_at?: string | null
           id?: string
           pergunta_id?: string
+          pontos_pergunta?: number | null
           prova_id?: string
           resultado_id?: string | null
           updated_at?: string | null
@@ -527,6 +533,8 @@ export type Database = {
           finalizado_em: string | null
           id: string
           nome_aluno: string | null
+          pontos_obtidos: number | null
+          pontos_total: number | null
           pontuacao: number | null
           prova_id: string
           respostas: Json | null
@@ -544,6 +552,8 @@ export type Database = {
           finalizado_em?: string | null
           id?: string
           nome_aluno?: string | null
+          pontos_obtidos?: number | null
+          pontos_total?: number | null
           pontuacao?: number | null
           prova_id: string
           respostas?: Json | null
@@ -561,6 +571,8 @@ export type Database = {
           finalizado_em?: string | null
           id?: string
           nome_aluno?: string | null
+          pontos_obtidos?: number | null
+          pontos_total?: number | null
           pontuacao?: number | null
           prova_id?: string
           respostas?: Json | null
@@ -605,11 +617,12 @@ export type Database = {
           created_at: string | null
           descricao: string | null
           id: string | null
-          qcount: number | null
           slug: string | null
           status: string | null
           studentcount: number | null
           titulo: string | null
+          total_pontos: number | null
+          total_questoes: number | null
         }
         Relationships: [
           {
