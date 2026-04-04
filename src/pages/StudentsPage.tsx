@@ -11,7 +11,8 @@ import {
   Check,
   ChevronDown,
   ArrowUpDown,
-  LogOut
+  LogOut,
+  Mail
 } from 'lucide-react';
 import { buildStudentSlug, cn, getStudentSlugMap, setStudentSlugMap } from '../lib/utils';
 import { useNavigate } from 'react-router-dom';
