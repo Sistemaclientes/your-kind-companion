@@ -392,6 +392,7 @@ export type Database = {
           permitir_revisao: boolean | null
           slug: string | null
           status: string | null
+          subtitulo: string | null
           tags: string[] | null
           tentativas_maximas: number | null
           titulo: string
@@ -423,6 +424,7 @@ export type Database = {
           permitir_revisao?: boolean | null
           slug?: string | null
           status?: string | null
+          subtitulo?: string | null
           tags?: string[] | null
           tentativas_maximas?: number | null
           titulo: string
@@ -454,6 +456,7 @@ export type Database = {
           permitir_revisao?: boolean | null
           slug?: string | null
           status?: string | null
+          subtitulo?: string | null
           tags?: string[] | null
           tentativas_maximas?: number | null
           titulo?: string
@@ -682,6 +685,7 @@ export type Database = {
           slug: string | null
           status: string | null
           studentcount: number | null
+          subtitulo: string | null
           tags: string[] | null
           titulo: string | null
           total_pontos: number | null
