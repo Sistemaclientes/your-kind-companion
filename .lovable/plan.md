@@ -28,7 +28,7 @@ Migrar toda a autenticação para o **Supabase Auth nativo** (`supabase.auth.*`)
 - **`/update-password`** — Formulário para definir nova senha com validação, usando `supabase.auth.updateUser({ password })`
 
 ### 4. Atualizar páginas existentes
-- **`LoginPage.tsx`** — Substituir login e forgot password por Supabase Auth
+- **`LoginPage.tsx`** — Substituir login e forgot password por Supabase Auth nativo
 - **`StudentLoginPage.tsx`** — Substituir login, cadastro e forgot password por Supabase Auth
 - **Remover `ConfirmEmailPage.tsx`** (substituída por `/auth/callback`)
 
@@ -41,6 +41,6 @@ Migrar toda a autenticação para o **Supabase Auth nativo** (`supabase.auth.*`)
 ## Observações Técnicas
 - O trigger `handle_new_user()` no banco já cria perfis automaticamente e vincula `alunos`/`admins` — sem migração de banco necessária
 - Emails de reset e confirmação são enviados automaticamente pelo Supabase Auth
-- Contas admin existentes precisarão ser recriadas no Supabase Auth (migração única — documentado para o usuário)
+- Contas admin existentes precisarão ser recriadas no Supabase Auth (migração única — será documentado)
 - A tabela `profiles` já possui coluna `role` para determinar admin vs student
 
