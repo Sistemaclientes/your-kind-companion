@@ -1,56 +1,46 @@
 
 
-# Plan: Fix Authentication Email System
+# Plano: Corrigir Sistema de Autenticação e Emails
 
-## Current Problems
+## Problemas Atuais
 
-The entire auth system is **custom and insecure** — passwords are stored in plaintext in `admins` and `alunos` tables. There is no actual Supabase Auth integration. The "forgot password" flow just updates the DB directly without sending emails. The email confirmation page (`/confirmar-email`) calls a non-existent API route. No emails are actually sent.
+O sistema de autenticação é **inteiramente customizado e inseguro**: senhas armazenadas em texto puro nas tabelas `admins` e `alunos`, sem integração com Supabase Auth. O fluxo de "esqueci senha" apenas atualiza o banco diretamente sem enviar emails. A página `/confirmar-email` chama uma rota de API que não existe. **Nenhum email é enviado de fato.**
 
-## Approach
+## Solução
 
-Migrate authentication to **Supabase Auth** (`supabase.auth.*`) so that email sending (password reset, signup confirmation) works natively via Supabase's built-in email system. This gives us secure password hashing, JWT sessions, and automatic email delivery.
+Migrar a autenticação para o **Supabase Auth nativo** (`supabase.auth.*`), que oferece envio automático de emails (reset de senha, confirmação de cadastro), hashing seguro de senhas, sessões JWT e tokens seguros.
 
-## Steps
+## Etapas
 
-### 1. Update `auth.service.ts` to use Supabase Auth
+### 1. Reescrever `auth.service.ts` com Supabase Auth
+- Login admin/aluno: `supabase.auth.signInWithPassword()`
+- Cadastro aluno: `supabase.auth.signUp()` com metadata (nome, telefone, cpf)
+- Esqueci senha: `supabase.auth.resetPasswordForEmail()` com `redirectTo` correto
+- Logout: `supabase.auth.signOut()`
 
-- **Admin login**: Use `supabase.auth.signInWithPassword()` instead of querying plaintext passwords
-- **Student login**: Use `supabase.auth.signInWithPassword()`
-- **Student register**: Use `supabase.auth.signUp()` with metadata (nome, telefone, cpf)
-- **Forgot password**: Use `supabase.auth.resetPasswordForEmail()` with `redirectTo`
-- **Logout**: Use `supabase.auth.signOut()`
+### 2. Reescrever `authStore.ts` com sessão Supabase
+- Usar `supabase.auth.onAuthStateChange()` ao invés de localStorage manual
+- Buscar role do usuário na tabela `profiles` (já existente)
+- Remover gerenciamento manual de tokens
 
-### 2. Update `authStore.ts` to use Supabase sessions
+### 3. Criar novas páginas
+- **`/auth/callback`** — Captura redirecionamentos do Supabase (confirmação de email, recovery). Detecta `type=recovery` para redirecionar ao formulário de nova senha
+- **`/update-password`** — Formulário para definir nova senha com `supabase.auth.updateUser({ password })`
 
-- Replace localStorage-based session with `supabase.auth.onAuthStateChange()` listener
-- Get user role from `profiles` table (already exists with a `role` column)
-- Remove manual localStorage token management
+### 4. Atualizar páginas existentes
+- **`LoginPage.tsx`** — Substituir login e forgot password por chamadas Supabase Auth
+- **`StudentLoginPage.tsx`** — Substituir login, cadastro e forgot password por Supabase Auth
+- **Remover `ConfirmEmailPage.tsx`** (substituída por `/auth/callback`)
 
-### 3. Create new pages
+### 5. Atualizar rotas em `App.tsx`
+- Adicionar `/auth/callback` e `/update-password`
+- Remover `/confirmar-email`
 
-- **`/auth/callback`** — Handles Supabase auth redirects (email confirmation, password reset). Detects `type=recovery` to redirect to update-password page, otherwise redirects based on user role.
-- **`/update-password`** — Form to set new password using `supabase.auth.updateUser({ password })`. Validates password match, min length, shows loading/success/error states.
+### 6. Atualizar `api.ts`
+- Atualizar rotas de autenticação para usar os novos métodos
 
-### 4. Update existing pages
-
-- **`LoginPage.tsx`** (admin) — Replace `api.login()` with `supabase.auth.signInWithPassword()`. Update forgot password to call `supabase.auth.resetPasswordForEmail()`. Remove the inline reset-password view (now handled by `/update-password`).
-- **`StudentLoginPage.tsx`** — Replace `api.post('/student/login')` with `supabase.auth.signInWithPassword()`. Replace register with `supabase.auth.signUp()`. Update forgot password to use `supabase.auth.resetPasswordForEmail()`.
-- **`ConfirmEmailPage.tsx`** — Remove (replaced by `/auth/callback`)
-
-### 5. Update routes in `App.tsx`
-
-- Add `/auth/callback` route
-- Add `/update-password` route  
-- Remove `/confirmar-email` route
-- Add legacy redirect from `/confirmar-email` to `/auth/callback`
-
-### 6. Update `api.ts` compatibility layer
-
-- Update auth-related routes to use the new Supabase Auth methods
-
-## Important Notes
-
-- The `handle_new_user()` database trigger already creates profiles and links to `alunos`/`admins` tables on signup — no DB migration needed
-- Supabase's built-in email templates handle password reset and signup confirmation emails automatically
-- Existing admin accounts in the `admins` table will need to be registered in Supabase Auth (one-time migration concern — documented for the user)
+## Observação
+- O trigger `handle_new_user()` já cria perfis e vincula às tabelas `alunos`/`admins` — sem necessidade de migração de banco
+- Emails de reset e confirmação são enviados automaticamente pelo Supabase
+- Contas admin existentes precisarão ser recriadas no Supabase Auth (migração única)
 
