@@ -3,6 +3,13 @@ import cors from 'cors';
 import { initDB } from './db';
 import db from './db';
 import { authService, adminMiddleware, masterMiddleware } from './auth';
+import { emailService } from './email';
+import crypto from 'crypto';
+import dotenv from 'dotenv';
+
+dotenv.config();
+
+
 
 function generateSlug(title: string): string {
   return title
@@ -133,7 +140,7 @@ app.post('/api/admin/reset-password', (req, res) => {
 
 // --- Student Auth ---
 
-app.post('/api/student/register', (req, res) => {
+app.post('/api/student/register', async (req, res) => {
   const { nome, email, telefone, senha } = req.body;
 
   if (!nome || !email || !senha) {
@@ -146,16 +153,117 @@ app.post('/api/student/register', (req, res) => {
 
   try {
     const hashedPassword = authService.hashPassword(String(senha));
-    db.prepare('INSERT INTO alunos (nome, email, telefone, senha) VALUES (?, ?, ?, ?)')
-      .run(String(nome).trim(), String(email).trim().toLowerCase(), String(telefone || '').trim(), hashedPassword);
-    res.json({ message: 'Cadastro realizado com sucesso' });
+    const token = crypto.randomUUID();
+    const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(); // 24h
+
+    db.prepare(`
+      INSERT INTO alunos (nome, email, telefone, senha, confirmation_token, token_expires_at, email_confirmed) 
+      VALUES (?, ?, ?, ?, ?, ?, 0)
+    `).run(
+      String(nome).trim(), 
+      String(email).trim().toLowerCase(), 
+      String(telefone || '').trim(), 
+      hashedPassword,
+      token,
+      expiresAt
+    );
+
+    // Send confirmation email
+    await emailService.sendConfirmation(String(email).trim().toLowerCase(), String(nome).trim(), token);
+
+    res.json({ message: 'Cadastro realizado com sucesso! Verifique seu e-mail para confirmar sua conta.' });
   } catch (err: any) {
     if (err.message?.includes('UNIQUE')) {
       return res.status(400).json({ error: 'Este e-mail já está cadastrado.' });
     }
+    console.error('Error registering student:', err);
     res.status(500).json({ error: 'Erro ao cadastrar aluno' });
   }
 });
+
+app.get('/api/confirmar-email', (req, res) => {
+  const { token } = req.query;
+
+  if (!token) {
+    return res.status(400).json({ error: 'Token de confirmação não fornecido.' });
+  }
+
+  const student = db.prepare('SELECT id, nome, email_confirmed FROM alunos WHERE confirmation_token = ?').get(token) as any;
+
+  if (!student) {
+    return res.status(404).json({ error: 'Token inválido ou usuário não encontrado.' });
+  }
+
+  if (student.email_confirmed) {
+    return res.json({ message: 'E-mail já confirmado!', alreadyConfirmed: true });
+  }
+
+  // Update status
+  db.prepare('UPDATE alunos SET email_confirmed = 1, confirmation_token = NULL WHERE id = ?').run(student.id);
+
+  res.json({ message: 'E-mail confirmado com sucesso!' });
+});
+
+
+app.post('/api/student/resend-confirmation', async (req, res) => {
+  const { email } = req.body;
+  
+  if (!email) return res.status(400).json({ error: 'E-mail é obrigatório' });
+
+  const student = db.prepare('SELECT id, nome, email_confirmed FROM alunos WHERE email = ?').get(String(email).trim().toLowerCase()) as any;
+
+  if (!student) {
+    return res.status(404).json({ error: 'E-mail não encontrado' });
+  }
+
+  if (student.email_confirmed) {
+    return res.status(400).json({ error: 'Este e-mail já foi confirmado' });
+  }
+
+  try {
+    const newToken = crypto.randomUUID();
+    const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
+
+    db.prepare('UPDATE alunos SET confirmation_token = ?, token_expires_at = ? WHERE id = ?')
+      .run(newToken, expiresAt, student.id);
+
+    await emailService.sendConfirmation(student.email, student.nome, newToken);
+    res.json({ message: 'E-mail de confirmação reenviado com sucesso!' });
+  } catch (err) {
+    res.status(500).json({ error: 'Erro ao reenviar e-mail' });
+  }
+});
+
+app.post('/api/admin/bulk-resend-confirmation', adminMiddleware, masterMiddleware, async (req, res) => {
+  try {
+    const unconfirmedStudents = db.prepare('SELECT id, nome, email FROM alunos WHERE email_confirmed = 0').all() as any[];
+    
+    if (unconfirmedStudents.length === 0) {
+      return res.json({ message: 'Nenhum aluno não-confirmado encontrado.' });
+    }
+
+    let successCount = 0;
+    for (const student of unconfirmedStudents) {
+      const token = crypto.randomUUID();
+      const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
+
+      db.prepare('UPDATE alunos SET confirmation_token = ?, token_expires_at = ? WHERE id = ?')
+        .run(token, expiresAt, student.id);
+
+      await emailService.sendConfirmation(student.email, student.nome, token);
+      successCount++;
+      
+      // Delay to avoid spam filters (optional but recommended in prompt)
+      await new Promise(resolve => setTimeout(resolve, 500)); 
+    }
+
+    res.json({ message: `Reenvio em massa concluído: ${successCount} e-mails enviados.` });
+  } catch (err) {
+    console.error('Bulk resend error:', err);
+    res.status(500).json({ error: 'Erro ao executar reenvio em massa' });
+  }
+});
+
 
 app.post('/api/student/login', (req, res) => {
   const { email, senha } = req.body;
@@ -170,6 +278,14 @@ app.post('/api/student/login', (req, res) => {
     return res.status(401).json({ error: 'Email ou senha inválidos' });
   }
 
+  if (!student.email_confirmed) {
+    return res.status(403).json({ 
+      error: 'E-mail não confirmado', 
+      unconfirmed: true,
+      email: student.email 
+    });
+  }
+
   res.json({
     student: {
       id: student.id,
@@ -179,6 +295,7 @@ app.post('/api/student/login', (req, res) => {
     }
   });
 });
+
 
 // --- Exam Management ---
 

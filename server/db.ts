@@ -75,8 +75,12 @@ export function initDB() {
       email TEXT UNIQUE NOT NULL,
       telefone TEXT,
       senha TEXT NOT NULL,
+      email_confirmed BOOLEAN DEFAULT 0,
+      confirmation_token TEXT,
+      token_expires_at DATETIME,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     );
+
   `);
 
   // Ensure is_protected column exists (migration)
@@ -92,6 +96,11 @@ export function initDB() {
   } catch (e) {
     // Column already exists
   }
+
+  // Alunos table migrations
+  try { db.exec(`ALTER TABLE alunos ADD COLUMN email_confirmed BOOLEAN DEFAULT 0`); } catch (e) {}
+  try { db.exec(`ALTER TABLE alunos ADD COLUMN confirmation_token TEXT`); } catch (e) {}
+  try { db.exec(`ALTER TABLE alunos ADD COLUMN token_expires_at DATETIME`); } catch (e) {}
 
   // Seed or update Admin Master with specified credentials
   const masterEmail = 'suprememidias.ok@gmail.com';

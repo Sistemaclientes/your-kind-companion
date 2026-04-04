@@ -22,9 +22,13 @@ export function StudentLoginPage() {
   const [rememberMe, setRememberMe] = React.useState(false);
   const [showPassword, setShowPassword] = React.useState(false);
   const [error, setError] = React.useState('');
+  const [unconfirmedEmail, setUnconfirmedEmail] = React.useState<string | null>(null);
+  const [resending, setResending] = React.useState(false);
+  const [resendSuccess, setResendSuccess] = React.useState(false);
   const [showForgotPassword, setShowForgotPassword] = React.useState(false);
   const [forgotEmail, setForgotEmail] = React.useState('');
   const [forgotSent, setForgotSent] = React.useState(false);
+
 
   // Register state
   const [regName, setRegName] = React.useState('');
@@ -63,14 +67,16 @@ export function StudentLoginPage() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    setUnconfirmedEmail(null);
+    setResendSuccess(false);
 
     try {
       const data = await api.post('/student/login', { email, senha: password });
 
       loginStudent({
-        nome: data.nome,
-        email: data.email,
-        telefone: data.telefone || ''
+        nome: data.student.nome,
+        email: data.student.email,
+        telefone: data.student.telefone || ''
       });
 
       if (rememberMe) {
@@ -81,9 +87,30 @@ export function StudentLoginPage() {
 
       navigate(redirectUrl, { replace: true });
     } catch (err: any) {
-      setError(err.message || 'Email ou senha inválidos.');
+      if (err.unconfirmed) {
+        setUnconfirmedEmail(err.email);
+        setError('Seu e-mail ainda não foi confirmado.');
+      } else {
+        setError(err.message || 'Email ou senha inválidos.');
+      }
     }
   };
+
+  const handleResendConfirmation = async () => {
+    if (!unconfirmedEmail || resending) return;
+    setResending(true);
+    setError('');
+    
+    try {
+      await api.post('/student/resend-confirmation', { email: unconfirmedEmail });
+      setResendSuccess(true);
+    } catch (err: any) {
+      setError(err.message || 'Erro ao reenviar e-mail.');
+    } finally {
+      setResending(false);
+    }
+  };
+
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -283,10 +310,24 @@ export function StudentLoginPage() {
               </div>
 
               {error && (
-                <motion.p initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} className="text-sm text-error font-semibold bg-error/10 border border-error/20 rounded-xl px-4 py-3">
-                  {error}
-                </motion.p>
+                <motion.div initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} className="text-sm text-error font-semibold bg-error/10 border border-error/20 rounded-xl px-4 py-3 space-y-2">
+                  <p>{error}</p>
+                  {unconfirmedEmail && !resendSuccess && (
+                    <button 
+                      type="button" 
+                      onClick={handleResendConfirmation} 
+                      disabled={resending}
+                      className="text-xs font-bold text-primary hover:underline underline-offset-4 flex items-center gap-1"
+                    >
+                      {resending ? 'Enviando...' : 'Reenviar e-mail de confirmação'}
+                    </button>
+                  )}
+                  {resendSuccess && (
+                    <p className="text-xs text-primary font-bold">E-mail reenviado com sucesso!</p>
+                  )}
+                </motion.div>
               )}
+
 
               <button type="submit" className="w-full btn-primary py-3.5 rounded-xl font-black text-base flex items-center justify-center gap-2 group">
                 <LogIn className="w-5 h-5 group-hover:scale-110 transition-transform" />

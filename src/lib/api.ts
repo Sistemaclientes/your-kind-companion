@@ -1,5 +1,7 @@
 import { supabase } from '@/integrations/supabase/client';
 
+const API_BASE_URL = window.location.hostname === 'localhost' ? 'http://localhost:3001/api' : '/api';
+
 function generateSlug(title: string): string {
   return title
     .normalize('NFD')
@@ -11,6 +13,41 @@ function generateSlug(title: string): string {
 }
 
 async function handleRoute(method: string, endpoint: string, data?: any): Promise<any> {
+  // Try local server first for specific endpoints
+  const localEndpoints = ['/student/register', '/student/login', '/student/resend-confirmation', '/admin/bulk-resend-confirmation', '/confirmar-email'];
+  if (localEndpoints.includes(endpoint) || endpoint.startsWith('/confirmar-email')) {
+
+    try {
+      const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+        method,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('saas_token')}`
+        },
+        body: data ? JSON.stringify(data) : undefined
+      });
+      
+      const result = await response.json();
+      if (!response.ok) {
+        // If the server returns a specific "unconfirmed" error, we throw a special error
+        if (result.unconfirmed) {
+          const error = new Error(result.error || 'Email não confirmado');
+          (error as any).unconfirmed = true;
+          (error as any).email = result.email;
+          throw error;
+        }
+        throw new Error(result.error || 'Erro na requisição');
+      }
+      return result;
+    } catch (err: any) {
+      if (err.unconfirmed) throw err;
+      console.error(`Local server error for ${endpoint}:`, err);
+      // Fallback to supabase if it's not one of our new ones (or keep throwing if we want strict)
+      if (endpoint === '/student/resend-confirmation' || endpoint === '/admin/bulk-resend-confirmation') throw err;
+    }
+  }
+
+
   // LOGIN
   if (method === 'POST' && endpoint === '/login') {
     const { data: admins, error } = await supabase
