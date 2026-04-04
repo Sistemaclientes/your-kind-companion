@@ -34,6 +34,7 @@ export function StudentLoginPage() {
   const [regName, setRegName] = React.useState('');
   const [regEmail, setRegEmail] = React.useState('');
   const [regPhone, setRegPhone] = React.useState('');
+  const [regCpf, setRegCpf] = React.useState('');
   const [regPassword, setRegPassword] = React.useState('');
   const [regConfirmPassword, setRegConfirmPassword] = React.useState('');
   const [showRegPassword, setShowRegPassword] = React.useState(false);
@@ -76,7 +77,8 @@ export function StudentLoginPage() {
       loginStudent({
         nome: data.student.nome,
         email: data.student.email,
-        telefone: data.student.telefone || ''
+        telefone: data.student.telefone || '',
+        cpf: data.student.cpf || ''
       });
 
       if (rememberMe) {
@@ -151,12 +153,7 @@ export function StudentLoginPage() {
 
   const handleForgotPassword = (e: React.FormEvent) => {
     e.preventDefault();
-    const registeredStudents = JSON.parse(localStorage.getItem('registered_students') || '[]');
-    const student = registeredStudents.find((s: any) => s.email === forgotEmail);
-    if (student) {
-      student.password = '';
-      localStorage.setItem('registered_students', JSON.stringify(registeredStudents));
-    }
+    // In a real app, this would call an API
     setForgotSent(true);
   };
 
@@ -192,7 +189,7 @@ export function StudentLoginPage() {
           {forgotSent ? (
             <div className="space-y-4 text-center">
               <p className="text-sm text-on-surface-variant">
-                Você pode fazer login novamente sem senha. Defina uma nova senha nas configurações do painel.
+                Se o e-mail estiver cadastrado, você receberá instruções para redefinir sua senha.
               </p>
               <button
                 onClick={() => { setShowForgotPassword(false); setForgotSent(false); }}
@@ -402,17 +399,17 @@ export function StudentLoginPage() {
                     <label className={labelClass}>Confirmar Senha</label>
                     <div className="relative group">
                       <Lock className={iconClass} />
-                      <input className={inputPasswordClass} placeholder="Repita a senha" type={showRegPassword ? 'text' : 'password'} value={regConfirmPassword} onChange={(e) => setRegConfirmPassword(e.target.value)} required />
+                      <input className={inputClass} placeholder="Repita a senha" type={showRegPassword ? 'text' : 'password'} value={regConfirmPassword} onChange={(e) => setRegConfirmPassword(e.target.value)} required />
                     </div>
                   </div>
 
                   {regError && (
-                    <motion.p initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} className="text-sm text-error font-semibold bg-error/10 border border-error/20 rounded-xl px-4 py-3">
+                    <motion.p initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} className="text-xs text-error font-bold bg-error/10 border border-error/20 rounded-xl px-4 py-3">
                       {regError}
                     </motion.p>
                   )}
 
-                  <button type="submit" className="w-full btn-primary py-3.5 rounded-xl font-black text-base flex items-center justify-center gap-2 group">
+                  <button type="submit" className="w-full btn-primary py-3.5 rounded-xl font-black text-base flex items-center justify-center gap-2 group mt-2">
                     <UserPlus className="w-5 h-5 group-hover:scale-110 transition-transform" />
                     Criar Conta
                   </button>
@@ -422,12 +419,10 @@ export function StudentLoginPage() {
           )}
         </AnimatePresence>
 
-        <p className="text-center text-[10px] text-on-surface-variant font-bold uppercase tracking-widest mt-6">
-          Plataforma de avaliações online
+        <p className="mt-8 text-center text-[10px] text-on-surface-variant font-bold uppercase tracking-widest opacity-40">
+          Eduvix © {new Date().getFullYear()} • Todos os direitos reservados
         </p>
       </motion.div>
     </div>
   );
 }
-
-export default StudentLoginPage;
