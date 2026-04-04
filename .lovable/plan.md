@@ -25,7 +25,7 @@ O login funciona com autenticacao customizada (senhas em texto puro nas tabelas 
 Tabela com `id`, `email`, `token` (UUID), `user_type` (admin/student), `expires_at` (1 hora), `used` (boolean), `created_at`. RLS habilitado.
 
 ### 2. Configurar email transacional
-Verificar dominio de email configurado. Se nao houver, configurar via dialog de setup. Depois configurar envio de emails transacionais para os emails de reset.
+Verificar dominio de email configurado. Se nao houver, configurar via dialog de setup de dominio. Depois configurar envio de emails transacionais para os emails de reset.
 
 ### 3. Criar Edge Function `send-reset-email`
 Recebe email + user_type + origin. Verifica existencia do usuario no banco, gera token, salva na tabela, envia email com link contendo token e email como query params.
