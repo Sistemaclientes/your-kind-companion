@@ -142,7 +142,7 @@ export function StudentLoginPage() {
         setPassword(regPassword);
         setTab('login');
         setRegSuccess(false);
-        setRegName(''); setRegEmail(''); setRegPhone(''); setRegPassword(''); setRegConfirmPassword('');
+        setRegName(''); setRegEmail(''); setRegPhone(''); setRegCpf(''); setRegPassword(''); setRegConfirmPassword('');
       }, 1500);
     } catch (err: any) {
       setRegError(err.message || 'Erro ao cadastrar. Tente novamente.');
