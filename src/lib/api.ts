@@ -643,6 +643,7 @@ export const api = {
   get: (endpoint: string) => handleRoute('GET', endpoint),
   post: (endpoint: string, data: any) => handleRoute('POST', endpoint, data),
   put: (endpoint: string, data: any) => handleRoute('PUT', endpoint, data),
+  patch: (endpoint: string, data: any) => handleRoute('PATCH', endpoint, data),
   delete: (endpoint: string) => handleRoute('DELETE', endpoint),
 
   login: async (credentials: { email: string; password: string }) => {
