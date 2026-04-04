@@ -507,6 +507,8 @@ async function handleRoute(method: string, endpoint: string, data?: any): Promis
       nome: data.nome,
       email: emailLower,
       telefone: data.telefone || '',
+      senha: data.senha || '',
+      status: 'Aguardando Confirmação'
     });
 
     if (error) throw new Error(error.message);
