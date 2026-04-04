@@ -162,7 +162,7 @@ app.post('/api/admin/reset-password', (req, res) => {
 // --- Student Auth ---
 
 app.post('/api/student/register', async (req, res) => {
-  const { nome, email, telefone, senha } = req.body;
+  const { nome, email, telefone, senha, cpf } = req.body;
 
   if (!nome || !email || !senha) {
     return res.status(400).json({ error: 'Nome, email e senha são obrigatórios' });
