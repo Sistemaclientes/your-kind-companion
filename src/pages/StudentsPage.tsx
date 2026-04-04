@@ -120,10 +120,26 @@ export function StudentsPage() {
           <div className="flex items-center gap-3">
             <button 
               onClick={async () => {
-                if (confirm('Deseja realmente deslogar todos os alunos? Eles receberão um e-mail de confirmação.')) {
+                if (confirm('Deseja reenviar e-mail de confirmação para TODOS os alunos não confirmados?')) {
+                  try {
+                    const res = await api.post('/admin/bulk-resend-confirmation', {});
+                    alert(res.message);
+                  } catch (err: any) {
+                    alert(err.message || 'Erro ao reenviar e-mails.');
+                  }
+                }
+              }} 
+              className="btn-secondary px-5 py-2.5 flex items-center gap-2 text-primary hover:bg-primary/5"
+            >
+              <Mail className="w-4 h-4" />
+              Reenviar Confirmações
+            </button>
+            <button 
+              onClick={async () => {
+                if (confirm('Deseja realmente deslogar todos os alunos?')) {
                   try {
                     await api.post('/admin/students/logout-all', {});
-                    alert('Todos os alunos foram deslogados e e-mails de confirmação foram simulados no servidor.');
+                    alert('Todos os alunos foram marcados para reconfirmação.');
                     window.location.reload();
                   } catch (err) {
                     alert('Erro ao deslogar alunos.');
@@ -135,6 +151,7 @@ export function StudentsPage() {
               <LogOut className="w-4 h-4" />
               Deslogar Todos
             </button>
+
             <button onClick={handleExport} className="btn-secondary px-5 py-2.5 flex items-center gap-2">
               <Download className="w-4 h-4 text-primary" />
               Exportar
