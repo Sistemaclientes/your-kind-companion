@@ -71,7 +71,7 @@ export function StudentProfilePage() {
     }
 
     // Update student_info in localStorage
-    const updatedInfo = { ...studentInfo, nome, telefone };
+    const updatedInfo = { ...studentInfo, nome, telefone, cpf };
     localStorage.setItem('student_info', JSON.stringify(updatedInfo));
     setStudentInfo(updatedInfo);
 
