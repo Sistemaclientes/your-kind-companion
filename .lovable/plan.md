@@ -9,9 +9,9 @@ O login funciona com autenticacao customizada (senhas em texto puro nas tabelas 
 **Problemas encontrados:**
 - **Admin "Esqueci senha"** (`LoginPage.tsx` linha 80): chama `api.post('/admin/forgot-password')` que apenas verifica se o email existe no banco. Nenhum email e enviado, mas a UI mostra "Email enviado!"
 - **Student "Esqueci senha"** (`StudentLoginPage.tsx` linha 154): `handleForgotPassword` apenas faz `setForgotSent(true)` -- literalmente nao chama nenhuma API
-- **Pagina `/confirmar-email`**: chama `api.get('/confirmar-email?token=...')` que nao existe
+- **Pagina `/confirmar-email`**: chama `api.get('/confirmar-email?token=...')` que nao existe (API removida com o backend Node)
 
-**Restricao critica:** Como os usuarios nao existem em `auth.users`, NAO e possivel usar `supabase.auth.resetPasswordForEmail()` sem migrar todo o login. A solucao usa Edge Function + tokens proprios.
+**Restricao critica:** Como os usuarios nao existem em `auth.users`, NAO e possivel usar `supabase.auth.resetPasswordForEmail()` sem migrar todo o login. A solucao usa Edge Function + tokens proprios para enviar emails reais.
 
 ## O que NAO sera alterado
 - Login existente (admin e aluno)
@@ -25,7 +25,7 @@ O login funciona com autenticacao customizada (senhas em texto puro nas tabelas 
 Tabela com `id`, `email`, `token` (UUID), `user_type` (admin/student), `expires_at` (1 hora), `used` (boolean), `created_at`. RLS habilitado.
 
 ### 2. Configurar email transacional
-Verificar dominio de email configurado. Se nao houver, configurar via dialog de setup. Depois configurar envio de emails transacionais para reset de senha.
+Verificar dominio de email configurado. Se nao houver, configurar via dialog de setup de dominio. Depois configurar envio de emails transacionais para reset de senha.
 
 ### 3. Criar Edge Function `send-reset-email`
 Recebe email + user_type + origin. Verifica existencia do usuario no banco, gera token UUID, salva na tabela, envia email com link `{origin}/redefinir-senha?token={token}&email={email}&type={user_type}`.
@@ -51,4 +51,5 @@ Recebe email + user_type + origin. Verifica existencia do usuario no banco, gera
 - Tokens UUID via `gen_random_uuid()`, single-use, expiracao 1h
 - Email via sistema de email transacional integrado
 - RLS na tabela de tokens (apenas service_role pode inserir/ler)
+- Nenhuma alteracao no fluxo de login existente
 
