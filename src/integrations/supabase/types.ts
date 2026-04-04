@@ -23,6 +23,7 @@ export type Database = {
           id: string
           is_master: boolean | null
           is_protected: boolean | null
+          last_login: string | null
           nome: string
           senha: string
           telefone: string | null
@@ -36,6 +37,7 @@ export type Database = {
           id?: string
           is_master?: boolean | null
           is_protected?: boolean | null
+          last_login?: string | null
           nome: string
           senha: string
           telefone?: string | null
@@ -49,6 +51,7 @@ export type Database = {
           id?: string
           is_master?: boolean | null
           is_protected?: boolean | null
+          last_login?: string | null
           nome?: string
           senha?: string
           telefone?: string | null
@@ -58,22 +61,31 @@ export type Database = {
       }
       alternativas: {
         Row: {
+          created_at: string | null
+          explicacao: string | null
           id: string
           is_correta: boolean | null
+          ordem: number | null
           pergunta_id: string
           texto: string
           updated_at: string | null
         }
         Insert: {
+          created_at?: string | null
+          explicacao?: string | null
           id?: string
           is_correta?: boolean | null
+          ordem?: number | null
           pergunta_id: string
           texto: string
           updated_at?: string | null
         }
         Update: {
+          created_at?: string | null
+          explicacao?: string | null
           id?: string
           is_correta?: boolean | null
+          ordem?: number | null
           pergunta_id?: string
           texto?: string
           updated_at?: string | null
@@ -311,7 +323,6 @@ export type Database = {
         Row: {
           banner_url: string | null
           bloquear_navegacao: boolean | null
-          categoria: string | null
           categoria_id: string | null
           created_at: string | null
           created_by: string | null
@@ -340,7 +351,6 @@ export type Database = {
         Insert: {
           banner_url?: string | null
           bloquear_navegacao?: boolean | null
-          categoria?: string | null
           categoria_id?: string | null
           created_at?: string | null
           created_by?: string | null
@@ -369,7 +379,6 @@ export type Database = {
         Update: {
           banner_url?: string | null
           bloquear_navegacao?: boolean | null
-          categoria?: string | null
           categoria_id?: string | null
           created_at?: string | null
           created_by?: string | null
