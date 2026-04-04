@@ -261,6 +261,8 @@ export type Database = {
       }
       perguntas: {
         Row: {
+          categoria_id: string | null
+          dificuldade: string | null
           enunciado: string
           explicacao: string | null
           id: string
@@ -268,10 +270,13 @@ export type Database = {
           ordem: number | null
           pontos: number | null
           prova_id: string
+          tags: string[] | null
           tipo: string | null
           updated_at: string | null
         }
         Insert: {
+          categoria_id?: string | null
+          dificuldade?: string | null
           enunciado: string
           explicacao?: string | null
           id?: string
@@ -279,10 +284,13 @@ export type Database = {
           ordem?: number | null
           pontos?: number | null
           prova_id: string
+          tags?: string[] | null
           tipo?: string | null
           updated_at?: string | null
         }
         Update: {
+          categoria_id?: string | null
+          dificuldade?: string | null
           enunciado?: string
           explicacao?: string | null
           id?: string
@@ -290,10 +298,18 @@ export type Database = {
           ordem?: number | null
           pontos?: number | null
           prova_id?: string
+          tags?: string[] | null
           tipo?: string | null
           updated_at?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "perguntas_categoria_id_fkey"
+            columns: ["categoria_id"]
+            isOneToOne: false
+            referencedRelation: "categorias"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "perguntas_prova_id_fkey"
             columns: ["prova_id"]
