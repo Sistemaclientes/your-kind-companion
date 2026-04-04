@@ -13,7 +13,8 @@ import {
   ChevronLeft,
   FileCheck,
   Award,
-  BarChart3
+  BarChart3,
+  Eye
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { cn } from '../lib/utils';
