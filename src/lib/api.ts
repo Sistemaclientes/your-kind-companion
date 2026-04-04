@@ -537,6 +537,20 @@ async function handleRoute(method: string, endpoint: string, data?: any): Promis
     return { id: aluno.id, nome: aluno.nome, email: aluno.email, telefone: aluno.telefone };
   }
 
+  // UPDATE STUDENT STATUS (ADMIN)
+  if (method === 'PATCH' && endpoint.startsWith('/admin/students/status/')) {
+    const email = decodeURIComponent(endpoint.split('/').pop() || '');
+    const { status } = data;
+    
+    const { error } = await supabase
+      .from('alunos')
+      .update({ status })
+      .eq('email', email);
+      
+    if (error) throw new Error(error.message);
+    return { message: 'Status atualizado com sucesso' };
+  }
+
   // ADMIN FORGOT PASSWORD
   if (method === 'POST' && endpoint === '/admin/forgot-password') {
     const { data: admin } = await supabase
