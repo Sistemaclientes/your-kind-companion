@@ -298,12 +298,15 @@ export type Database = {
           created_by: string | null
           descricao: string | null
           duracao: number | null
+          embaralhar_alternativas: boolean | null
           embaralhar_questoes: boolean | null
           feedback_aprovacao: string | null
           feedback_reprovacao: string | null
           id: string
+          mostrar_gabarito_pos_prova: boolean | null
           mostrar_resultado: boolean | null
           nota_corte: number | null
+          permite_retroceder: boolean | null
           permitir_revisao: boolean | null
           slug: string | null
           status: string | null
@@ -321,12 +324,15 @@ export type Database = {
           created_by?: string | null
           descricao?: string | null
           duracao?: number | null
+          embaralhar_alternativas?: boolean | null
           embaralhar_questoes?: boolean | null
           feedback_aprovacao?: string | null
           feedback_reprovacao?: string | null
           id?: string
+          mostrar_gabarito_pos_prova?: boolean | null
           mostrar_resultado?: boolean | null
           nota_corte?: number | null
+          permite_retroceder?: boolean | null
           permitir_revisao?: boolean | null
           slug?: string | null
           status?: string | null
@@ -344,12 +350,15 @@ export type Database = {
           created_by?: string | null
           descricao?: string | null
           duracao?: number | null
+          embaralhar_alternativas?: boolean | null
           embaralhar_questoes?: boolean | null
           feedback_aprovacao?: string | null
           feedback_reprovacao?: string | null
           id?: string
+          mostrar_gabarito_pos_prova?: boolean | null
           mostrar_resultado?: boolean | null
           nota_corte?: number | null
+          permite_retroceder?: boolean | null
           permitir_revisao?: boolean | null
           slug?: string | null
           status?: string | null
