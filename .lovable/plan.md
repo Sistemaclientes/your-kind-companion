@@ -40,7 +40,7 @@ Migrate authentication to **Supabase Auth** (`supabase.auth.*`) so that email se
 ### 5. Update routes in `App.tsx`
 
 - Add `/auth/callback` route
-- Add `/update-password` route
+- Add `/update-password` route  
 - Remove `/confirmar-email` route
 - Add legacy redirect from `/confirmar-email` to `/auth/callback`
 
