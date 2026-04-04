@@ -50,7 +50,7 @@ export function StudentResultsListPage() {
               const dateStr = result.data ? new Date(result.data).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' }) : '—';
               return (
                 <motion.div
-                  key={realIdx}
+                  key={result.id}
                   whileHover={{ scale: 1.01 }}
                   className="card-saas !p-5"
                 >
