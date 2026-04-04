@@ -131,7 +131,8 @@ export function StudentLoginPage() {
         nome: regName,
         email: regEmail,
         telefone: regPhone,
-        senha: regPassword
+        senha: regPassword,
+        cpf: regCpf
       });
 
       setRegSuccess(true);
