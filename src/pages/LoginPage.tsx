@@ -37,7 +37,7 @@ export function LoginPage() {
   React.useEffect(() => {
     if (user) {
       if (user.role === 'admin') navigate('/admin/dashboard', { replace: true });
-      else navigate('/aluno/dashboard', { replace: true });
+      else navigate('/student/dashboard', { replace: true });
     }
   }, [user, navigate]);
 
@@ -315,7 +315,7 @@ export function LoginPage() {
         <div className="bg-surface-container p-6 rounded-[20px] border border-outline">
           <button
             type="button"
-            onClick={() => navigate('/aluno/login')}
+            onClick={() => navigate('/student/login')}
             className="w-full flex items-center justify-center gap-3 py-3.5 rounded-xl border border-primary/20 bg-primary/5 text-primary font-bold text-sm hover:bg-primary/10 transition-all"
           >
             <GraduationCap className="w-5 h-5" />

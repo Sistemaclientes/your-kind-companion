@@ -1,0 +1,70 @@
+import { supabase } from './supabase';
+
+export const studentsService = {
+  async getResults(email: string) {
+    const { data: aluno } = await supabase
+      .from('alunos')
+      .select('id')
+      .eq('email', email.toLowerCase())
+      .single();
+
+    if (!aluno) return [];
+
+    const { data: results, error } = await supabase
+      .from('resultados')
+      .select('*, provas(titulo, slug)')
+      .eq('aluno_id', aluno.id)
+      .order('data', { ascending: false });
+
+    if (error) throw new Error(error.message);
+    return (results || []).map((r) => ({
+      ...r,
+      prova_titulo: (r as any).provas?.titulo,
+      prova_slug: (r as any).provas?.slug,
+    }));
+  },
+
+  async getResultBySlug(slug: string) {
+    const { data: result, error } = await supabase
+      .from('resultados')
+      .select('*, provas(*, perguntas(*, alternativas(*)))')
+      .eq('slug', slug)
+      .single();
+
+    if (error || !result) throw new Error('Resultado não encontrado');
+
+    const correctAlts: Record<string, string> = {};
+    if ((result as any).provas?.perguntas) {
+      (result as any).provas.perguntas.forEach((q: any) => {
+        const correct = q.alternativas?.find((a: any) => a.is_correta);
+        if (correct) correctAlts[q.id] = correct.id;
+      });
+    }
+
+    return {
+      ...result,
+      prova_titulo: (result as any).provas?.titulo,
+      prova_slug: (result as any).provas?.slug,
+      exam: { ...(result as any).provas, correctAlts },
+    };
+  },
+
+  async updateStatus(email: string, status: string) {
+    const { error } = await supabase
+      .from('alunos')
+      .update({ status })
+      .eq('email', email);
+
+    if (error) throw new Error(error.message);
+    return { message: 'Status atualizado com sucesso' };
+  },
+
+  async logoutAll() {
+    const { error } = await supabase
+      .from('alunos')
+      .update({ must_reconfirm: true });
+
+    if (error) throw new Error(error.message);
+    return { message: 'Todos os alunos foram deslogados' };
+  },
+};

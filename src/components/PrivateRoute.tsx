@@ -21,24 +21,16 @@ function LoadingScreen() {
 export function PrivateRoute({ role, children }: PrivateRouteProps) {
   const { user, isLoading } = useAuthStore();
 
-  if (isLoading) {
-    return <LoadingScreen />;
-  }
+  if (isLoading) return <LoadingScreen />;
 
-  // Not logged in
   if (!user) {
-    if (role === 'aluno') {
-      return <Navigate to="/aluno/login" replace />;
-    }
-    return <Navigate to="/" replace />;
+    if (role === 'aluno') return <Navigate to="/student/login" replace />;
+    return <Navigate to="/admin/login" replace />;
   }
 
-  // Role mismatch
   if (user.role !== role) {
-    if (user.role === 'admin') {
-      return <Navigate to="/admin/dashboard" replace />;
-    }
-    return <Navigate to="/aluno/dashboard" replace />;
+    if (user.role === 'admin') return <Navigate to="/admin/dashboard" replace />;
+    return <Navigate to="/student/dashboard" replace />;
   }
 
   return <>{children}</>;
