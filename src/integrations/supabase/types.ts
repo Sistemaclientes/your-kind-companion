@@ -20,10 +20,12 @@ export type Database = {
           avatar_url: string | null
           created_at: string | null
           email: string
+          email_confirmed: boolean | null
           id: string
           is_master: boolean | null
           is_protected: boolean | null
           last_login: string | null
+          must_reconfirm: boolean | null
           nome: string
           reset_expires: string | null
           reset_token: string | null
@@ -36,10 +38,12 @@ export type Database = {
           avatar_url?: string | null
           created_at?: string | null
           email: string
+          email_confirmed?: boolean | null
           id?: string
           is_master?: boolean | null
           is_protected?: boolean | null
           last_login?: string | null
+          must_reconfirm?: boolean | null
           nome: string
           reset_expires?: string | null
           reset_token?: string | null
@@ -52,10 +56,12 @@ export type Database = {
           avatar_url?: string | null
           created_at?: string | null
           email?: string
+          email_confirmed?: boolean | null
           id?: string
           is_master?: boolean | null
           is_protected?: boolean | null
           last_login?: string | null
+          must_reconfirm?: boolean | null
           nome?: string
           reset_expires?: string | null
           reset_token?: string | null
@@ -117,6 +123,8 @@ export type Database = {
           last_login: string | null
           must_reconfirm: boolean | null
           nome: string
+          reset_expires: string | null
+          reset_token: string | null
           senha: string | null
           status: string | null
           telefone: string | null
@@ -133,6 +141,8 @@ export type Database = {
           last_login?: string | null
           must_reconfirm?: boolean | null
           nome: string
+          reset_expires?: string | null
+          reset_token?: string | null
           senha?: string | null
           status?: string | null
           telefone?: string | null
@@ -149,6 +159,8 @@ export type Database = {
           last_login?: string | null
           must_reconfirm?: boolean | null
           nome?: string
+          reset_expires?: string | null
+          reset_token?: string | null
           senha?: string | null
           status?: string | null
           telefone?: string | null
