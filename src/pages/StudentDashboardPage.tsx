@@ -128,7 +128,7 @@ export function StudentDashboardPage() {
           >
             <h2 className="text-lg font-black text-on-surface font-headline tracking-tight mb-4">Últimos Resultados</h2>
             <div className="space-y-3">
-              results.slice(0, 5).map((result) => {
+              {results.slice(0, 5).map((result) => {
                 const isApproved = result.pontuacao >= 70;
                 const dateStr = result.data ? new Date(result.data).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' }) : '—';
                 return (
