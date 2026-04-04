@@ -6,12 +6,12 @@
 
 O login funciona com autenticacao customizada (senhas em texto puro nas tabelas `admins` e `alunos`, sessao via localStorage). O sistema NAO usa Supabase Auth -- os usuarios nao existem em `auth.users`.
 
-Problemas encontrados:
+**Problemas encontrados:**
 - Admin "Esqueci senha": chama API que apenas verifica se email existe no banco -- nenhum email e enviado, mas mostra "Email enviado!"
 - Student "Esqueci senha": literalmente nao faz nada (`setForgotSent(true)` sem chamar API)
 - Pagina `/confirmar-email` chama API inexistente
 
-Restricao critica: Como os usuarios nao estao no `auth.users`, NAO e possivel usar `supabase.auth.resetPasswordForEmail()`. A solucao usa Edge Function + tokens proprios.
+**Restricao critica:** Como os usuarios nao estao no `auth.users`, NAO e possivel usar `supabase.auth.resetPasswordForEmail()`. A solucao usa Edge Function + tokens proprios.
 
 ## O que NAO sera alterado
 - Login existente (admin e aluno)
@@ -24,8 +24,8 @@ Restricao critica: Como os usuarios nao estao no `auth.users`, NAO e possivel us
 ### 1. Criar tabela `password_reset_tokens` (migracao SQL)
 Tokens UUID, expiracao 1 hora, tipo usuario (admin/student), flag `used`. Com RLS e indices.
 
-### 2. Configurar email transacional
-Scaffold transactional email via Lovable para enviar emails de reset com template profissional.
+### 2. Configurar sistema de email transacional
+Configurar envio de email via Lovable para os emails de reset com template profissional.
 
 ### 3. Criar Edge Function `send-reset-email`
 Recebe email + user_type, verifica existencia no banco, gera token, salva, envia email com link `{origin}/redefinir-senha?token={token}&email={email}`.
@@ -48,6 +48,6 @@ Recebe email + user_type, verifica existencia no banco, gera token, salva, envia
 
 ## Detalhes Tecnicos
 - Tokens UUID via `gen_random_uuid()`, single-use, expiracao 1h
-- Email via transactional email do Lovable
+- Email enviado via sistema de email transacional
 - RLS na tabela de tokens para seguranca
 
