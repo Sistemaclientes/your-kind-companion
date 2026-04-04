@@ -310,10 +310,24 @@ export function StudentLoginPage() {
               </div>
 
               {error && (
-                <motion.p initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} className="text-sm text-error font-semibold bg-error/10 border border-error/20 rounded-xl px-4 py-3">
-                  {error}
-                </motion.p>
+                <motion.div initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} className="text-sm text-error font-semibold bg-error/10 border border-error/20 rounded-xl px-4 py-3 space-y-2">
+                  <p>{error}</p>
+                  {unconfirmedEmail && !resendSuccess && (
+                    <button 
+                      type="button" 
+                      onClick={handleResendConfirmation} 
+                      disabled={resending}
+                      className="text-xs font-bold text-primary hover:underline underline-offset-4 flex items-center gap-1"
+                    >
+                      {resending ? 'Enviando...' : 'Reenviar e-mail de confirmação'}
+                    </button>
+                  )}
+                  {resendSuccess && (
+                    <p className="text-xs text-primary font-bold">E-mail reenviado com sucesso!</p>
+                  )}
+                </motion.div>
               )}
+
 
               <button type="submit" className="w-full btn-primary py-3.5 rounded-xl font-black text-base flex items-center justify-center gap-2 group">
                 <LogIn className="w-5 h-5 group-hover:scale-110 transition-transform" />
