@@ -1,4 +1,4 @@
-import { GoogleGenerativeAI } from "@google/genai";
+import { GoogleGenAI } from "@google/genai";
 
 const getApiKey = () => {
   return import.meta.env.VITE_GOOGLE_API_KEY || "";
@@ -10,8 +10,7 @@ export const generateQuestions = async (topic: string, count: number = 5) => {
     throw new Error("Google API Key não configurada. Adicione VITE_GOOGLE_API_KEY ao seu arquivo .env");
   }
 
-  const genAI = new GoogleGenerativeAI(apiKey);
-  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+  const ai = new GoogleGenAI({ apiKey });
 
   const prompt = `Gere ${count} questões de múltipla escolha sobre o tema: "${topic}".
   Retorne APENAS um array JSON válido com o seguinte formato:
@@ -27,10 +26,17 @@ export const generateQuestions = async (topic: string, count: number = 5) => {
   ]
   Certifique-se de que o JSON seja válido e não inclua blocos de código markdown.`;
 
-  const result = await model.generateContent(prompt);
-  const response = await result.response;
-  const text = response.text();
+  const response = await ai.models.generateContent({
+    model: "gemini-1.5-flash",
+    contents: [{ role: 'user', parts: [{ text: prompt }] }]
+  });
+
+  const text = response.candidates?.[0]?.content?.parts?.[0]?.text || "";
   
+  if (!text) {
+    throw new Error("O Gemini não retornou nenhuma resposta.");
+  }
+
   try {
     // Clean up potential markdown blocks
     const jsonString = text.replace(/```json/g, "").replace(/```/g, "").trim();
