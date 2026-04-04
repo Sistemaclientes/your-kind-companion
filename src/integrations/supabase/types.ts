@@ -116,6 +116,7 @@ export type Database = {
         Row: {
           avatar_url: string | null
           confirmation_token: string | null
+          cpf: string | null
           created_at: string | null
           email: string
           email_confirmed: boolean | null
@@ -134,6 +135,7 @@ export type Database = {
         Insert: {
           avatar_url?: string | null
           confirmation_token?: string | null
+          cpf?: string | null
           created_at?: string | null
           email: string
           email_confirmed?: boolean | null
@@ -152,6 +154,7 @@ export type Database = {
         Update: {
           avatar_url?: string | null
           confirmation_token?: string | null
+          cpf?: string | null
           created_at?: string | null
           email?: string
           email_confirmed?: boolean | null

@@ -162,7 +162,7 @@ app.post('/api/admin/reset-password', (req, res) => {
 // --- Student Auth ---
 
 app.post('/api/student/register', async (req, res) => {
-  const { nome, email, telefone, senha } = req.body;
+  const { nome, email, telefone, senha, cpf } = req.body;
 
   if (!nome || !email || !senha) {
     return res.status(400).json({ error: 'Nome, email e senha são obrigatórios' });
@@ -178,15 +178,16 @@ app.post('/api/student/register', async (req, res) => {
     const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(); // 24h
 
     db.prepare(`
-      INSERT INTO alunos (nome, email, telefone, senha, confirmation_token, token_expires_at, email_confirmed) 
-      VALUES (?, ?, ?, ?, ?, ?, 0)
+      INSERT INTO alunos (nome, email, telefone, senha, confirmation_token, token_expires_at, email_confirmed, cpf) 
+      VALUES (?, ?, ?, ?, ?, ?, 0, ?)
     `).run(
       String(nome).trim(), 
       String(email).trim().toLowerCase(), 
       String(telefone || '').trim(), 
       hashedPassword,
       token,
-      expiresAt
+      expiresAt,
+      cpf ? String(cpf).trim() : null
     );
 
     // Send confirmation email
@@ -312,7 +313,8 @@ app.post('/api/student/login', (req, res) => {
       id: student.id,
       nome: student.nome,
       email: student.email,
-      telefone: student.telefone
+      telefone: student.telefone,
+      cpf: student.cpf
     }
   });
 });

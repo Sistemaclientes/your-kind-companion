@@ -12,6 +12,7 @@ export function StudentProfilePage() {
   const [nome, setNome] = React.useState('');
   const [email, setEmail] = React.useState('');
   const [telefone, setTelefone] = React.useState('');
+  const [cpf, setCpf] = React.useState('');
   const [avatar, setAvatar] = React.useState<string | null>(null);
   const [newPassword, setNewPassword] = React.useState('');
   const [confirmPassword, setConfirmPassword] = React.useState('');
@@ -31,6 +32,7 @@ export function StudentProfilePage() {
     setNome(parsed.nome || '');
     setEmail(parsed.email || '');
     setTelefone(parsed.telefone || '');
+    setCpf(parsed.cpf || '');
 
     // Load avatar
     const savedAvatar = localStorage.getItem(`student_avatar_${parsed.email}`);
@@ -70,7 +72,7 @@ export function StudentProfilePage() {
     }
 
     // Update student_info in localStorage
-    const updatedInfo = { ...studentInfo, nome, telefone };
+    const updatedInfo = { ...studentInfo, nome, telefone, cpf };
     localStorage.setItem('student_info', JSON.stringify(updatedInfo));
     setStudentInfo(updatedInfo);
 
@@ -80,6 +82,7 @@ export function StudentProfilePage() {
     if (idx >= 0) {
       registeredStudents[idx].nome = nome;
       registeredStudents[idx].telefone = telefone;
+      registeredStudents[idx].cpf = cpf;
       if (newPassword) {
         registeredStudents[idx].password = newPassword;
       }
@@ -171,6 +174,14 @@ export function StudentProfilePage() {
                 <input className={`${inputClass} opacity-60 cursor-not-allowed`} type="email" value={email} disabled />
               </div>
               <p className="text-[10px] text-on-surface-variant/60 ml-1">O e-mail não pode ser alterado.</p>
+            </div>
+
+            <div className="space-y-2">
+              <label className={labelClass}>CPF</label>
+              <div className="relative group">
+                <User className={iconClass} />
+                <input className={inputClass} type="text" placeholder="000.000.000-00" value={cpf} onChange={(e) => setCpf(e.target.value)} />
+              </div>
             </div>
 
             <div className="space-y-2">

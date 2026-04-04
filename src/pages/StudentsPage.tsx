@@ -64,7 +64,8 @@ export function StudentsPage() {
       const q = searchQuery.toLowerCase();
       result = result.filter(s => 
         s.nome.toLowerCase().includes(q) || 
-        s.email.toLowerCase().includes(q)
+        s.email.toLowerCase().includes(q) ||
+        (s.cpf && s.cpf.includes(q))
       );
     }
 
@@ -88,10 +89,11 @@ export function StudentsPage() {
   };
 
   const handleExport = () => {
-    const headers = ['Nome', 'Email', 'Status', 'Provas Realizadas', 'Média Geral', 'Último Acesso'];
+    const headers = ['Nome', 'Email', 'CPF', 'Status', 'Provas Realizadas', 'Média Geral', 'Último Acesso'];
     const rows = filteredStudents.map(s => [
       s.nome,
       s.email,
+      s.cpf || '',
       s.status || (s.provas_contagem > 0 ? 'Ativo' : 'Cadastrado'),
       s.provas_contagem,
       `${Math.round(s.media_pontuacao)}%`,
@@ -166,7 +168,7 @@ export function StudentsPage() {
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant group-focus-within:text-primary transition-colors w-4 h-4" />
               <input 
                 className="w-full bg-surface-container border border-outline rounded-xl pl-12 pr-4 py-3 text-sm text-on-surface font-medium placeholder:text-on-surface-variant/50 focus:border-primary outline-none transition-all" 
-                placeholder="Buscar por nome ou e-mail..." 
+                placeholder="Buscar por nome, e-mail ou CPF..." 
                 type="text"
                 value={searchQuery}
                 onChange={(e) => {
@@ -204,7 +206,9 @@ export function StudentsPage() {
                           </div>
                           <div>
                             <p className="font-bold text-on-surface group-hover:text-primary transition-colors tracking-tight">{student.nome}</p>
-                            <p className="text-[10px] text-on-surface-variant font-bold uppercase tracking-widest mt-1 opacity-70">{student.email}</p>
+                            <p className="text-[10px] text-on-surface-variant font-bold uppercase tracking-widest mt-1 opacity-70">
+                              {student.email} {student.cpf && `• CPF: ${student.cpf}`}
+                            </p>
                           </div>
                         </div>
                       </td>

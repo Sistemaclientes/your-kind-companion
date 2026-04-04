@@ -8,6 +8,7 @@ export interface AuthUser {
   email: string;
   role: UserRole;
   is_master?: boolean;
+  cpf?: string;
 }
 
 interface AuthState {
@@ -54,6 +55,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           nome: parsed.nome,
           email: parsed.email,
           role: 'aluno',
+          cpf: parsed.cpf,
         });
         setIsLoading(false);
         return;
@@ -81,12 +83,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       nome: studentInfo.nome,
       email: studentInfo.email,
       telefone: studentInfo.telefone || '',
+      cpf: studentInfo.cpf || '',
     }));
     setUser({
       id: studentInfo.email,
       nome: studentInfo.nome,
       email: studentInfo.email,
       role: 'aluno',
+      cpf: studentInfo.cpf || '',
     });
   }, []);
 

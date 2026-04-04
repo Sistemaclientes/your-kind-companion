@@ -12,7 +12,8 @@ import {
   X,
   Check,
   XCircle,
-  Info
+  Info,
+  ShieldCheck
 } from 'lucide-react';
 import { cn, getStudentSlugMap, setStudentSlugMap, buildStudentSlug } from '../lib/utils';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -168,6 +169,14 @@ export function StudentDetailsPage() {
                   </div>
                   <span className="truncate">{studentData.email}</span>
                 </div>
+                {studentData.cpf && (
+                  <div className="flex items-center gap-4 text-sm text-on-surface-variant font-medium">
+                    <div className="w-9 h-9 rounded-xl bg-surface-container flex items-center justify-center text-primary/70 border border-outline">
+                      <ShieldCheck className="w-4 h-4" />
+                    </div>
+                    <span className="truncate">CPF: {studentData.cpf}</span>
+                  </div>
+                )}
                 <div className="flex items-center gap-4 text-sm text-on-surface-variant font-medium">
                   <div className="w-9 h-9 rounded-xl bg-surface-container flex items-center justify-center text-primary/70 border border-outline">
                     <Calendar className="w-4 h-4" />
@@ -331,7 +340,7 @@ export function StudentDetailsPage() {
                               <h5 className="text-base font-bold text-on-surface leading-tight font-headline">{q.enunciado}</h5>
                               
                               <div className="grid grid-cols-1 gap-2.5">
-                                {q.alternativas?.map((alt: any, optIdx: number) => {
+                                {q.alternativas?.map((alt: any) => {
                                   const isCorrect = alt.is_correta;
                                   const isStudentAnswer = alt.id === studentAltId;
                                   
@@ -347,41 +356,20 @@ export function StudentDetailsPage() {
                                     >
                                       <div className="flex items-center gap-4">
                                         <div className={cn(
-                                          "w-8 h-8 rounded-lg border-2 flex items-center justify-center text-xs font-bold",
-                                          isCorrect && "bg-emerald-500 border-emerald-500 text-white",
-                                          isStudentAnswer && !isCorrect && "bg-red-500 border-red-500 text-white",
-                                          !isCorrect && !isStudentAnswer && "border-outline text-on-surface-variant bg-surface-container"
+                                          "w-6 h-6 rounded-lg flex items-center justify-center text-xs font-bold shrink-0",
+                                          isCorrect ? "bg-emerald-500 text-white" :
+                                          isStudentAnswer ? "bg-red-500 text-white" : "bg-outline/20 text-on-surface-variant"
                                         )}>
-                                          {String.fromCharCode(65 + optIdx)}
+                                          {isCorrect ? <Check className="w-3.5 h-3.5" /> : 
+                                           isStudentAnswer ? <XCircle className="w-3.5 h-3.5" /> : null}
                                         </div>
                                         <span className={cn(
-                                          "text-sm font-semibold",
-                                          isCorrect && "text-emerald-700 dark:text-emerald-400",
-                                          isStudentAnswer && !isCorrect && "text-red-700 dark:text-red-400",
-                                          !isCorrect && !isStudentAnswer && "text-on-surface"
+                                          "text-sm font-medium",
+                                          isCorrect ? "text-emerald-700 dark:text-emerald-400" :
+                                          isStudentAnswer ? "text-red-700 dark:text-red-400" : "text-on-surface-variant"
                                         )}>
                                           {alt.texto}
                                         </span>
-                                      </div>
-                                      
-                                      <div className="flex items-center gap-2">
-                                        {isCorrect && (
-                                          <div className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
-                                            <Check className="w-3 h-3" />
-                                            <span className="text-[9px] font-bold uppercase tracking-widest hidden sm:inline">Correta</span>
-                                          </div>
-                                        )}
-                                        {isStudentAnswer && !isCorrect && (
-                                          <div className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20">
-                                            <XCircle className="w-3 h-3" />
-                                            <span className="text-[9px] font-bold uppercase tracking-widest hidden sm:inline">Resposta</span>
-                                          </div>
-                                        )}
-                                        {isStudentAnswer && isCorrect && (
-                                          <div className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
-                                            <span className="text-[9px] font-bold uppercase tracking-widest hidden sm:inline">Sua Resposta</span>
-                                          </div>
-                                        )}
                                       </div>
                                     </div>
                                   );
@@ -389,28 +377,15 @@ export function StudentDetailsPage() {
                               </div>
                             </div>
                           </div>
-                          {idx < selectedExam.perguntas.length - 1 && <div className="h-px bg-outline my-4" />}
                         </div>
                       );
                     })
                   ) : (
-                    <div className="text-center py-16">
-                      <div className="w-16 h-16 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant/30 mx-auto mb-4 border border-outline">
-                        <FileText className="w-8 h-8" />
-                      </div>
-                      <p className="text-on-surface-variant font-bold">Detalhes das questões não disponíveis.</p>
+                    <div className="flex flex-col items-center justify-center py-20 text-on-surface-variant">
+                      <Info className="w-12 h-12 mb-4 opacity-20" />
+                      <p className="font-medium">Nenhum detalhe de questão disponível.</p>
                     </div>
                   )}
-                </div>
-
-                {/* Modal Footer */}
-                <div className="p-6 sm:p-8 border-t border-outline bg-surface-container-low/50 flex justify-end">
-                  <button 
-                    onClick={() => setSelectedExam(null)}
-                    className="btn-primary px-8 py-3"
-                  >
-                    Fechar
-                  </button>
                 </div>
               </motion.div>
             </div>
