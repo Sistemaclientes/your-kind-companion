@@ -88,7 +88,7 @@ export function StudentsPage() {
   };
 
   const handleExport = () => {
-    const headers = ['Nome', 'Email', 'Status', 'Provas Realizadas', 'Média Geral', 'Último Acesso'];
+    const headers = ['Nome', 'Email', 'CPF', 'Status', 'Provas Realizadas', 'Média Geral', 'Último Acesso'];
     const rows = filteredStudents.map(s => [
       s.nome,
       s.email,
