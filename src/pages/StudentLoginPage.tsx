@@ -67,14 +67,16 @@ export function StudentLoginPage() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    setUnconfirmedEmail(null);
+    setResendSuccess(false);
 
     try {
       const data = await api.post('/student/login', { email, senha: password });
 
       loginStudent({
-        nome: data.nome,
-        email: data.email,
-        telefone: data.telefone || ''
+        nome: data.student.nome,
+        email: data.student.email,
+        telefone: data.student.telefone || ''
       });
 
       if (rememberMe) {
@@ -85,9 +87,30 @@ export function StudentLoginPage() {
 
       navigate(redirectUrl, { replace: true });
     } catch (err: any) {
-      setError(err.message || 'Email ou senha inválidos.');
+      if (err.unconfirmed) {
+        setUnconfirmedEmail(err.email);
+        setError('Seu e-mail ainda não foi confirmado.');
+      } else {
+        setError(err.message || 'Email ou senha inválidos.');
+      }
     }
   };
+
+  const handleResendConfirmation = async () => {
+    if (!unconfirmedEmail || resending) return;
+    setResending(true);
+    setError('');
+    
+    try {
+      await api.post('/student/resend-confirmation', { email: unconfirmedEmail });
+      setResendSuccess(true);
+    } catch (err: any) {
+      setError(err.message || 'Erro ao reenviar e-mail.');
+    } finally {
+      setResending(false);
+    }
+  };
+
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
