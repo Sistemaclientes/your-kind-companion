@@ -8,6 +8,7 @@ export interface AuthUser {
   email: string;
   role: UserRole;
   is_master?: boolean;
+  cpf?: string;
 }
 
 interface AuthState {
