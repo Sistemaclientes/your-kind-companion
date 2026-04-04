@@ -28,25 +28,10 @@ export function StudentResultDetailPage() {
   React.useEffect(() => {
     const loadData = async () => {
       try {
-        const info = localStorage.getItem('student_info');
-        if (!info) return;
-        const parsed = JSON.parse(info);
-        const allResults = JSON.parse(localStorage.getItem('local_resultados') || '[]');
-        const myResults = allResults.filter((r: any) => r.email_aluno === parsed.email);
-        const reversed = [...myResults].reverse();
-        const idx = parseInt(id || '0');
-
-        if (idx < 0 || idx >= reversed.length) {
-          setError('Resultado não encontrado.');
-          return;
-        }
-
-        const selectedResult = reversed[idx];
-        setResult(selectedResult);
-
-        // Fetch exam with questions to show details
-        const examData = await api.get(`/provas/${selectedResult.prova_id}`);
-        setExam(examData);
+        if (!slug) return;
+        const data = await api.get(`/resultados/slug/${slug}`);
+        setResult(data);
+        setExam(data.exam);
       } catch (err) {
         console.error('Error loading result detail:', err);
         setError('Erro ao carregar detalhes do resultado.');
@@ -55,7 +40,7 @@ export function StudentResultDetailPage() {
       }
     };
     loadData();
-  }, [id, navigate]);
+  }, [slug, navigate]);
 
   if (error) {
     return (
