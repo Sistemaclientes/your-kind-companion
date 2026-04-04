@@ -711,6 +711,7 @@ export type Database = {
           prova_id: string | null
           prova_titulo: string | null
           resultado_id: string | null
+          resultado_slug: string | null
           total: number | null
         }
         Relationships: [
