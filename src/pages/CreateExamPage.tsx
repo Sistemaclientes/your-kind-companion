@@ -50,6 +50,7 @@ export function CreateExamPage() {
   const [isSaving, setIsSaving] = useState(false);
   const [isPublishing, setIsPublishing] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
+  const [showAIGenerator, setShowAIGenerator] = useState(false);
   const [openTypeDropdownId, setOpenTypeDropdownId] = useState<string | number | null>(null);
 
   React.useEffect(() => {
@@ -924,6 +925,21 @@ export function CreateExamPage() {
                 <div className="text-left hidden sm:block">
                   <p className="text-xs font-black uppercase tracking-widest">Dissertativa</p>
                   <p className="text-[10px] opacity-50 font-medium">Texto livre</p>
+                </div>
+              </button>
+
+              <div className="w-px h-8 sm:h-10 bg-outline"></div>
+
+              <button 
+                onClick={() => setShowAIGenerator(true)}
+                className="flex items-center gap-2 sm:gap-3 px-3 sm:px-6 py-3 sm:py-4 rounded-xl sm:rounded-2xl hover:bg-primary/10 text-on-surface-variant hover:text-primary transition-all group flex-1 sm:flex-auto"
+              >
+                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-all shrink-0">
+                  <Brain className="w-4 sm:w-5 h-4 sm:h-5" />
+                </div>
+                <div className="text-left hidden sm:block">
+                  <p className="text-xs font-black uppercase tracking-widest text-primary">Gerar com IA</p>
+                  <p className="text-[10px] opacity-50 font-medium">Auto-geração</p>
                 </div>
               </button>
             </div>

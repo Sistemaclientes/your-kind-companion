@@ -83,19 +83,11 @@ export function initDB() {
 
   `);
 
-  // Ensure is_protected column exists (migration)
-  try {
-    db.exec(`ALTER TABLE admins ADD COLUMN is_protected BOOLEAN DEFAULT 0`);
-  } catch (e) {
-    // Column already exists
-  }
-
-  // Ensure slug column exists (migration)
-  try {
-    db.exec(`ALTER TABLE provas ADD COLUMN slug TEXT UNIQUE`);
-  } catch (e) {
-    // Column already exists
-  }
+  // Ensure columns exist (migrations)
+  try { db.exec(`ALTER TABLE admins ADD COLUMN is_protected BOOLEAN DEFAULT 0`); } catch (e) {}
+  try { db.exec(`ALTER TABLE admins ADD COLUMN reset_token TEXT`); } catch (e) {}
+  try { db.exec(`ALTER TABLE admins ADD COLUMN reset_expires DATETIME`); } catch (e) {}
+  try { db.exec(`ALTER TABLE provas ADD COLUMN slug TEXT UNIQUE`); } catch (e) {}
 
   // Alunos table migrations
   try { db.exec(`ALTER TABLE alunos ADD COLUMN email_confirmed BOOLEAN DEFAULT 0`); } catch (e) {}

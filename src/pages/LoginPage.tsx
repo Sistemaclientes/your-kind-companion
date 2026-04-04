@@ -1,6 +1,6 @@
 import React from 'react';
 import { Mail, Lock, Eye, EyeOff, LogIn, AlertCircle, Loader2, GraduationCap, ArrowLeft, KeyRound, CheckCircle2 } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { api } from '../lib/api';
 import { useAuthStore } from '../lib/authStore';
 import { motion, AnimatePresence } from 'motion/react';
@@ -9,8 +9,12 @@ type View = 'login' | 'forgot' | 'reset';
 
 export function LoginPage() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { user, loginAdmin } = useAuthStore();
-  const [view, setView] = React.useState<View>('login');
+  const [view, setView] = React.useState<View>(() => {
+    if (searchParams.get('token') && searchParams.get('email')) return 'reset';
+    return 'login';
+  });
   const [email, setEmail] = React.useState(() => localStorage.getItem('admin_remembered_email') || '');
   const [password, setPassword] = React.useState(() => localStorage.getItem('admin_remembered_pw') || '');
   const [error, setError] = React.useState('');
@@ -99,7 +103,14 @@ export function LoginPage() {
     setIsLoading(true);
     setResetError('');
     try {
-      await api.post('/admin/reset-password', { email: forgotEmail.trim(), new_password: newPassword });
+      const emailParam = searchParams.get('email') || forgotEmail.trim();
+      const tokenParam = searchParams.get('token');
+      
+      await api.post('/admin/reset-password', { 
+        email: emailParam, 
+        token: tokenParam,
+        new_password: newPassword 
+      });
       setResetSuccess(true);
       setTimeout(() => {
         setView('login');
@@ -207,12 +218,12 @@ export function LoginPage() {
                 {forgotSuccess ? (
                   <div className="text-center space-y-4">
                     <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center mx-auto">
-                      <CheckCircle2 className="w-7 h-7 text-primary" />
+                      <Mail className="w-7 h-7 text-primary" />
                     </div>
-                    <p className="text-on-surface font-bold">Conta verificada!</p>
-                    <p className="text-on-surface-variant text-sm">Agora defina sua nova senha.</p>
-                    <button onClick={() => { setResetError(''); setView('reset'); }} className="w-full btn-primary py-3.5 text-sm mt-4">
-                      Definir nova senha
+                    <p className="text-on-surface font-bold">E-mail enviado!</p>
+                    <p className="text-on-surface-variant text-sm">Verifique sua caixa de entrada para redefinir sua senha.</p>
+                    <button onClick={() => setView('login')} className="w-full btn-primary py-3.5 text-sm mt-4">
+                      Voltar ao Login
                     </button>
                   </div>
                 ) : (
