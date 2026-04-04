@@ -24,11 +24,11 @@ O login funciona com autenticacao customizada (senhas em texto puro nas tabelas 
 ### 1. Criar tabela `password_reset_tokens` (migracao SQL)
 Tokens UUID, expiracao 1 hora, tipo usuario (admin/student), flag `used`. Com RLS e indices.
 
-### 2. Configurar sistema de email transacional
-Configurar envio de emails de reset via sistema de email transacional integrado. Requer configuracao de dominio de email primeiro.
+### 2. Configurar email transacional
+Primeiro verificar se ha um dominio de email configurado. Se nao, configurar via dialog de setup. Depois scaffold transactional email para enviar os emails de reset.
 
 ### 3. Criar Edge Function `send-reset-email`
-Recebe email + user_type, verifica existencia no banco, gera token, salva na tabela, envia email com link contendo token e email como query params para a pagina de redefinicao.
+Recebe email + user_type, verifica existencia no banco, gera token, salva na tabela, envia email via transactional email com link `{origin}/redefinir-senha?token={token}&email={email}`.
 
 ### 4. Atualizar `auth.service.ts`
 - `forgotAdminPassword` e novo `forgotStudentPassword`: chamam a Edge Function
@@ -48,6 +48,6 @@ Recebe email + user_type, verifica existencia no banco, gera token, salva na tab
 
 ## Detalhes Tecnicos
 - Tokens UUID via `gen_random_uuid()`, single-use, expiracao 1h
-- Email enviado via sistema de email transacional integrado
+- Email enviado via transactional email do Lovable
 - RLS na tabela de tokens para seguranca
 
