@@ -557,10 +557,12 @@ export type Database = {
           acertos: number | null
           aluno_id: string
           data: string | null
+          data_conclusao: string | null
           email_aluno: string | null
           finalizado_em: string | null
           id: string
           nome_aluno: string | null
+          nota_corte: number | null
           pontos_obtidos: number | null
           pontos_total: number | null
           pontuacao: number | null
@@ -569,6 +571,7 @@ export type Database = {
           status: string | null
           tentativa_numero: number | null
           total: number | null
+          total_questoes: number | null
           total_time: number | null
           updated_at: string | null
         }
@@ -576,10 +579,12 @@ export type Database = {
           acertos?: number | null
           aluno_id: string
           data?: string | null
+          data_conclusao?: string | null
           email_aluno?: string | null
           finalizado_em?: string | null
           id?: string
           nome_aluno?: string | null
+          nota_corte?: number | null
           pontos_obtidos?: number | null
           pontos_total?: number | null
           pontuacao?: number | null
@@ -588,6 +593,7 @@ export type Database = {
           status?: string | null
           tentativa_numero?: number | null
           total?: number | null
+          total_questoes?: number | null
           total_time?: number | null
           updated_at?: string | null
         }
@@ -595,10 +601,12 @@ export type Database = {
           acertos?: number | null
           aluno_id?: string
           data?: string | null
+          data_conclusao?: string | null
           email_aluno?: string | null
           finalizado_em?: string | null
           id?: string
           nome_aluno?: string | null
+          nota_corte?: number | null
           pontos_obtidos?: number | null
           pontos_total?: number | null
           pontuacao?: number | null
@@ -607,6 +615,7 @@ export type Database = {
           status?: string | null
           tentativa_numero?: number | null
           total?: number | null
+          total_questoes?: number | null
           total_time?: number | null
           updated_at?: string | null
         }
