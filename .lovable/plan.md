@@ -4,7 +4,7 @@
 
 ## Analise do Estado Atual
 
-O login funciona com autenticacao customizada (senhas em texto puro nas tabelas `admins` e `alunos`, sessao via localStorage). O sistema NAO usa Supabase Auth -- os usuarios nao existem em `auth.users`.
+O login funciona com autenticacao customizada (senhas em texto puro nas tabelas `admins` e `alunos`, sessao via localStorage). O sistema **NAO usa Supabase Auth** -- os usuarios nao existem em `auth.users`.
 
 **Problemas encontrados:**
 - Admin "Esqueci senha": chama API que apenas verifica se email existe no banco -- nenhum email e enviado, mas mostra "Email enviado!"
