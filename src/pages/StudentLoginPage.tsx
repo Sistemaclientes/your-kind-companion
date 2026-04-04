@@ -22,9 +22,13 @@ export function StudentLoginPage() {
   const [rememberMe, setRememberMe] = React.useState(false);
   const [showPassword, setShowPassword] = React.useState(false);
   const [error, setError] = React.useState('');
+  const [unconfirmedEmail, setUnconfirmedEmail] = React.useState<string | null>(null);
+  const [resending, setResending] = React.useState(false);
+  const [resendSuccess, setResendSuccess] = React.useState(false);
   const [showForgotPassword, setShowForgotPassword] = React.useState(false);
   const [forgotEmail, setForgotEmail] = React.useState('');
   const [forgotSent, setForgotSent] = React.useState(false);
+
 
   // Register state
   const [regName, setRegName] = React.useState('');
