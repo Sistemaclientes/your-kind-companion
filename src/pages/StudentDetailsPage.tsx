@@ -138,6 +138,28 @@ export function StudentDetailsPage() {
                 {studentData.nome.charAt(0).toUpperCase()}
               </div>
               <h2 className="text-2xl font-bold text-on-surface font-headline tracking-tight">{studentData.nome}</h2>
+              {studentData.status === 'Aguardando Confirmação' && (
+                <div className="mt-4 px-4 py-3 bg-orange-500/10 rounded-xl border border-orange-500/20 text-orange-600 text-xs font-bold uppercase tracking-wider">
+                  <p className="mb-2">Aguardando confirmação por e-mail</p>
+                  <button 
+                    onClick={async () => {
+                      if (confirm('Deseja confirmar este aluno manualmente?')) {
+                        try {
+                          await api.patch(`/admin/students/status/${encodeURIComponent(studentData.email)}`, { status: 'Cadastrado' });
+                          alert('Aluno confirmado com sucesso!');
+                          window.location.reload();
+                        } catch (err) {
+                          alert('Erro ao confirmar aluno.');
+                        }
+                      }
+                    }}
+                    className="btn-primary w-full py-2 flex items-center justify-center gap-2"
+                  >
+                    <CheckCircle2 className="w-4 h-4" />
+                    Confirmar Manulamente
+                  </button>
+                </div>
+              )}
               
               <div className="space-y-4 text-left border-t border-outline pt-6 mt-6">
                 <div className="flex items-center gap-4 text-sm text-on-surface-variant font-medium">
