@@ -151,10 +151,79 @@ export function StudentLoginPage() {
     }
   };
 
-  const handleForgotPassword = (e: React.FormEvent) => {
+  const [forgotLoading, setForgotLoading] = React.useState(false);
+  const [forgotError, setForgotError] = React.useState('');
+  
+  // Reset password state (student)
+  const [showResetPassword, setShowResetPassword] = React.useState(false);
+  const [resetNewPassword, setResetNewPassword] = React.useState('');
+  const [resetConfirmPassword, setResetConfirmPassword] = React.useState('');
+  const [resetError, setResetError] = React.useState('');
+  const [resetSuccess, setResetSuccess] = React.useState(false);
+  const [resetLoading, setResetLoading] = React.useState(false);
+  const [showResetPw, setShowResetPw] = React.useState(false);
+
+  // Check URL for reset params
+  React.useEffect(() => {
+    if (searchParams.get('reset') === 'true' && searchParams.get('token') && searchParams.get('email')) {
+      setShowResetPassword(true);
+    }
+  }, [searchParams]);
+
+  const handleForgotPassword = async (e: React.FormEvent) => {
     e.preventDefault();
-    // In a real app, this would call an API
-    setForgotSent(true);
+    if (!forgotEmail.trim()) {
+      setForgotError('Informe seu e-mail');
+      return;
+    }
+    setForgotLoading(true);
+    setForgotError('');
+    try {
+      await api.post('/student/forgot-password', { email: forgotEmail.trim() });
+      setForgotSent(true);
+    } catch (err: any) {
+      setForgotError(err.message || 'Erro ao processar solicitação');
+    } finally {
+      setForgotLoading(false);
+    }
+  };
+
+  const handleResetPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!resetNewPassword || !resetConfirmPassword) {
+      setResetError('Preencha todos os campos');
+      return;
+    }
+    if (resetNewPassword.length < 6) {
+      setResetError('A senha deve ter pelo menos 6 caracteres');
+      return;
+    }
+    if (resetNewPassword !== resetConfirmPassword) {
+      setResetError('As senhas não coincidem');
+      return;
+    }
+    setResetLoading(true);
+    setResetError('');
+    try {
+      const emailParam = searchParams.get('email') || '';
+      const tokenParam = searchParams.get('token') || '';
+      await api.post('/student/reset-password', {
+        email: emailParam,
+        token: tokenParam,
+        new_password: resetNewPassword,
+      });
+      setResetSuccess(true);
+      setTimeout(() => {
+        setShowResetPassword(false);
+        setResetSuccess(false);
+        setResetNewPassword('');
+        setResetConfirmPassword('');
+      }, 2000);
+    } catch (err: any) {
+      setResetError(err.message || 'Erro ao redefinir senha');
+    } finally {
+      setResetLoading(false);
+    }
   };
 
   const inputClass = "w-full pl-12 pr-4 py-3.5 bg-surface-container-low border border-outline rounded-xl text-on-surface text-sm font-semibold placeholder:text-on-surface-variant/30 focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all outline-none";

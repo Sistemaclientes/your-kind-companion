@@ -86,6 +86,13 @@ export function LoginPage() {
     }
   };
 
+  // Check if URL has reset params on mount
+  React.useEffect(() => {
+    if (searchParams.get('reset') === 'true' && searchParams.get('token') && searchParams.get('email')) {
+      setView('reset');
+    }
+  }, [searchParams]);
+
   const handleResetSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newPassword || !confirmPassword) {
@@ -220,8 +227,8 @@ export function LoginPage() {
                     <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center mx-auto">
                       <Mail className="w-7 h-7 text-primary" />
                     </div>
-                    <p className="text-on-surface font-bold">E-mail enviado!</p>
-                    <p className="text-on-surface-variant text-sm">Verifique sua caixa de entrada para redefinir sua senha.</p>
+                    <p className="text-on-surface font-bold">Solicitação enviada!</p>
+                    <p className="text-on-surface-variant text-sm">Se o e-mail estiver cadastrado, você receberá um link para redefinir sua senha. Verifique sua caixa de entrada e spam.</p>
                     <button onClick={() => setView('login')} className="w-full btn-primary py-3.5 text-sm mt-4">
                       Voltar ao Login
                     </button>
