@@ -524,7 +524,17 @@ async function handleRoute(method: string, endpoint: string, data?: any): Promis
       .single();
     
     if (error || !aluno) throw new Error('Email não encontrado. Cadastre-se primeiro.');
-    return { nome: aluno.nome, email: aluno.email, telefone: aluno.telefone };
+    
+    // Check if password matches (this app seems to store plain text or simple hashes?)
+    if (data.senha && aluno.senha !== data.senha) {
+      throw new Error('Senha incorreta.');
+    }
+
+    if (aluno.status === 'Aguardando Confirmação') {
+      throw new Error('Confirme seu cadastro no e-mail enviado antes de realizar o login.');
+    }
+    
+    return { id: aluno.id, nome: aluno.nome, email: aluno.email, telefone: aluno.telefone };
   }
 
   // ADMIN FORGOT PASSWORD
