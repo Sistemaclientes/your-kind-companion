@@ -313,7 +313,8 @@ app.post('/api/student/login', (req, res) => {
       id: student.id,
       nome: student.nome,
       email: student.email,
-      telefone: student.telefone
+      telefone: student.telefone,
+      cpf: student.cpf
     }
   });
 });
