@@ -3,6 +3,9 @@ import cors from 'cors';
 import { initDB } from './db';
 import db from './db';
 import { authService, adminMiddleware, masterMiddleware } from './auth';
+import { emailService } from './email';
+import crypto from 'crypto';
+
 
 function generateSlug(title: string): string {
   return title
