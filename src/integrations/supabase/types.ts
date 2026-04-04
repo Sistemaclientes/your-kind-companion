@@ -127,6 +127,7 @@ export type Database = {
           reset_expires: string | null
           reset_token: string | null
           senha: string | null
+          slug: string | null
           status: string | null
           telefone: string | null
           token_expires_at: string | null
@@ -146,6 +147,7 @@ export type Database = {
           reset_expires?: string | null
           reset_token?: string | null
           senha?: string | null
+          slug?: string | null
           status?: string | null
           telefone?: string | null
           token_expires_at?: string | null
@@ -165,6 +167,7 @@ export type Database = {
           reset_expires?: string | null
           reset_token?: string | null
           senha?: string | null
+          slug?: string | null
           status?: string | null
           telefone?: string | null
           token_expires_at?: string | null
@@ -685,6 +688,7 @@ export type Database = {
     }
     Functions: {
       check_is_admin: { Args: never; Returns: boolean }
+      generate_slug: { Args: { title: string }; Returns: string }
       get_my_role: { Args: never; Returns: string }
     }
     Enums: {
