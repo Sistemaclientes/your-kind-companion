@@ -132,7 +132,7 @@ export function StudentsPage() {
               }} 
               className="btn-secondary px-5 py-2.5 flex items-center gap-2 text-red-600 hover:bg-red-50"
             >
-              <LogIn className="w-4 h-4" />
+              <LogOut className="w-4 h-4" />
               Deslogar Todos
             </button>
             <button onClick={handleExport} className="btn-secondary px-5 py-2.5 flex items-center gap-2">
