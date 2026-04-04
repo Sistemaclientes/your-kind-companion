@@ -45,8 +45,7 @@ export function StudentResultsListPage() {
               <p className="text-sm text-on-surface-variant font-medium">Comece fazendo uma prova disponível.</p>
             </div>
           ) : (
-            [...results].reverse().map((result, idx) => {
-              const realIdx = results.length - 1 - idx;
+            results.map((result) => {
               const isApproved = result.pontuacao >= 70;
               const dateStr = result.data ? new Date(result.data).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' }) : '—';
               return (
