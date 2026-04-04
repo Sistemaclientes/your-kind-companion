@@ -1,6 +1,6 @@
 import React from 'react';
 import { Mail, Lock, Eye, EyeOff, LogIn, AlertCircle, Loader2, GraduationCap, ArrowLeft, KeyRound, CheckCircle2 } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { api } from '../lib/api';
 import { useAuthStore } from '../lib/authStore';
 import { motion, AnimatePresence } from 'motion/react';
