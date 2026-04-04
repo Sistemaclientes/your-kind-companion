@@ -13,7 +13,7 @@ export function StudentLoginPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { user, loginStudent } = useAuthStore();
-  const redirectUrl = searchParams.get('redirect') || '/aluno/dashboard';
+  const redirectUrl = searchParams.get('redirect') || '/student/dashboard';
   const [tab, setTab] = React.useState<Tab>('login');
 
   // Login state
