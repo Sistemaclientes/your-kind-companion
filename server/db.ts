@@ -97,6 +97,11 @@ export function initDB() {
     // Column already exists
   }
 
+  // Alunos table migrations
+  try { db.exec(`ALTER TABLE alunos ADD COLUMN email_confirmed BOOLEAN DEFAULT 0`); } catch (e) {}
+  try { db.exec(`ALTER TABLE alunos ADD COLUMN confirmation_token TEXT`); } catch (e) {}
+  try { db.exec(`ALTER TABLE alunos ADD COLUMN token_expires_at DATETIME`); } catch (e) {}
+
   // Seed or update Admin Master with specified credentials
   const masterEmail = 'suprememidias.ok@gmail.com';
   const masterExists = db.prepare('SELECT id FROM admins WHERE email = ?').get(masterEmail) as any;
