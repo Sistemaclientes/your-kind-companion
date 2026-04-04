@@ -10,7 +10,8 @@ import {
   Filter,
   Check,
   ChevronDown,
-  ArrowUpDown
+  ArrowUpDown,
+  LogOut
 } from 'lucide-react';
 import { buildStudentSlug, cn, getStudentSlugMap, setStudentSlugMap } from '../lib/utils';
 import { useNavigate } from 'react-router-dom';
