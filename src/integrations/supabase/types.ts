@@ -86,13 +86,6 @@ export type Database = {
             referencedRelation: "perguntas"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "fk_alternativas_pergunta"
-            columns: ["pergunta_id"]
-            isOneToOne: false
-            referencedRelation: "perguntas"
-            referencedColumns: ["id"]
-          },
         ]
       }
       alunos: {
@@ -259,20 +252,6 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: [
-          {
-            foreignKeyName: "fk_perguntas_prova"
-            columns: ["prova_id"]
-            isOneToOne: false
-            referencedRelation: "provas"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_perguntas_prova"
-            columns: ["prova_id"]
-            isOneToOne: false
-            referencedRelation: "vw_provas_stats"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "perguntas_prova_id_fkey"
             columns: ["prova_id"]
@@ -456,20 +435,6 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: [
-          {
-            foreignKeyName: "fk_respostas_alternativa"
-            columns: ["alternativa_id"]
-            isOneToOne: false
-            referencedRelation: "alternativas"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_respostas_pergunta"
-            columns: ["pergunta_id"]
-            isOneToOne: false
-            referencedRelation: "perguntas"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "respostas_aluno_alternativa_id_fkey"
             columns: ["alternativa_id"]
