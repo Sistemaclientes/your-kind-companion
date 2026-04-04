@@ -117,6 +117,23 @@ export function StudentsPage() {
             <p className="text-on-surface-variant font-medium mt-1">Visualize e gerencie todos os estudantes que já realizaram provas.</p>
           </div>
           <div className="flex items-center gap-3">
+            <button 
+              onClick={async () => {
+                if (confirm('Deseja realmente deslogar todos os alunos? Eles receberão um e-mail de confirmação.')) {
+                  try {
+                    await api.post('/admin/students/logout-all');
+                    alert('Todos os alunos foram deslogados e e-mails de confirmação foram simulados no servidor.');
+                    window.location.reload();
+                  } catch (err) {
+                    alert('Erro ao deslogar alunos.');
+                  }
+                }
+              }} 
+              className="btn-secondary px-5 py-2.5 flex items-center gap-2 text-red-600 hover:bg-red-50"
+            >
+              <LogIn className="w-4 h-4" />
+              Deslogar Todos
+            </button>
             <button onClick={handleExport} className="btn-secondary px-5 py-2.5 flex items-center gap-2">
               <Download className="w-4 h-4 text-primary" />
               Exportar
