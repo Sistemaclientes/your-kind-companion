@@ -94,6 +94,7 @@ export type Database = {
           confirmation_token: string | null
           created_at: string | null
           email: string
+          email_confirmed: boolean | null
           id: string
           last_login: string | null
           must_reconfirm: boolean | null
@@ -101,6 +102,7 @@ export type Database = {
           senha: string | null
           status: string | null
           telefone: string | null
+          token_expires_at: string | null
           updated_at: string | null
         }
         Insert: {
@@ -108,6 +110,7 @@ export type Database = {
           confirmation_token?: string | null
           created_at?: string | null
           email: string
+          email_confirmed?: boolean | null
           id?: string
           last_login?: string | null
           must_reconfirm?: boolean | null
@@ -115,6 +118,7 @@ export type Database = {
           senha?: string | null
           status?: string | null
           telefone?: string | null
+          token_expires_at?: string | null
           updated_at?: string | null
         }
         Update: {
@@ -122,6 +126,7 @@ export type Database = {
           confirmation_token?: string | null
           created_at?: string | null
           email?: string
+          email_confirmed?: boolean | null
           id?: string
           last_login?: string | null
           must_reconfirm?: boolean | null
@@ -129,6 +134,7 @@ export type Database = {
           senha?: string | null
           status?: string | null
           telefone?: string | null
+          token_expires_at?: string | null
           updated_at?: string | null
         }
         Relationships: []
@@ -560,30 +566,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
-      }
-      table_name: {
-        Row: {
-          data: Json | null
-          id: number
-          inserted_at: string
-          name: string | null
-          updated_at: string
-        }
-        Insert: {
-          data?: Json | null
-          id?: number
-          inserted_at?: string
-          name?: string | null
-          updated_at?: string
-        }
-        Update: {
-          data?: Json | null
-          id?: number
-          inserted_at?: string
-          name?: string | null
-          updated_at?: string
-        }
-        Relationships: []
       }
     }
     Views: {
