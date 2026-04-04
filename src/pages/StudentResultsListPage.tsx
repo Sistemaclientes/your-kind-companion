@@ -4,6 +4,7 @@ import { motion } from 'motion/react';
 import { Trophy, Eye, BarChart3 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { TopBar } from '../components/TopBar';
+import { api } from '../lib/api';
 
 function Skeleton({ className }: { className?: string }) {
   return <div className={cn("skeleton", className)} />;
