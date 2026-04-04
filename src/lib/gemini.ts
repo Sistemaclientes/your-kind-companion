@@ -31,7 +31,7 @@ export const generateQuestions = async (topic: string, count: number = 5) => {
     contents: [{ role: 'user', parts: [{ text: prompt }] }]
   });
 
-  const text = response.candidates?.[0]?.content?.parts?.[0]?.text || "";
+  const text = response.text;
   
   if (!text) {
     throw new Error("O Gemini não retornou nenhuma resposta.");
