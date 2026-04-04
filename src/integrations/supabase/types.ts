@@ -271,6 +271,7 @@ export type Database = {
       perguntas: {
         Row: {
           categoria_id: string | null
+          created_at: string
           dificuldade: string | null
           enunciado: string
           explicacao: string | null
@@ -286,6 +287,7 @@ export type Database = {
         }
         Insert: {
           categoria_id?: string | null
+          created_at?: string
           dificuldade?: string | null
           enunciado: string
           explicacao?: string | null
@@ -301,6 +303,7 @@ export type Database = {
         }
         Update: {
           categoria_id?: string | null
+          created_at?: string
           dificuldade?: string | null
           enunciado?: string
           explicacao?: string | null
@@ -578,6 +581,7 @@ export type Database = {
         Row: {
           acertos: number | null
           aluno_id: string
+          created_at: string
           data: string | null
           data_conclusao: string | null
           email_aluno: string | null
@@ -601,6 +605,7 @@ export type Database = {
         Insert: {
           acertos?: number | null
           aluno_id: string
+          created_at?: string
           data?: string | null
           data_conclusao?: string | null
           email_aluno?: string | null
@@ -624,6 +629,7 @@ export type Database = {
         Update: {
           acertos?: number | null
           aluno_id?: string
+          created_at?: string
           data?: string | null
           data_conclusao?: string | null
           email_aluno?: string | null
