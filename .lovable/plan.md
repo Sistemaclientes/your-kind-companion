@@ -6,48 +6,56 @@
 
 O login funciona com autenticacao customizada (senhas em texto puro nas tabelas `admins` e `alunos`, sessao via localStorage). O sistema **NAO usa Supabase Auth** -- os usuarios nao existem em `auth.users`.
 
-**Problemas:**
-- Admin "Esqueci senha": chama API que apenas verifica se email existe -- nenhum email enviado
-- Student "Esqueci senha": nao faz nada (apenas `setForgotSent(true)`)
-- `/confirmar-email` chama API inexistente
+**Problemas encontrados:**
+- Admin "Esqueci senha": chama API que apenas verifica se email existe no banco -- nenhum email e enviado, mas mostra "Email enviado!"
+- Student "Esqueci senha": literalmente nao faz nada (`setForgotSent(true)` sem chamar API nenhuma)
+- Pagina `/confirmar-email` chama API inexistente
 
-**Restricao:** Sem `auth.users`, nao da pra usar `supabase.auth.resetPasswordForEmail()`. Solucao usa Edge Function + tokens proprios.
+**Restricao critica:** Como os usuarios nao estao no `auth.users`, NAO e possivel usar `supabase.auth.resetPasswordForEmail()` sem migrar todo o sistema de login. A solucao usa Edge Function + tokens proprios para enviar emails reais.
 
 ## O que NAO sera alterado
 - Login existente (admin e aluno)
-- `authStore` / logica de sessao
+- `authStore` / logica de sessao / localStorage
 - Rotas ja existentes
 - Design global
 
-## Etapas
+## Etapas de Implementacao
 
-### 1. Criar tabela `password_reset_tokens` (migracao)
-Tokens UUID, expiracao 1h, tipo usuario (admin/student), flag `used`.
+### 1. Criar tabela `password_reset_tokens` (migracao SQL)
+Armazena tokens temporarios: `id`, `email`, `token` (UUID), `user_type` (admin/student), `expires_at` (1 hora), `used` (boolean). Com RLS e indices.
 
 ### 2. Configurar email transacional
-Scaffold transactional email via Lovable para enviar os emails de reset.
+Usar o sistema de email transacional do Lovable (scaffold + Edge Function `send-transactional-email`) para enviar os emails de reset com link seguro e template profissional.
 
 ### 3. Criar Edge Function `send-reset-email`
-Recebe email + tipo, verifica existencia no banco, gera token, salva, envia email com link `{origin}/redefinir-senha?token={token}&email={email}`.
+Recebe `email` e `user_type`, verifica se o usuario existe na tabela correspondente (`admins` ou `alunos`), gera token UUID, salva na tabela `password_reset_tokens`, e envia email transacional com link: `{origin}/redefinir-senha?token={token}&email={email}`.
 
 ### 4. Atualizar `auth.service.ts`
-- `forgotAdminPassword` e `forgotStudentPassword`: chamam Edge Function
-- `resetAdminPassword` e `resetStudentPassword`: validam token antes de atualizar senha
+- `forgotAdminPassword`: chamar Edge Function `send-reset-email` com `user_type: 'admin'`
+- `forgotStudentPassword` (novo): chamar Edge Function com `user_type: 'student'`
+- `resetAdminPassword`: validar token na tabela antes de atualizar senha
+- `resetStudentPassword` (novo): validar token e atualizar senha do aluno
 
 ### 5. Corrigir `LoginPage.tsx` (admin)
-- `handleForgotSubmit`: chama servico que envia email real
-- `handleResetSubmit`: valida token da URL
+- `handleForgotSubmit`: chamar o novo servico que envia email de verdade
+- `handleResetSubmit`: usar token da URL para validar antes de resetar
+- Manter toda a UI e animacoes existentes
 
 ### 6. Corrigir `StudentLoginPage.tsx`
-- `handleForgotPassword`: chama API real
-- Adicionar view de reset (nova senha + confirmacao)
+- `handleForgotPassword`: chamar API real que envia email
+- Adicionar view de reset de senha (campos nova senha + confirmacao + validacao)
+- Manter toda a UI de login/cadastro intacta
 
-### 7. Atualizar `api.ts` com novas rotas
+### 7. Atualizar `api.ts`
+- Adicionar rotas para `student/forgot-password` e `student/reset-password`
 
 ### 8. Remover `ConfirmEmailPage.tsx` quebrada
+- Remover pagina e rota `/confirmar-email` do `App.tsx`
 
 ## Detalhes Tecnicos
-- Tokens UUID via `gen_random_uuid()`, single-use, expiracao 1h
-- Email via transactional email (Lovable)
-- RLS na tabela de tokens
+- Tokens UUID gerados com `gen_random_uuid()` no Postgres
+- Expiracao de 1 hora, single-use (marcado `used = true` apos consumo)
+- Email enviado via sistema transacional do Lovable (sem necessidade de API key externa)
+- Link de reset inclui token e email como query params
+- RLS policies na tabela de tokens
 
