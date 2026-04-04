@@ -50,6 +50,7 @@ export function CreateExamPage() {
   const [isSaving, setIsSaving] = useState(false);
   const [isPublishing, setIsPublishing] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
+  const [showAIGenerator, setShowAIGenerator] = useState(false);
   const [openTypeDropdownId, setOpenTypeDropdownId] = useState<string | number | null>(null);
 
   React.useEffect(() => {
