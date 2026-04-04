@@ -95,6 +95,7 @@ export type Database = {
           email: string
           id: string
           last_login: string | null
+          must_reconfirm: boolean | null
           nome: string
           senha: string | null
           status: string | null
@@ -107,6 +108,7 @@ export type Database = {
           email: string
           id?: string
           last_login?: string | null
+          must_reconfirm?: boolean | null
           nome: string
           senha?: string | null
           status?: string | null
@@ -119,6 +121,7 @@ export type Database = {
           email?: string
           id?: string
           last_login?: string | null
+          must_reconfirm?: boolean | null
           nome?: string
           senha?: string | null
           status?: string | null
@@ -554,6 +557,30 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      table_name: {
+        Row: {
+          data: Json | null
+          id: number
+          inserted_at: string
+          name: string | null
+          updated_at: string
+        }
+        Insert: {
+          data?: Json | null
+          id?: number
+          inserted_at?: string
+          name?: string | null
+          updated_at?: string
+        }
+        Update: {
+          data?: Json | null
+          id?: number
+          inserted_at?: string
+          name?: string | null
+          updated_at?: string
+        }
+        Relationships: []
       }
     }
     Views: {

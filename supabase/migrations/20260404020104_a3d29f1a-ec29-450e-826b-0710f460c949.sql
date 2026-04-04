@@ -1,0 +1,1 @@
+ALTER TABLE public.alunos ADD COLUMN must_reconfirm BOOLEAN DEFAULT false;
