@@ -75,7 +75,7 @@ export default function App() {
                   <StudentLoginPage />
                 </PublicRoute>
               } />
-              <Route path="/confirmar-email" element={<ConfirmEmailPage />} />
+              <Route path="/confirmar-email" element={<Navigate to="/student/login" replace />} />
               <Route path="/redefinir-senha" element={<LoginPage />} />
 
               {/* Legacy redirects */}
