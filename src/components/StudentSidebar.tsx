@@ -68,14 +68,14 @@ export function StudentSidebar({ isOpen, onClose }: StudentSidebarProps) {
 
   const handleLogout = () => {
     logout();
-    navigate('/aluno/login');
+    navigate('/student/login');
   };
 
   const navItems = [
-    { icon: LayoutDashboard, label: 'Dashboard', path: '/aluno/dashboard' },
-    { icon: BookOpen, label: 'Provas', path: '/aluno/provas' },
-    { icon: BarChart3, label: 'Resultados', path: '/aluno/resultados' },
-    { icon: UserCircle, label: 'Meu Perfil', path: '/aluno/perfil' },
+    { icon: LayoutDashboard, label: 'Dashboard', path: '/student/dashboard' },
+    { icon: BookOpen, label: 'Provas', path: '/student/provas' },
+    { icon: BarChart3, label: 'Resultados', path: '/student/resultados' },
+    { icon: UserCircle, label: 'Meu Perfil', path: '/student/perfil' },
   ];
 
   return (

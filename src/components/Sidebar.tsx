@@ -46,7 +46,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
 
   const handleLogout = () => {
     logout();
-    navigate('/', { replace: true });
+    navigate('/admin/login', { replace: true });
   };
 
   const navItems = [
