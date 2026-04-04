@@ -5,6 +5,10 @@ import db from './db';
 import { authService, adminMiddleware, masterMiddleware } from './auth';
 import { emailService } from './email';
 import crypto from 'crypto';
+import dotenv from 'dotenv';
+
+dotenv.config();
+
 
 
 function generateSlug(title: string): string {
