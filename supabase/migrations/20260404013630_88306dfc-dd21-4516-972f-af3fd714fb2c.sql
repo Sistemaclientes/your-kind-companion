@@ -1,0 +1,10 @@
+ALTER TABLE IF EXISTS public.perguntas DROP CONSTRAINT IF EXISTS fk_perguntas_prova;
+ALTER TABLE IF EXISTS public.alternativas DROP CONSTRAINT IF EXISTS fk_alternativas_pergunta;
+ALTER TABLE IF EXISTS public.resultados DROP CONSTRAINT IF EXISTS fk_resultados_prova;
+ALTER TABLE IF EXISTS public.resultados DROP CONSTRAINT IF EXISTS fk_resultados_aluno;
+ALTER TABLE IF EXISTS public.respostas_aluno DROP CONSTRAINT IF EXISTS fk_respostas_resultado;
+ALTER TABLE IF EXISTS public.respostas_aluno DROP CONSTRAINT IF EXISTS fk_respostas_prova;
+ALTER TABLE IF EXISTS public.respostas_aluno DROP CONSTRAINT IF EXISTS fk_respostas_aluno;
+ALTER TABLE IF EXISTS public.respostas_aluno DROP CONSTRAINT IF EXISTS fk_respostas_pergunta;
+ALTER TABLE IF EXISTS public.respostas_aluno DROP CONSTRAINT IF EXISTS fk_respostas_alternativa;
+ALTER TABLE IF EXISTS public.provas DROP CONSTRAINT IF EXISTS fk_provas_categoria;
