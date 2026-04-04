@@ -30,9 +30,8 @@ export function StudentDashboardPage() {
 
     const fetchData = async () => {
       try {
-        const allResults = JSON.parse(localStorage.getItem('local_resultados') || '[]');
-        const myResults = allResults.filter((r: any) => r.email_aluno === parsed.email);
-        setResults(myResults);
+        const data = await api.get('/resultados');
+        setResults(data);
       } catch (err) {
         console.error('Error loading dashboard:', err);
       } finally {
