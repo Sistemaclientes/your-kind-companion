@@ -12,6 +12,7 @@ export function StudentProfilePage() {
   const [nome, setNome] = React.useState('');
   const [email, setEmail] = React.useState('');
   const [telefone, setTelefone] = React.useState('');
+  const [cpf, setCpf] = React.useState('');
   const [avatar, setAvatar] = React.useState<string | null>(null);
   const [newPassword, setNewPassword] = React.useState('');
   const [confirmPassword, setConfirmPassword] = React.useState('');
@@ -81,6 +82,7 @@ export function StudentProfilePage() {
     if (idx >= 0) {
       registeredStudents[idx].nome = nome;
       registeredStudents[idx].telefone = telefone;
+      registeredStudents[idx].cpf = cpf;
       if (newPassword) {
         registeredStudents[idx].password = newPassword;
       }
@@ -175,16 +177,18 @@ export function StudentProfilePage() {
             </div>
 
             <div className="space-y-2">
-              <label className={labelClass}>Telefone / WhatsApp</label>
-              <div className="relative group">
-                <Phone className={iconClass} />
-                <input className={inputClass} type="tel" placeholder="(00) 00000-0000" value={telefone} onChange={(e) => setTelefone(phoneMask(e.target.value))} />
-              </div>
-            <div className="space-y-2">
               <label className={labelClass}>CPF</label>
               <div className="relative group">
                 <User className={iconClass} />
                 <input className={inputClass} type="text" placeholder="000.000.000-00" value={cpf} onChange={(e) => setCpf(e.target.value)} />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <label className={labelClass}>Telefone / WhatsApp</label>
+              <div className="relative group">
+                <Phone className={iconClass} />
+                <input className={inputClass} type="tel" placeholder="(00) 00000-0000" value={telefone} onChange={(e) => setTelefone(phoneMask(e.target.value))} />
               </div>
             </div>
 
