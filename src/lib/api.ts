@@ -25,7 +25,13 @@ async function handleRoute(method: string, endpoint: string, data?: any): Promis
     return authService.forgotAdminPassword(data.email);
   }
   if (method === 'POST' && endpoint === '/admin/reset-password') {
-    return authService.resetAdminPassword(data.email, data.new_password);
+    return authService.resetAdminPassword(data.email, data.token, data.new_password);
+  }
+  if (method === 'POST' && endpoint === '/student/forgot-password') {
+    return authService.forgotStudentPassword(data.email);
+  }
+  if (method === 'POST' && endpoint === '/student/reset-password') {
+    return authService.resetStudentPassword(data.email, data.token, data.new_password);
   }
   if (method === 'PUT' && endpoint === '/admins/change-password') {
     const user = api.getUser();

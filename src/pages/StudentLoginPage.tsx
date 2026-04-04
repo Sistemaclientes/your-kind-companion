@@ -151,16 +151,152 @@ export function StudentLoginPage() {
     }
   };
 
-  const handleForgotPassword = (e: React.FormEvent) => {
+  const [forgotLoading, setForgotLoading] = React.useState(false);
+  const [forgotError, setForgotError] = React.useState('');
+  
+  // Reset password state (student)
+  const [showResetPassword, setShowResetPassword] = React.useState(false);
+  const [resetNewPassword, setResetNewPassword] = React.useState('');
+  const [resetConfirmPassword, setResetConfirmPassword] = React.useState('');
+  const [resetError, setResetError] = React.useState('');
+  const [resetSuccess, setResetSuccess] = React.useState(false);
+  const [resetLoading, setResetLoading] = React.useState(false);
+  const [showResetPw, setShowResetPw] = React.useState(false);
+
+  // Check URL for reset params
+  React.useEffect(() => {
+    if (searchParams.get('reset') === 'true' && searchParams.get('token') && searchParams.get('email')) {
+      setShowResetPassword(true);
+    }
+  }, [searchParams]);
+
+  const handleForgotPassword = async (e: React.FormEvent) => {
     e.preventDefault();
-    // In a real app, this would call an API
-    setForgotSent(true);
+    if (!forgotEmail.trim()) {
+      setForgotError('Informe seu e-mail');
+      return;
+    }
+    setForgotLoading(true);
+    setForgotError('');
+    try {
+      await api.post('/student/forgot-password', { email: forgotEmail.trim() });
+      setForgotSent(true);
+    } catch (err: any) {
+      setForgotError(err.message || 'Erro ao processar solicitação');
+    } finally {
+      setForgotLoading(false);
+    }
+  };
+
+  const handleResetPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!resetNewPassword || !resetConfirmPassword) {
+      setResetError('Preencha todos os campos');
+      return;
+    }
+    if (resetNewPassword.length < 6) {
+      setResetError('A senha deve ter pelo menos 6 caracteres');
+      return;
+    }
+    if (resetNewPassword !== resetConfirmPassword) {
+      setResetError('As senhas não coincidem');
+      return;
+    }
+    setResetLoading(true);
+    setResetError('');
+    try {
+      const emailParam = searchParams.get('email') || '';
+      const tokenParam = searchParams.get('token') || '';
+      await api.post('/student/reset-password', {
+        email: emailParam,
+        token: tokenParam,
+        new_password: resetNewPassword,
+      });
+      setResetSuccess(true);
+      setTimeout(() => {
+        setShowResetPassword(false);
+        setResetSuccess(false);
+        setResetNewPassword('');
+        setResetConfirmPassword('');
+      }, 2000);
+    } catch (err: any) {
+      setResetError(err.message || 'Erro ao redefinir senha');
+    } finally {
+      setResetLoading(false);
+    }
   };
 
   const inputClass = "w-full pl-12 pr-4 py-3.5 bg-surface-container-low border border-outline rounded-xl text-on-surface text-sm font-semibold placeholder:text-on-surface-variant/30 focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all outline-none";
   const inputPasswordClass = "w-full pl-12 pr-12 py-3.5 bg-surface-container-low border border-outline rounded-xl text-on-surface text-sm font-semibold placeholder:text-on-surface-variant/30 focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all outline-none";
   const labelClass = "block text-[10px] font-bold text-on-surface-variant uppercase tracking-[0.15em] ml-1";
   const iconClass = "absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-on-surface-variant/40 group-focus-within:text-primary transition-colors";
+
+  // Reset password view (student)
+  if (showResetPassword) {
+    return (
+      <div className="min-h-[100dvh] bg-surface flex items-center justify-center p-4 relative overflow-hidden">
+        <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
+          <div className="absolute -top-[10%] -left-[10%] w-[40%] h-[40%] rounded-full bg-primary/10 blur-[120px]" />
+          <div className="absolute top-[20%] -right-[5%] w-[30%] h-[50%] rounded-full bg-secondary/10 blur-[100px]" />
+        </div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="w-full max-w-md bg-surface-container p-8 sm:p-10 rounded-3xl shadow-2xl shadow-primary/5 border border-outline relative z-10"
+        >
+          <div className="text-center mb-8">
+            <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-4">
+              <Lock className="w-7 h-7 text-primary" />
+            </div>
+            <h1 className="text-2xl font-black text-on-surface font-headline tracking-tight">Nova Senha</h1>
+            <p className="text-sm text-on-surface-variant font-medium mt-1">Defina uma nova senha para sua conta.</p>
+          </div>
+
+          {resetSuccess ? (
+            <div className="text-center space-y-4">
+              <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center mx-auto">
+                <ShieldCheck className="w-7 h-7 text-primary" />
+              </div>
+              <p className="text-on-surface font-bold">Senha redefinida!</p>
+              <p className="text-on-surface-variant text-sm">Redirecionando para o login...</p>
+            </div>
+          ) : (
+            <form onSubmit={handleResetPassword} className="space-y-5">
+              {resetError && (
+                <motion.div initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} className="text-sm text-error font-semibold bg-error/10 border border-error/20 rounded-xl px-4 py-3">
+                  <p>{resetError}</p>
+                </motion.div>
+              )}
+              <div className="space-y-2">
+                <label className={labelClass}>Nova Senha</label>
+                <div className="relative group">
+                  <Lock className={iconClass} />
+                  <input className={inputPasswordClass} placeholder="Mínimo 6 caracteres" type={showResetPw ? 'text' : 'password'} value={resetNewPassword} onChange={(e) => setResetNewPassword(e.target.value)} required />
+                  <button type="button" onClick={() => setShowResetPw(!showResetPw)} className="absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant/40 hover:text-primary transition-colors">
+                    {showResetPw ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                  </button>
+                </div>
+              </div>
+              <div className="space-y-2">
+                <label className={labelClass}>Confirmar Senha</label>
+                <div className="relative group">
+                  <Lock className={iconClass} />
+                  <input className={inputClass} placeholder="Repita a nova senha" type="password" value={resetConfirmPassword} onChange={(e) => setResetConfirmPassword(e.target.value)} required />
+                </div>
+              </div>
+              <button type="submit" className="btn-primary w-full py-3.5 rounded-xl font-bold text-sm disabled:opacity-50" disabled={resetLoading}>
+                {resetLoading ? 'Redefinindo...' : 'Redefinir Senha'}
+              </button>
+              <button type="button" onClick={() => setShowResetPassword(false)} className="w-full text-center text-sm text-primary font-bold hover:underline">
+                Voltar ao Login
+              </button>
+            </form>
+          )}
+        </motion.div>
+      </div>
+    );
+  }
 
   // Forgot password view
   if (showForgotPassword) {
@@ -182,17 +318,17 @@ export function StudentLoginPage() {
             </div>
             <h1 className="text-2xl font-black text-on-surface font-headline tracking-tight">Recuperar Senha</h1>
             <p className="text-sm text-on-surface-variant font-medium mt-1">
-              {forgotSent ? 'Sua senha foi resetada com sucesso.' : 'Insira seu e-mail para resetar a senha.'}
+              {forgotSent ? 'Solicitação enviada!' : 'Insira seu e-mail para recuperar a senha.'}
             </p>
           </div>
 
           {forgotSent ? (
             <div className="space-y-4 text-center">
               <p className="text-sm text-on-surface-variant">
-                Se o e-mail estiver cadastrado, você receberá instruções para redefinir sua senha.
+                Se o e-mail estiver cadastrado, você receberá um link para redefinir sua senha. Verifique sua caixa de entrada e spam.
               </p>
               <button
-                onClick={() => { setShowForgotPassword(false); setForgotSent(false); }}
+                onClick={() => { setShowForgotPassword(false); setForgotSent(false); setForgotError(''); }}
                 className="btn-primary w-full py-3.5 rounded-xl font-bold text-sm"
               >
                 Voltar ao Login
@@ -200,6 +336,11 @@ export function StudentLoginPage() {
             </div>
           ) : (
             <form onSubmit={handleForgotPassword} className="space-y-5">
+              {forgotError && (
+                <motion.div initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} className="text-sm text-error font-semibold bg-error/10 border border-error/20 rounded-xl px-4 py-3">
+                  <p>{forgotError}</p>
+                </motion.div>
+              )}
               <div className="space-y-2">
                 <label className={labelClass}>E-mail</label>
                 <div className="relative group">
@@ -207,8 +348,10 @@ export function StudentLoginPage() {
                   <input className={inputClass} placeholder="seu@email.com" type="email" value={forgotEmail} onChange={(e) => setForgotEmail(e.target.value)} required />
                 </div>
               </div>
-              <button type="submit" className="btn-primary w-full py-3.5 rounded-xl font-bold text-sm">Resetar Senha</button>
-              <button type="button" onClick={() => setShowForgotPassword(false)} className="w-full text-center text-sm text-primary font-bold hover:underline">Voltar ao Login</button>
+              <button type="submit" className="btn-primary w-full py-3.5 rounded-xl font-bold text-sm disabled:opacity-50" disabled={forgotLoading}>
+                {forgotLoading ? 'Enviando...' : 'Enviar Link de Recuperação'}
+              </button>
+              <button type="button" onClick={() => { setShowForgotPassword(false); setForgotError(''); }} className="w-full text-center text-sm text-primary font-bold hover:underline">Voltar ao Login</button>
             </form>
           )}
         </motion.div>
