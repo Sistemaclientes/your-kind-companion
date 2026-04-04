@@ -56,7 +56,7 @@ export function StudentsPage() {
     if (statusFilter === 'Ativos') {
       result = result.filter(s => s.status === 'Ativo');
     } else if (statusFilter === 'Inativos') {
-      result = result.filter(s => s.status === 'Cadastrado');
+      result = result.filter(s => s.status === 'Cadastrado' || s.status === 'Aguardando Confirmação');
     }
     
     if (searchQuery) {
