@@ -309,7 +309,7 @@ export function StudentLoginPage() {
                     <ShieldCheck className="w-7 h-7 text-primary" />
                   </div>
                   <p className="text-lg font-black text-on-surface font-headline">Cadastro realizado!</p>
-                  <p className="text-sm text-on-surface-variant">Redirecionando para o login...</p>
+                  <p className="text-sm text-on-surface-variant">Um e-mail de confirmação foi enviado. Por favor, confirme seu cadastro para acessar a plataforma.</p>
                 </motion.div>
               ) : (
                 <>
