@@ -4,7 +4,7 @@
 
 ## Analise do Estado Atual
 
-O login funciona com autenticacao customizada (senhas em texto puro nas tabelas `admins` e `alunos`, sessao via localStorage). O sistema **NAO usa Supabase Auth** -- os usuarios nao existem em `auth.users`.
+O login funciona com autenticacao customizada (senhas em texto puro nas tabelas `admins` e `alunos`, sessao via localStorage). O sistema NAO usa Supabase Auth -- os usuarios nao existem em `auth.users`.
 
 **Problemas encontrados:**
 - Admin "Esqueci senha": chama API que apenas verifica se email existe no banco -- nenhum email e enviado, mas mostra "Email enviado!"
@@ -25,10 +25,10 @@ O login funciona com autenticacao customizada (senhas em texto puro nas tabelas 
 Tokens UUID, expiracao 1 hora, tipo usuario (admin/student), flag `used`. Com RLS e indices.
 
 ### 2. Configurar sistema de email transacional
-Usar o sistema de email transacional integrado ao projeto para enviar emails de reset com template profissional.
+Configurar envio de emails de reset via sistema de email transacional integrado.
 
 ### 3. Criar Edge Function `send-reset-email`
-Recebe email + user_type, verifica existencia no banco, gera token, salva na tabela, envia email com link contendo token e email como query params.
+Recebe email + user_type, verifica existencia no banco, gera token, salva na tabela, envia email com link contendo token e email como query params para a pagina de redefinicao.
 
 ### 4. Atualizar `auth.service.ts`
 - `forgotAdminPassword` e novo `forgotStudentPassword`: chamam a Edge Function
