@@ -134,6 +134,7 @@ export type Database = {
           status: string | null
           telefone: string | null
           token_expires_at: string | null
+          turma_id: string | null
           updated_at: string | null
         }
         Insert: {
@@ -154,6 +155,7 @@ export type Database = {
           status?: string | null
           telefone?: string | null
           token_expires_at?: string | null
+          turma_id?: string | null
           updated_at?: string | null
         }
         Update: {
@@ -174,9 +176,25 @@ export type Database = {
           status?: string | null
           telefone?: string | null
           token_expires_at?: string | null
+          turma_id?: string | null
           updated_at?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "alunos_turma_id_fkey"
+            columns: ["turma_id"]
+            isOneToOne: false
+            referencedRelation: "turmas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "alunos_turma_id_fkey"
+            columns: ["turma_id"]
+            isOneToOne: false
+            referencedRelation: "vw_turmas_performance"
+            referencedColumns: ["turma_id"]
+          },
+        ]
       }
       categorias: {
         Row: {
@@ -232,6 +250,69 @@ export type Database = {
           id?: string
           updated_at?: string | null
           valor?: Json
+        }
+        Relationships: []
+      }
+      dicas_sistema: {
+        Row: {
+          ativa: boolean | null
+          conteudo: string
+          created_at: string
+          id: string
+          tipo: string | null
+          titulo: string
+        }
+        Insert: {
+          ativa?: boolean | null
+          conteudo: string
+          created_at?: string
+          id?: string
+          tipo?: string | null
+          titulo: string
+        }
+        Update: {
+          ativa?: boolean | null
+          conteudo?: string
+          created_at?: string
+          id?: string
+          tipo?: string | null
+          titulo?: string
+        }
+        Relationships: []
+      }
+      logs_atividade: {
+        Row: {
+          acao: string
+          created_at: string
+          detalhes: Json | null
+          entidade_id: string | null
+          entidade_tipo: string | null
+          id: string
+          ip_address: string | null
+          user_id: string | null
+          user_role: string | null
+        }
+        Insert: {
+          acao: string
+          created_at?: string
+          detalhes?: Json | null
+          entidade_id?: string | null
+          entidade_tipo?: string | null
+          id?: string
+          ip_address?: string | null
+          user_id?: string | null
+          user_role?: string | null
+        }
+        Update: {
+          acao?: string
+          created_at?: string
+          detalhes?: Json | null
+          entidade_id?: string | null
+          entidade_tipo?: string | null
+          id?: string
+          ip_address?: string | null
+          user_id?: string | null
+          user_role?: string | null
         }
         Relationships: []
       }
@@ -337,7 +418,7 @@ export type Database = {
             columns: ["prova_id"]
             isOneToOne: false
             referencedRelation: "vw_provas_stats"
-            referencedColumns: ["id"]
+            referencedColumns: ["prova_id"]
           },
         ]
       }
@@ -559,7 +640,7 @@ export type Database = {
             columns: ["prova_id"]
             isOneToOne: false
             referencedRelation: "vw_provas_stats"
-            referencedColumns: ["id"]
+            referencedColumns: ["prova_id"]
           },
           {
             foreignKeyName: "respostas_aluno_resultado_id_fkey"
@@ -676,6 +757,47 @@ export type Database = {
             columns: ["prova_id"]
             isOneToOne: false
             referencedRelation: "vw_provas_stats"
+            referencedColumns: ["prova_id"]
+          },
+        ]
+      }
+      turmas: {
+        Row: {
+          created_at: string
+          descricao: string | null
+          id: string
+          nome: string
+          professor_id: string | null
+          slug: string
+          total_alunos: number | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          descricao?: string | null
+          id?: string
+          nome: string
+          professor_id?: string | null
+          slug: string
+          total_alunos?: number | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          descricao?: string | null
+          id?: string
+          nome?: string
+          professor_id?: string | null
+          slug?: string
+          total_alunos?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "turmas_professor_id_fkey"
+            columns: ["professor_id"]
+            isOneToOne: false
+            referencedRelation: "admins"
             referencedColumns: ["id"]
           },
         ]
@@ -693,35 +815,16 @@ export type Database = {
       }
       vw_provas_stats: {
         Row: {
-          avg_score: number | null
-          categoria_cor: string | null
-          categoria_icon: string | null
-          categoria_id: string | null
-          categoria_nome: string | null
-          created_at: string | null
-          descricao: string | null
-          dificuldade: string | null
-          id: string | null
-          max_score: number | null
-          slug: string | null
+          alunos_unicos: number | null
+          media_pontuacao: number | null
+          nota_maxima: number | null
+          nota_minima: number | null
+          prova_id: string | null
           status: string | null
-          studentcount: number | null
-          subtitulo: string | null
-          tags: string[] | null
           titulo: string | null
-          total_pontos: number | null
-          total_questoes: number | null
-          total_submissions: number | null
+          total_conclusoes: number | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "provas_categoria_id_fkey"
-            columns: ["categoria_id"]
-            isOneToOne: false
-            referencedRelation: "categorias"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       vw_ranking_alunos: {
         Row: {
@@ -759,9 +862,19 @@ export type Database = {
             columns: ["prova_id"]
             isOneToOne: false
             referencedRelation: "vw_provas_stats"
-            referencedColumns: ["id"]
+            referencedColumns: ["prova_id"]
           },
         ]
+      }
+      vw_turmas_performance: {
+        Row: {
+          media_turma: number | null
+          total_alunos: number | null
+          total_provas_concluidas: number | null
+          turma_id: string | null
+          turma_nome: string | null
+        }
+        Relationships: []
       }
     }
     Functions: {
