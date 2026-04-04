@@ -1,35 +1,56 @@
 
-## Plano de Reestruturação do SaaS
 
-### Fase 1 — Limpeza de Arquitetura
-- Remover pasta `/server` (Node.js/SQLite backend)
-- Remover arquivos legados (`check_db.js`, `list_tables.js`, `extract_schema.*`, `generate_import.js`, `import_data.sql`, `database.sqlite`)
-- Remover dependências Node backend (`better-sqlite3`, `bcryptjs`, `jsonwebtoken`, `express`, etc.)
-- Garantir que `src/lib/api.ts` use apenas Supabase client
+# Plano: Corrigir Sistema de Autenticacao e Emails
 
-### Fase 2 — Reorganização de Código
-- Criar estrutura: `/services`, `/hooks`, `/layouts`, `/store`
-- Mover `AdminLayout` e `StudentLayout` para `/layouts`
-- Extrair lógica de API para `/services` (separar de `api.ts` monolítico)
-- Criar hooks reutilizáveis (`useExams`, `useStudents`, `useDashboard`)
+## Problema Identificado
 
-### Fase 3 — Rotas e Autenticação
-- Criar `/admin/login` separado
-- Padronizar rotas: `/admin/*` e `/student/*`
-- Refatorar `PrivateRoute` com suporte robusto a roles
-- Implementar `PublicRoute` (redireciona se já logado)
+O sistema de autenticacao atual e completamente customizado e inseguro:
+- Senhas armazenadas em **texto puro** nas tabelas `admins` e `alunos`
+- Sem integracao com Supabase Auth
+- **Nenhum email e enviado** -- nem para reset de senha, nem para confirmacao de cadastro
+- A pagina `/confirmar-email` chama uma API que nao existe
+- O forgot password do aluno nao faz nada (apenas muda state local sem enviar email)
 
-### Fase 4 — UI/UX Premium
-- Refinar design system (tokens, tipografia, espaçamento)
-- Redesenhar Dashboard com cards menores e grid responsivo
-- Sidebar moderna com microinterações
-- Skeleton loaders e transições suaves
-- Integrar Recharts para gráficos
+## Solucao
 
-### Fase 5 — Tema, Performance e Deploy
-- Refinar dark/light mode (já existe, melhorar transições)
-- Otimizar lazy loading e code splitting
-- Remover arquivos de deploy desnecessários (`vercel.json`, `.htaccess`)
-- Validação de formulários e mensagens de erro
+Migrar toda a autenticacao para o **Supabase Auth nativo** (`supabase.auth.*`), que fornece automaticamente envio de emails, hashing seguro, sessoes JWT e tokens seguros.
 
-**Abordagem**: Cada fase será implementada sequencialmente, testando antes de avançar.
+## Etapas de Implementacao
+
+### 1. Reescrever `auth.service.ts`
+- Login (admin/aluno): `supabase.auth.signInWithPassword()`
+- Cadastro aluno: `supabase.auth.signUp()` com metadata (nome, telefone, cpf)
+- Esqueci senha: `supabase.auth.resetPasswordForEmail()` com `redirectTo` para `/update-password`
+- Logout: `supabase.auth.signOut()`
+
+### 2. Reescrever `authStore.ts`
+- Usar `supabase.auth.onAuthStateChange()` como listener (configurado ANTES de `getSession()`)
+- Buscar role na tabela `profiles` (ja existente com coluna `role`)
+- Remover gerenciamento manual de localStorage/tokens
+
+### 3. Criar pagina `/auth/callback`
+- Captura redirects do Supabase (confirmacao de email, password recovery)
+- Detecta `type=recovery` na URL hash para redirecionar ao `/update-password`
+- Caso contrario, redireciona conforme role (admin ou student)
+
+### 4. Criar pagina `/update-password`
+- Formulario nova senha com validacao (min 6 chars, confirmacao)
+- Usa `supabase.auth.updateUser({ password })`
+- Loading states e feedback visual
+
+### 5. Atualizar `LoginPage.tsx` e `StudentLoginPage.tsx`
+- Substituir login, cadastro e forgot password por Supabase Auth nativo
+- Remover view inline de reset do LoginPage
+
+### 6. Atualizar rotas em `App.tsx`
+- Adicionar `/auth/callback` e `/update-password`
+- Remover `/confirmar-email` e `ConfirmEmailPage.tsx`
+
+### 7. Atualizar `api.ts` para delegar aos novos metodos
+
+## Detalhes Tecnicos
+- O trigger `handle_new_user()` ja cria perfis automaticamente -- sem migracao de banco
+- Emails enviados automaticamente pelo Supabase Auth
+- Contas admin existentes precisarao ser recriadas no Supabase Auth (sera documentado)
+- Tabela `profiles` ja possui coluna `role` para admin vs student
+
