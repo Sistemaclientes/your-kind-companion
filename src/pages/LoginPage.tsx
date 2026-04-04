@@ -9,8 +9,12 @@ type View = 'login' | 'forgot' | 'reset';
 
 export function LoginPage() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { user, loginAdmin } = useAuthStore();
-  const [view, setView] = React.useState<View>('login');
+  const [view, setView] = React.useState<View>(() => {
+    if (searchParams.get('token') && searchParams.get('email')) return 'reset';
+    return 'login';
+  });
   const [email, setEmail] = React.useState(() => localStorage.getItem('admin_remembered_email') || '');
   const [password, setPassword] = React.useState(() => localStorage.getItem('admin_remembered_pw') || '');
   const [error, setError] = React.useState('');
