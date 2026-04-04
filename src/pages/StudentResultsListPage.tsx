@@ -15,14 +15,17 @@ export function StudentResultsListPage() {
   const [loading, setLoading] = React.useState(true);
 
   React.useEffect(() => {
-    const info = localStorage.getItem('student_info');
-    if (!info) return;
-    const parsed = JSON.parse(info);
-
-    const allResults = JSON.parse(localStorage.getItem('local_resultados') || '[]');
-    const myResults = allResults.filter((r: any) => r.email_aluno === parsed.email);
-    setResults(myResults);
-    setLoading(false);
+    const fetchData = async () => {
+      try {
+        const data = await api.get('/resultados');
+        setResults(data);
+      } catch (err) {
+        console.error('Error fetching results:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
   }, []);
 
   return (
