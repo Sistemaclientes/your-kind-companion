@@ -1,56 +1,57 @@
 
 
-# Plano: Corrigir Sistema de Autenticacao e Emails
+# Plano: Adicionar Fluxo de Reset de Senha (sem alterar login existente)
 
-## Problema Identificado
+## Analise do Estado Atual
 
-O sistema de autenticacao atual e completamente customizado e inseguro:
-- Senhas armazenadas em **texto puro** nas tabelas `admins` e `alunos`
-- Sem integracao com Supabase Auth
-- **Nenhum email e enviado** -- nem para reset de senha, nem para confirmacao de cadastro
-- A pagina `/confirmar-email` chama uma API que nao existe
-- O forgot password do aluno nao faz nada (apenas muda state local sem enviar email)
+O login atual funciona com autenticacao customizada (senhas em texto puro nas tabelas `admins` e `alunos`). O `authStore` usa localStorage. O sistema NAO usa Supabase Auth (`supabase.auth.*`).
 
-## Solucao
+Problemas encontrados:
+- **Admin forgot password** (`LoginPage.tsx` linha 80): chama `api.post('/admin/forgot-password')` que apenas verifica se o email existe no banco -- nao envia nenhum email. Depois mostra "Email enviado!" mas nada foi enviado.
+- **Admin reset password** (`LoginPage.tsx` linha 109): chama `api.post('/admin/reset-password')` que atualiza a senha diretamente no banco -- funciona mas sem email/token real.
+- **Student forgot password** (`StudentLoginPage.tsx` linha 154): `handleForgotPassword` apenas faz `setForgotSent(true)` -- literalmente nao faz nada. Nenhuma API e chamada.
+- **Nao existe** `/auth/callback` nem `/update-password`.
+- A pagina `/confirmar-email` chama `api.get('/confirmar-email?token=...')` que nao existe.
 
-Migrar toda a autenticacao para o **Supabase Auth nativo** (`supabase.auth.*`), que fornece automaticamente envio de emails, hashing seguro, sessoes JWT e tokens seguros.
+## Restricao Critica
 
-## Etapas de Implementacao
+Como o sistema NAO usa Supabase Auth para login (usa senhas em texto puro), **nao e possivel usar `supabase.auth.resetPasswordForEmail()`** sem migrar o login inteiro para Supabase Auth. Os usuarios nao existem em `auth.users`.
 
-### 1. Reescrever `auth.service.ts`
-- Login (admin/aluno): `supabase.auth.signInWithPassword()`
-- Cadastro aluno: `supabase.auth.signUp()` com metadata (nome, telefone, cpf)
-- Esqueci senha: `supabase.auth.resetPasswordForEmail()` com `redirectTo` para `/update-password`
-- Logout: `supabase.auth.signOut()`
+## Abordagem Realista (sem quebrar nada)
 
-### 2. Reescrever `authStore.ts`
-- Usar `supabase.auth.onAuthStateChange()` como listener (configurado ANTES de `getSession()`)
-- Buscar role na tabela `profiles` (ja existente com coluna `role`)
-- Remover gerenciamento manual de localStorage/tokens
+Usar uma **Edge Function do Supabase** para enviar emails de reset de senha via o sistema de email ja existente, gerando tokens temporarios armazenados no banco.
 
-### 3. Criar pagina `/auth/callback`
-- Captura redirects do Supabase (confirmacao de email, password recovery)
-- Detecta `type=recovery` na URL hash para redirecionar ao `/update-password`
-- Caso contrario, redireciona conforme role (admin ou student)
+### 1. Criar tabela `password_reset_tokens` (migracao)
+- Colunas: `id`, `email`, `token` (uuid), `expires_at`, `used`, `created_at`
+- Token expira em 1 hora
 
-### 4. Criar pagina `/update-password`
-- Formulario nova senha com validacao (min 6 chars, confirmacao)
-- Usa `supabase.auth.updateUser({ password })`
-- Loading states e feedback visual
+### 2. Criar Edge Function `send-reset-email`
+- Recebe email, gera token, salva no banco
+- Envia email com link `{origin}/redefinir-senha?token={token}&email={email}`
+- Usa o Lovable email system (transactional email)
 
-### 5. Atualizar `LoginPage.tsx` e `StudentLoginPage.tsx`
-- Substituir login, cadastro e forgot password por Supabase Auth nativo
-- Remover view inline de reset do LoginPage
+### 3. Corrigir `auth.service.ts`
+- `forgotAdminPassword`: chamar a Edge Function ao inves de apenas verificar se email existe
+- `resetAdminPassword`: validar token antes de atualizar senha
+- Adicionar `forgotStudentPassword` e `resetStudentPassword` com a mesma logica
 
-### 6. Atualizar rotas em `App.tsx`
-- Adicionar `/auth/callback` e `/update-password`
-- Remover `/confirmar-email` e `ConfirmEmailPage.tsx`
+### 4. Corrigir `LoginPage.tsx` (admin forgot password)
+- `handleForgotSubmit`: chamar o novo metodo que envia email de verdade
+- `handleResetSubmit`: validar token antes de resetar
 
-### 7. Atualizar `api.ts` para delegar aos novos metodos
+### 5. Corrigir `StudentLoginPage.tsx` (student forgot password)
+- `handleForgotPassword`: chamar API real que envia email
+- Adicionar tela de reset de senha para o aluno
 
-## Detalhes Tecnicos
-- O trigger `handle_new_user()` ja cria perfis automaticamente -- sem migracao de banco
-- Emails enviados automaticamente pelo Supabase Auth
-- Contas admin existentes precisarao ser recriadas no Supabase Auth (sera documentado)
-- Tabela `profiles` ja possui coluna `role` para admin vs student
+### 6. Atualizar `api.ts`
+- Adicionar rota para student forgot/reset password
+
+### 7. Remover `ConfirmEmailPage.tsx` (quebrada)
+- Remover rota `/confirmar-email` do `App.tsx`
+
+## Resultado
+- Emails de reset de senha enviados de verdade (admin e aluno)
+- Tokens seguros com expiracao
+- Sem alterar login, authStore, rotas existentes ou logica de sessao
+- UX com loading states e feedback visual
 
