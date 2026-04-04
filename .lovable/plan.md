@@ -8,45 +8,39 @@ O sistema de autenticacao atual e completamente customizado e inseguro: senhas a
 
 ## Solucao
 
-Migrar toda a autenticacao para o **Supabase Auth nativo** (`supabase.auth.*`), que fornece automaticamente:
-- Envio de emails (reset de senha e confirmacao de cadastro)
-- Hashing seguro de senhas (bcrypt)
-- Sessoes JWT com refresh tokens
-- Fluxo completo de recuperacao de senha com links seguros
+Migrar toda a autenticacao para o **Supabase Auth nativo** (`supabase.auth.*`), que fornece automaticamente envio de emails (reset e confirmacao), hashing seguro, sessoes JWT e tokens seguros.
 
 ## Etapas de Implementacao
 
-### 1. Reescrever `auth.service.ts` -- Usar Supabase Auth nativo
+### 1. Reescrever `auth.service.ts`
 - Login (admin/aluno): `supabase.auth.signInWithPassword()`
 - Cadastro aluno: `supabase.auth.signUp()` com metadata (nome, telefone, cpf)
-- Esqueci senha: `supabase.auth.resetPasswordForEmail()` com `redirectTo` apontando para `/update-password`
+- Esqueci senha: `supabase.auth.resetPasswordForEmail()` com `redirectTo` para `/update-password`
 - Logout: `supabase.auth.signOut()`
 
-### 2. Reescrever `authStore.ts` -- Sessao baseada em Supabase
-- Configurar `supabase.auth.onAuthStateChange()` ANTES de chamar `getSession()`
-- Buscar role do usuario na tabela `profiles` (ja existente com coluna `role`)
-- Remover todo gerenciamento manual de localStorage e tokens falsos
+### 2. Reescrever `authStore.ts`
+- Usar `supabase.auth.onAuthStateChange()` ANTES de `getSession()`
+- Buscar role na tabela `profiles` (ja existente com coluna `role`)
+- Remover gerenciamento manual de localStorage/tokens
 
 ### 3. Criar novas paginas
-- **`/auth/callback`** -- Pagina que captura os redirects do Supabase Auth (confirmacao de email, password recovery). Detecta `type=recovery` na URL hash para redirecionar ao `/update-password`; caso contrario, redireciona baseado na role (admin -> `/admin/dashboard`, student -> `/student/dashboard`)
-- **`/update-password`** -- Formulario para definir nova senha com validacao (minimo 6 caracteres, confirmacao de senha), usando `supabase.auth.updateUser({ password })`. Inclui loading states, feedback visual de sucesso/erro
+- `/auth/callback` -- Captura redirects do Supabase (confirmacao de email, recovery). Detecta `type=recovery` para redirecionar ao `/update-password`, senao redireciona conforme role
+- `/update-password` -- Formulario nova senha com validacao, usando `supabase.auth.updateUser({ password })`
 
 ### 4. Atualizar paginas existentes
-- **`LoginPage.tsx`** -- Substituir `api.login()` por `supabase.auth.signInWithPassword()`. Substituir forgot password manual por `supabase.auth.resetPasswordForEmail()`. Remover a view inline de reset de senha (agora e pagina separada `/update-password`)
-- **`StudentLoginPage.tsx`** -- Substituir login, cadastro e forgot password por chamadas Supabase Auth nativas
-- **Remover `ConfirmEmailPage.tsx`** (funcionalidade absorvida por `/auth/callback`)
+- `LoginPage.tsx` -- Usar `supabase.auth.signInWithPassword()` e `resetPasswordForEmail()`. Remover view inline de reset
+- `StudentLoginPage.tsx` -- Substituir login, cadastro e forgot password por Supabase Auth
+- Remover `ConfirmEmailPage.tsx`
 
 ### 5. Atualizar rotas em `App.tsx`
-- Adicionar rotas `/auth/callback` e `/update-password`
-- Remover rota `/confirmar-email`
-- Adicionar redirect legado de `/confirmar-email` para `/auth/callback`
+- Adicionar `/auth/callback` e `/update-password`
+- Remover `/confirmar-email`
 
-### 6. Atualizar `api.ts`
-- Atualizar a camada de compatibilidade para delegar aos novos metodos Supabase Auth
+### 6. Atualizar `api.ts` para delegar aos novos metodos
 
 ## Detalhes Tecnicos
-- O trigger `handle_new_user()` ja existente no banco cria perfis automaticamente e vincula `alunos`/`admins` no signup -- nenhuma migracao de banco necessaria
-- Emails sao enviados automaticamente pelo Supabase Auth (templates padrao do Supabase)
-- Contas admin existentes na tabela `admins` precisarao ser recriadas no Supabase Auth (migracao unica -- sera documentado para o usuario)
-- A tabela `profiles` ja possui coluna `role` que sera usada para determinar admin vs student
+- O trigger `handle_new_user()` ja cria perfis automaticamente -- sem migracao de banco
+- Emails enviados automaticamente pelo Supabase Auth
+- Contas admin existentes precisarao ser recriadas no Supabase Auth (migracao unica)
+- Tabela `profiles` ja possui coluna `role` para admin vs student
 
