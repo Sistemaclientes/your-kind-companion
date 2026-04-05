@@ -26,7 +26,7 @@ Apos analise detalhada do banco e codigo, identifiquei o que ja foi feito e o qu
 
 ## Execucao em 4 Etapas
 
-### Etapa 1 -- Migracao SQL (via ferramenta de migracao)
+### Etapa 1 -- Migracao SQL
 
 Uma unica migracao SQL que fara:
 
@@ -37,39 +37,37 @@ Uma unica migracao SQL que fara:
 5. Criar funcao register_aluno que ja faz hash da senha ao registrar
 6. Criar funcao change_admin_password que valida senha atual e faz hash da nova
 7. Remover politicas RLS inseguras/duplicadas:
-   - "Permitir consulta publica de existencia de email" (USING true -- expoe todos os emails)
-   - "Auto-registro publico de alunos" (WITH CHECK true -- sem restricao)
-   - "admin only access" (duplicada/generica)
-   - "select own user", "update own user", "delete own user" (duplicadas das politicas em portugues)
+   - "Permitir consulta publica de existencia de email" (USING true)
+   - "Auto-registro publico de alunos" (WITH CHECK true)
+   - "admin only access" (duplicada)
+   - "select own user", "update own user", "delete own user" (duplicadas)
    - Corrigir "Visualizacao de admins" removendo condicao auth.uid() IS NULL
-8. Criar politicas de storage para avatars e banners (leitura publica, escrita autenticada)
+8. Criar politicas de storage para avatars e banners
 
 ### Etapa 2 -- Atualizar codigo de autenticacao
 
 **src/services/auth.service.ts:**
-- loginAdmin(): trocar SELECT direto + comparacao texto puro por chamada RPC login_admin
-- registerStudent(): usar RPC register_aluno em vez de insert direto com senha em texto puro
+- loginAdmin(): trocar SELECT direto por chamada RPC login_admin
+- registerStudent(): usar RPC register_aluno em vez de insert direto
 - changeAdminPassword(): usar RPC change_admin_password
 
 **src/services/admin.service.ts:**
-- Criar admin com senha hashada via RPC em vez de insert com senha em texto puro
+- Criar admin com senha hashada via RPC
 
 ### Etapa 3 -- Remover "lembrar senha" inseguro
 
-**src/pages/LoginPage.tsx:** parar de salvar admin_remembered_pw no localStorage, manter apenas email
-
-**src/pages/StudentLoginPage.tsx:** idem -- salvar apenas email, nunca senha
+**src/pages/LoginPage.tsx:** salvar apenas email, nunca senha no localStorage
+**src/pages/StudentLoginPage.tsx:** idem
 
 ### Etapa 4 -- Limpeza
 
-- Verificar que nenhuma query do front-end pede as colunas senha ou password_hash
-- Nota: is_correta e retornado nas alternativas durante a prova -- alunos podem ver respostas corretas no DevTools (risco de cola -- sera tratado separadamente)
+- Verificar que nenhuma query expoe senha ou password_hash
+- Nota: is_correta e retornado ao front durante a prova (risco de cola)
 
 ---
 
-## Alertas Importantes
+## Alertas
 
-- A coluna senha sera mantida temporariamente ate confirmar que o login com bcrypt funciona corretamente
-- As politicas WITH CHECK (true) em resultados e respostas_aluno precisam permanecer porque o sistema usa autenticacao customizada (sem auth.users) -- alunos nao tem auth.uid()
-- O campo is_correta nas alternativas e enviado ao front durante a prova
+- Coluna senha mantida temporariamente ate confirmar bcrypt
+- WITH CHECK (true) em resultados/respostas_aluno necessario (auth customizada sem auth.users)
 
