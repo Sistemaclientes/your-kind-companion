@@ -718,7 +718,7 @@ export type Database = {
       resultados: {
         Row: {
           acertos: number | null
-          aluno_id: string
+          aluno_id: string | null
           created_at: string
           data: string | null
           data_conclusao: string | null
@@ -745,7 +745,7 @@ export type Database = {
         }
         Insert: {
           acertos?: number | null
-          aluno_id: string
+          aluno_id?: string | null
           created_at?: string
           data?: string | null
           data_conclusao?: string | null
@@ -772,7 +772,7 @@ export type Database = {
         }
         Update: {
           acertos?: number | null
-          aluno_id?: string
+          aluno_id?: string | null
           created_at?: string
           data?: string | null
           data_conclusao?: string | null
