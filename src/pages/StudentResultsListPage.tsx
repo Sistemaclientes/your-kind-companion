@@ -75,7 +75,7 @@ export function StudentResultsListPage() {
                       </div>
                     </div>
                     <button
-                      onClick={() => navigate(`/aluno/resultado/${result.slug}`)}
+                      onClick={() => navigate(`/student/resultado/${result.slug}`)}
                       className="flex items-center gap-1.5 px-4 py-2 rounded-xl border border-outline text-on-surface-variant font-bold text-[10px] uppercase tracking-widest hover:bg-surface-container-high hover:text-primary transition-all shrink-0"
                     >
                       <Eye className="w-3.5 h-3.5" />
