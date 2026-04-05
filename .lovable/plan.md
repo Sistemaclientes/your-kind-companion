@@ -11,9 +11,9 @@ Adicionar um bloco de explicação abaixo das alternativas de cada questão na t
 **Arquivo: `src/pages/StudentResultDetailPage.tsx`**
 
 Após o bloco de alternativas de cada questão (linha 231), inserir um card condicional:
-- Rótulo "Explicação" em destaque
+- Rótulo "Explicação" em texto pequeno e destaque primary
 - Texto da explicação em estilo sutil (fundo `surface-container-low`, borda, texto `on-surface-variant`)
 - Aparece somente quando `question.explicacao` tiver conteúdo
 
-Nenhuma alteração de banco de dados ou API necessária -- o campo `explicacao` já existe na tabela `perguntas` e já é retornado pela query.
+Nenhuma alteração de banco de dados ou API necessária — o campo `explicacao` já existe na tabela `perguntas` e já é retornado pela query.
 
