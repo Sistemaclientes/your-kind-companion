@@ -293,7 +293,16 @@ export function StudentsPage() {
                                   setActionLoading(true);
                                   try {
                                     await studentsService.deleteStudent(student.email);
-                                    setStudents(prev => prev.filter(s => s.email !== student.email));
+                                    // Re-fetch from database to confirm deletion
+                                    const data = await api.get('/dashboard/students');
+                                    const map = getStudentSlugMap();
+                                    const mapped = data.map((s: any) => {
+                                      const slug = buildStudentSlug(s.nome, s.email);
+                                      map[slug] = s.email;
+                                      return { ...s, slug };
+                                    });
+                                    setStudentSlugMap(map);
+                                    setStudents(mapped);
                                   } catch (err: any) {
                                     alert(err.message || 'Erro ao excluir');
                                   } finally {
