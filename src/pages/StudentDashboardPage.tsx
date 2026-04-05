@@ -188,7 +188,7 @@ export function StudentDashboardPage() {
                   return (
                     <div 
                       key={result.id} 
-                      onClick={() => navigate(`/aluno/resultado/${result.slug}`)}
+                      onClick={() => navigate(`/student/resultado/${result.slug}`)}
                       className="card-saas !p-4 flex items-center gap-4 cursor-pointer hover:bg-surface-container-high transition-colors group"
                     >
                       <div className={cn(
