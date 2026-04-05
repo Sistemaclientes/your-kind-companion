@@ -32,7 +32,10 @@ export function StudentsPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [students, setStudents] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  
+  const [editingStudent, setEditingStudent] = useState<string | null>(null);
+  const [editForm, setEditForm] = useState<{ nome: string; cpf: string; telefone: string }>({ nome: '', cpf: '', telefone: '' });
+  const [actionLoading, setActionLoading] = useState(false);
+
   const itemsPerPage = 10;
 
   React.useEffect(() => {
