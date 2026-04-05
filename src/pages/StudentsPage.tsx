@@ -12,12 +12,17 @@ import {
   ChevronDown,
   ArrowUpDown,
   LogOut,
-  Mail
+  Mail,
+  Pencil,
+  Trash2,
+  X,
+  Save
 } from 'lucide-react';
 import { buildStudentSlug, cn, getStudentSlugMap, setStudentSlugMap } from '../lib/utils';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import { api } from '../lib/api';
+import { studentsService } from '../services/students.service';
 
 export function StudentsPage() {
   const navigate = useNavigate();
