@@ -5,7 +5,10 @@ import { Mail, Lock, LogIn, Eye, EyeOff, ShieldCheck, KeyRound, User, Phone, Use
 import { cn } from '../lib/utils';
 import { phoneMask } from '../lib/masks';
 import { useAuthStore } from '../lib/authStore';
+import { useTheme } from '../lib/ThemeContext';
 import { api } from '../lib/api';
+import livroDark from '../assets/livro_logo_dark.png';
+import livroWhite from '../assets/livro_logo_white.png';
 
 type Tab = 'login' | 'register';
 
