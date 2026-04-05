@@ -12,7 +12,8 @@ import {
 import { cn } from '../lib/utils';
 import { useTheme } from '../lib/ThemeContext';
 import { useAuthStore } from '../lib/authStore';
-import logoUplife from '../assets/logo-uplife.png';
+import logoWhite from '../assets/livro_logo_white.png';
+import logoDark from '../assets/livro_logo_dark.png';
 
 interface StudentSidebarProps {
   isOpen?: boolean;
@@ -86,7 +87,7 @@ export function StudentSidebar({ isOpen, onClose }: StudentSidebarProps) {
     )}>
       {/* Logo & Time */}
       <div className="px-3 py-5 mb-3 flex flex-col items-start gap-3">
-        <img src={customLogo || logoUplife} alt="Logo" className="w-12 h-12 rounded-xl object-cover ring-2 ring-outline shadow-md" />
+        <img src={customLogo || (theme === 'dark' ? logoWhite : logoDark)} alt="Logo" className="w-12 h-12 rounded-xl object-cover ring-2 ring-outline shadow-md" />
         <div className="flex flex-col">
           <p className="text-sm font-semibold text-on-surface tabular-nums">
             Hora: {currentTime.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
