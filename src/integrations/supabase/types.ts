@@ -27,6 +27,7 @@ export type Database = {
           last_login: string | null
           must_reconfirm: boolean | null
           nome: string
+          password_hash: string | null
           reset_expires: string | null
           reset_token: string | null
           senha: string
@@ -46,6 +47,7 @@ export type Database = {
           last_login?: string | null
           must_reconfirm?: boolean | null
           nome: string
+          password_hash?: string | null
           reset_expires?: string | null
           reset_token?: string | null
           senha: string
@@ -65,6 +67,7 @@ export type Database = {
           last_login?: string | null
           must_reconfirm?: boolean | null
           nome?: string
+          password_hash?: string | null
           reset_expires?: string | null
           reset_token?: string | null
           senha?: string
@@ -1137,6 +1140,15 @@ export type Database = {
       generate_slug: { Args: { title: string }; Returns: string }
       get_my_role: { Args: never; Returns: string }
       hash_password: { Args: { password: string }; Returns: string }
+      login_admin: {
+        Args: { p_email: string; p_password: string }
+        Returns: {
+          email: string
+          id: string
+          is_master: boolean
+          nome: string
+        }[]
+      }
       login_aluno: { Args: { p_email: string; p_senha: string }; Returns: Json }
       login_user: {
         Args: { email_input: string; password_input: string }
