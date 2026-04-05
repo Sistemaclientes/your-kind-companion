@@ -971,7 +971,7 @@ export type Database = {
       login_aluno: { Args: { p_email: string; p_senha: string }; Returns: Json }
     }
     Enums: {
-      user_role: "admin" | "aluno"
+      user_role: "admin" | "aluno" | "master"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1099,7 +1099,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      user_role: ["admin", "aluno"],
+      user_role: ["admin", "aluno", "master"],
     },
   },
 } as const
