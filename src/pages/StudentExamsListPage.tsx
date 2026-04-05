@@ -19,16 +19,15 @@ export function StudentExamsListPage() {
   React.useEffect(() => {
     const info = localStorage.getItem('student_info');
     if (!info) return;
-    const parsed = JSON.parse(info);
 
     const fetchData = async () => {
       try {
         const [allExams, allResults] = await Promise.all([
           api.get('/provas'),
-          Promise.resolve(JSON.parse(localStorage.getItem('local_resultados') || '[]'))
+          api.get('/resultados')
         ]);
         setExams(allExams);
-        setResults(allResults.filter((r: any) => r.email_aluno === parsed.email));
+        setResults(allResults);
       } catch (err) {
         console.error('Error loading exams:', err);
       } finally {

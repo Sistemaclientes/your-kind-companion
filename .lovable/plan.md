@@ -1,55 +1,48 @@
 
 
-## Situacao Atual
+# Plano: Ver acertos/erros + ocultar provas aprovadas
 
-**Ja feito em migracoes anteriores:**
-- Extensao pgcrypto movida para schema extensions
-- Coluna password_hash adicionada a tabela alunos
-- Funcoes hash_password() e login_user() criadas com SECURITY DEFINER
-- RLS ativado em alunos e admins
+## O que já funciona
+A tela de **detalhes do resultado** (`StudentResultDetailPage`) já mostra cada questão com marcação verde (acertou) e vermelha (errou), incluindo a resposta correta destacada.
 
-**Ainda vulneravel:**
-- 0 de 8 alunos tem password_hash preenchido - senhas em texto puro na coluna senha
-- Admin com senha visivel no banco
-- Codigo front-end compara senhas com toLowerCase() sem hash
-- Funcao login_aluno compara senha em texto puro
-- Politicas RLS duplicadas e permissivas (USING true, WITH CHECK true)
-- Storage sem politicas restritivas
-- "Lembrar-me" salva senha em texto puro no localStorage
+## Alterações necessárias
 
----
+### 1. `src/pages/StudentExamsListPage.tsx` — Usar resultados do banco de dados
 
-## Execucao em 4 Etapas
+A lista de provas disponíveis usa `localStorage` para saber quais provas foram aprovadas. Isso não funciona entre dispositivos e pode ficar desatualizado.
 
-### Etapa 1 - Migracao SQL
+**Correção:** Na linha 28, substituir:
+```
+Promise.resolve(JSON.parse(localStorage.getItem('local_resultados') || '[]'))
+```
+por:
+```
+api.get('/resultados')
+```
 
-1. Adicionar password_hash a tabela admins
-2. Migrar senhas existentes de alunos e admins para bcrypt
-3. Atualizar funcao login_aluno para validar via bcrypt
-4. Criar funcao login_admin como RPC segura com bcrypt
-5. Criar funcao register_aluno que faz hash da senha
-6. Criar funcao change_admin_password
-7. Remover politicas RLS inseguras/duplicadas
-8. Criar politicas de storage para avatars e banners
+E na linha 31, remover o `.filter((r: any) => r.email_aluno === parsed.email)` — a API já retorna apenas os resultados do aluno logado. O resultado fica:
+```
+setResults(allResults);
+```
 
-### Etapa 2 - Atualizar codigo de autenticacao
+O filtro `pontuacao >= 70` na linha 41 já existe e continuará funcionando — provas aprovadas desaparecem da lista automaticamente.
 
-- **auth.service.ts:** trocar SELECT direto por RPCs (login_admin, register_aluno, change_admin_password)
-- **admin.service.ts:** criar admin com senha hashada via RPC
+### 2. `src/pages/StudentResultPage.tsx` — Botão "Ver Detalhes" proeminente
 
-### Etapa 3 - Remover "lembrar senha" inseguro
+Após a prova, o botão para ver questões acertadas/erradas está escondido. Precisamos torná-lo visível.
 
-- **LoginPage.tsx e StudentLoginPage.tsx:** salvar apenas email, nunca senha no localStorage
+**Correção:** Substituir o bloco do "Certificado de Conclusão" (linhas 169-209) por um card proeminente:
+- Ícone Eye grande (16x16) com fundo primary/10
+- Título: "Ver Detalhes da Prova"
+- Subtítulo: "Veja quais questões você acertou e errou, com as respostas corretas destacadas."
+- Botão primary "Ver Questões" que navega para `/aluno/resultado/${result.slug}`
+- Card com borda `border-2 border-primary/20 hover:border-primary/40`
+- Abaixo, manter botões "Dashboard" e "Nova Prova" como secundários
 
-### Etapa 4 - Limpeza
+### Nenhuma alteração de banco de dados necessária.
 
-- Verificar que nenhuma query expoe senha ou password_hash
-
----
-
-## Alertas
-
-- Coluna senha mantida temporariamente ate confirmar bcrypt
-- WITH CHECK (true) em resultados/respostas_aluno necessario (auth customizada sem auth.users)
-- is_correta e enviado ao front durante a prova (risco de cola)
+### Resultado
+1. Aluno finaliza prova → vê nota → clica "Ver Detalhes da Prova" → vê cada questão com acerto/erro
+2. Aluno volta à lista de provas → prova aprovada (>=70%) não aparece mais
+3. Funciona entre dispositivos pois usa dados do Supabase
 

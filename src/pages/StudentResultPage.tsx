@@ -100,14 +100,14 @@ export function StudentResultPage() {
         <motion.div 
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          className="text-center mb-8 sm:mb-16 px-2"
+          className="text-center mb-8 sm:mb-12 px-2"
         >
           <h1 className="text-2xl sm:text-4xl md:text-6xl font-black text-on-surface font-headline tracking-tight mb-4 sm:mb-6 leading-tight">
             {isApproved ? 'Parabéns,' : 'Continue tentando,'} <span className="text-primary block sm:inline">{studentInfo?.nome || 'Estudante'}!</span>
           </h1>
           <p className="text-base sm:text-lg md:text-xl text-on-surface-variant font-medium max-w-2xl mx-auto leading-relaxed">
             {isApproved 
-              ? 'Você concluiu sua avaliação com desempenho satisfatório. Deseja fazer mais uma avaliação?'
+              ? 'Você concluiu sua avaliação com desempenho satisfatório.'
               : 'Infelizmente você não atingiu a pontuação mínima, mas pode tentar novamente.'}
           </p>
         </motion.div>
@@ -117,7 +117,7 @@ export function StudentResultPage() {
           variants={containerVariants}
           initial="hidden"
           animate="visible"
-          className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 w-full max-w-4xl mb-8 sm:mb-16"
+          className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 w-full max-w-4xl mb-8 sm:mb-10"
         >
           {/* Note Card */}
           <motion.div variants={itemVariants} className="card-saas !p-6 sm:!p-10 flex flex-col items-center justify-center text-center group">
@@ -165,50 +165,56 @@ export function StudentResultPage() {
           </motion.div>
         </motion.div>
 
-        {/* Certificate Action */}
+        {/* View Details CTA - Prominent */}
+        {result?.slug && (
+          <motion.div
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.4 }}
+            className="w-full max-w-4xl mb-8 sm:mb-10"
+          >
+            <button
+              onClick={() => navigate(`/aluno/resultado/${result.slug}`)}
+              className="w-full card-saas !p-6 sm:!p-8 flex flex-col sm:flex-row items-center gap-4 sm:gap-6 text-center sm:text-left hover:bg-surface-container-high transition-colors cursor-pointer group border-2 border-primary/20 hover:border-primary/40"
+            >
+              <div className="w-14 h-14 sm:w-16 sm:h-16 bg-primary/10 rounded-2xl flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+                <Eye className="w-7 h-7 sm:w-8 sm:h-8 text-primary" />
+              </div>
+              <div className="flex-1">
+                <h3 className="text-xl sm:text-2xl font-bold font-headline mb-1">Ver Detalhes da Prova</h3>
+                <p className="text-on-surface-variant text-sm font-medium">Veja quais questões você acertou e errou, com as respostas corretas destacadas.</p>
+              </div>
+              <div className="btn-primary py-3.5 px-8 text-sm uppercase tracking-widest shrink-0">
+                Ver Questões
+              </div>
+            </button>
+          </motion.div>
+        )}
+
+        {/* Bottom Actions */}
         <motion.div 
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.5 }}
-          className="w-full max-w-4xl bg-surface-container-high rounded-[24px] sm:rounded-[32px] p-6 sm:p-8 md:p-12 text-on-surface flex flex-col items-center md:flex-row md:items-center justify-between gap-6 sm:gap-8 mb-8 sm:mb-16 shadow-2xl shadow-primary/5 border border-outline"
+          className="w-full max-w-4xl flex flex-col sm:flex-row items-center justify-center gap-3 mb-8 sm:mb-16"
         >
-          <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6 text-center sm:text-left">
-            <div className="w-14 h-14 sm:w-16 sm:h-16 bg-primary/10 rounded-2xl flex items-center justify-center shrink-0">
-              <FileCheck className="w-7 h-7 sm:w-8 sm:h-8 text-primary" />
-            </div>
-            <div>
-              <h3 className="text-xl sm:text-2xl font-bold font-headline mb-1">Certificado de Conclusão</h3>
-              <p className="text-on-surface-variant text-sm font-medium">Sua certificação oficial está pronta para download.</p>
-            </div>
-          </div>
-          <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
-            {result?.slug && (
-              <button 
-                onClick={() => navigate(`/aluno/resultado/${result.slug}`)}
-                className="btn-secondary py-3.5 sm:py-4 px-8 sm:px-10 w-full text-sm uppercase tracking-widest group"
-              >
-                <Eye className="w-5 h-5" />
-                Ver Detalhes
-              </button>
-            )}
-            <button 
-              onClick={() => navigate('/aluno/dashboard')}
-              className="btn-primary py-3.5 sm:py-4 px-8 sm:px-10 w-full text-sm uppercase tracking-widest group"
-            >
-              <BarChart3 className="w-5 h-5" />
-              Dashboard
-            </button>
-            <button 
-              onClick={() => navigate('/student/start')}
-              className="btn-secondary py-3.5 sm:py-4 px-8 sm:px-10 w-full text-sm uppercase tracking-widest group"
-            >
-              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              Nova Prova
-            </button>
-          </div>
+          <button 
+            onClick={() => navigate('/aluno/dashboard')}
+            className="btn-secondary py-3.5 sm:py-4 px-8 sm:px-10 w-full sm:w-auto text-sm uppercase tracking-widest group"
+          >
+            <BarChart3 className="w-5 h-5" />
+            Dashboard
+          </button>
+          <button 
+            onClick={() => navigate('/student/start')}
+            className="btn-secondary py-3.5 sm:py-4 px-8 sm:px-10 w-full sm:w-auto text-sm uppercase tracking-widest group"
+          >
+            <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+            Nova Prova
+          </button>
         </motion.div>
 
-        {/* Footer Actions */}
+        {/* Footer */}
         <motion.div 
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
