@@ -10,7 +10,7 @@ Após análise detalhada do banco e código:
 
 **Ainda vulnerável:**
 - 0 de 8 alunos tem `password_hash` preenchido — senhas em texto puro na coluna `senha`
-- Admin com senha visível no banco (`Baudasorte123@`)
+- Admin com senha visível no banco
 - Código front-end compara senhas com `toLowerCase()` sem hash
 - Função `login_aluno` compara `senha` em texto puro
 - Políticas RLS duplicadas e permissivas (`USING (true)`, `WITH CHECK (true)`)
@@ -31,10 +31,10 @@ Após análise detalhada do banco e código:
 5. Criar função `register_aluno` que já faz hash da senha
 6. Criar função `change_admin_password` que valida e faz hash
 7. Remover políticas RLS inseguras/duplicadas:
-   - `Permitir consulta pública de existência de email` (USING true — expõe todos os emails)
-   - `Auto-registro público de alunos` (WITH CHECK true — sem restrição)
+   - `Permitir consulta pública de existência de email` (USING true)
+   - `Auto-registro público de alunos` (WITH CHECK true)
    - `admin only access` (duplicada/genérica)
-   - `select own user`, `update own user`, `delete own user` (duplicadas das políticas em português)
+   - `select own user`, `update own user`, `delete own user` (duplicadas)
    - Corrigir `Visualização de admins` removendo condição `auth.uid() IS NULL`
 8. Criar políticas de storage para `avatars` e `banners`
 
@@ -51,19 +51,18 @@ Após análise detalhada do banco e código:
 ### Etapa 3 — Remover "lembrar senha" inseguro
 
 **`src/pages/LoginPage.tsx`:** parar de salvar `admin_remembered_pw` no localStorage, manter apenas email
-
 **`src/pages/StudentLoginPage.tsx`:** idem para `student_remembered`
 
 ### Etapa 4 — Limpeza
 
 - Verificar que nenhuma query do front-end pede `senha` ou `password_hash`
-- Nota: `is_correta` é retornado nas alternativas durante a prova -- alunos podem ver respostas corretas no DevTools (risco de cola)
+- Nota: `is_correta` é retornado nas alternativas durante a prova — alunos podem ver respostas corretas no DevTools
 
 ---
 
 ## Alertas Importantes
 
-- A coluna `senha` sera mantida temporariamente ate confirmar que o login com bcrypt funciona
-- As politicas `WITH CHECK (true)` em `resultados` e `respostas_aluno` precisam permanecer porque o sistema usa autenticacao customizada (sem `auth.users`) -- alunos nao tem `auth.uid()`
-- O campo `is_correta` nas alternativas e enviado ao front durante a prova
+- A coluna `senha` será mantida temporariamente até confirmar que o login com bcrypt funciona
+- As políticas `WITH CHECK (true)` em `resultados` e `respostas_aluno` precisam permanecer porque o sistema usa autenticação customizada (sem `auth.users`) — alunos não têm `auth.uid()`
+- O campo `is_correta` nas alternativas é enviado ao front durante a prova — risco de cola
 
