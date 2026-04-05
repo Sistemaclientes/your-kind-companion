@@ -39,18 +39,14 @@ export const authService = {
   },
 
   async loginStudent(email: string, senha: string): Promise<{ student: StudentUser }> {
-    const { data: aluno, error } = await supabase
-      .from('alunos')
-      .select('*')
-      .eq('email', email.trim().toLowerCase())
-      .single();
+    const { data, error } = await supabase.rpc('login_aluno', {
+      p_email: email.trim().toLowerCase(),
+      p_senha: senha,
+    });
 
-    if (error || !aluno) throw new Error('Email não encontrado. Cadastre-se primeiro.');
-    if (senha && aluno.senha !== senha) throw new Error('Senha incorreta.');
-    if (aluno.status === 'Aguardando Confirmação') {
-      throw new Error('Confirme seu cadastro no e-mail enviado antes de realizar o login.');
-    }
+    if (error) throw new Error(error.message);
 
+    const aluno = data as any;
     return {
       student: {
         id: aluno.id,

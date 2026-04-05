@@ -953,6 +953,7 @@ export type Database = {
       check_is_admin: { Args: never; Returns: boolean }
       generate_slug: { Args: { title: string }; Returns: string }
       get_my_role: { Args: never; Returns: string }
+      login_aluno: { Args: { p_email: string; p_senha: string }; Returns: Json }
     }
     Enums: {
       [_ in never]: never
