@@ -4,71 +4,51 @@
 
 ## Situação Atual
 
-Após análise detalhada do banco e código, identifiquei:
+Após análise detalhada do banco e código:
 
-**Já feito (migrações anteriores):**
-- Extensão `pgcrypto` movida para schema `extensions`
-- Coluna `password_hash` adicionada à tabela `alunos`
-- Funções `hash_password()` e `login_user()` criadas com `SECURITY DEFINER`
-- RLS ativado em `alunos` e `admins`
+**Já feito:** extensão `pgcrypto` no schema `extensions`, coluna `password_hash` em `alunos`, funções `hash_password()` e `login_user()` com SECURITY DEFINER, RLS ativado.
 
 **Ainda vulnerável:**
-- 0 de 8 alunos tem `password_hash` preenchido — senhas em texto puro na coluna `senha`
-- Admin tem senha visível no banco (`Baudasorte123@`)
-- Código front-end compara senhas com `toLowerCase()` (sem hash)
-- Função `login_aluno` ainda compara `senha` em texto puro
-- Políticas RLS duplicadas e permissivas (`USING (true)`, `WITH CHECK (true)`)
-- Política de admins permite acesso quando `auth.uid() IS NULL`
-- Storage sem políticas restritivas
+- 0 de 8 alunos tem `password_hash` — senhas em texto puro
+- Admin com senha visível no banco
+- Código compara senhas sem hash
+- `login_aluno` compara texto puro
+- Políticas RLS permissivas (`USING true`, `WITH CHECK true`)
+- Storage sem restrições
 - "Lembrar-me" salva senha em texto puro no localStorage
 
 ---
 
-## Plano de Execução (4 etapas)
+## Execução em 4 Etapas
 
-### Etapa 1 — Migração SQL (via ferramenta de migração)
+### Etapa 1 — Migração SQL
 
 1. Adicionar `password_hash` à tabela `admins`
-2. Migrar todas as senhas existentes de `alunos` e `admins` para bcrypt
-3. Atualizar função `login_aluno` para validar via bcrypt
-4. Criar função `login_admin` como RPC segura com bcrypt
-5. Remover políticas RLS inseguras e duplicadas
+2. Migrar senhas existentes de `alunos` e `admins` para bcrypt
+3. Atualizar `login_aluno` para validar via bcrypt
+4. Criar `login_admin` como RPC segura com bcrypt
+5. Remover políticas RLS inseguras/duplicadas: `Permitir consulta pública de existência de email`, `Auto-registro público de alunos`, `admin only access`, `select own user`, `update own user`, `delete own user`, corrigir `Visualização de admins`
 6. Criar políticas de storage para `avatars` e `banners`
 
 ### Etapa 2 — Atualizar código de autenticação
 
-**Arquivo: `src/services/auth.service.ts`**
-- `loginAdmin()`: trocar SELECT direto por chamada RPC `login_admin`
-- `changeAdminPassword()`: usar hash bcrypt
-- `registerStudent()`: incluir `password_hash` via função `hash_password()`
-
-**Arquivo: `src/services/admin.service.ts`**
-- Hash da senha padrão ao criar admin
+- `auth.service.ts`: trocar SELECT direto por RPC `login_admin`, usar hash no registro e troca de senha
+- `admin.service.ts`: hash da senha padrão ao criar admin
 
 ### Etapa 3 — Remover "lembrar senha" inseguro
 
-**Arquivos: `LoginPage.tsx` e `StudentLoginPage.tsx`**
-- Parar de salvar senha no localStorage
-- Manter apenas o email no "lembrar-me"
+- `LoginPage.tsx` e `StudentLoginPage.tsx`: salvar apenas email, nunca senha
 
-### Etapa 4 — Limpeza final
+### Etapa 4 — Limpeza
 
 - Verificar que nenhuma query expõe `senha` ou `password_hash`
-- Confirmar que `is_correta` não é exposto aos alunos durante a prova (via DevTools)
+- Confirmar exposição de `is_correta` ao front-end durante prova
 
 ---
 
-## Detalhes Técnicos
+## Alertas
 
-**Políticas RLS a remover:**
-- `Permitir consulta pública de existência de email` (USING true — expõe todos os emails)
-- `Auto-registro público de alunos` (WITH CHECK true — sem restrição)
-- `admin only access` (duplicada/genérica)
-- `select own user`, `update own user`, `delete own user` (duplicadas)
-- `Visualização de admins` — remover condição `auth.uid() IS NULL`
-
-**Alertas:**
-- A coluna `senha` será mantida temporariamente até confirmar que bcrypt funciona
-- As políticas `WITH CHECK (true)` em `resultados` e `respostas_aluno` precisam permanecer porque o sistema usa autenticação customizada (sem `auth.users`)
-- O campo `is_correta` nas alternativas é retornado ao front durante a prova — alunos podem ver respostas corretas no DevTools
+- Coluna `senha` será mantida temporariamente até confirmar que bcrypt funciona
+- Políticas `WITH CHECK (true)` em `resultados` e `respostas_aluno` precisam permanecer (autenticação customizada sem `auth.users`)
+- Campo `is_correta` é retornado ao front durante a prova — alunos podem ver respostas no DevTools
 
