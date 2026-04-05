@@ -424,6 +424,7 @@ export type Database = {
       }
       profiles: {
         Row: {
+          active: boolean | null
           avatar_url: string | null
           cpf: string | null
           created_at: string
@@ -432,12 +433,15 @@ export type Database = {
           id: string
           is_master: boolean | null
           is_protected: boolean | null
+          last_login: string | null
           nome: string | null
           role: Database["public"]["Enums"]["user_role"]
+          status: string | null
           telefone: string | null
           updated_at: string
         }
         Insert: {
+          active?: boolean | null
           avatar_url?: string | null
           cpf?: string | null
           created_at?: string
@@ -446,12 +450,15 @@ export type Database = {
           id: string
           is_master?: boolean | null
           is_protected?: boolean | null
+          last_login?: string | null
           nome?: string | null
           role?: Database["public"]["Enums"]["user_role"]
+          status?: string | null
           telefone?: string | null
           updated_at?: string
         }
         Update: {
+          active?: boolean | null
           avatar_url?: string | null
           cpf?: string | null
           created_at?: string
@@ -460,8 +467,10 @@ export type Database = {
           id?: string
           is_master?: boolean | null
           is_protected?: boolean | null
+          last_login?: string | null
           nome?: string | null
           role?: Database["public"]["Enums"]["user_role"]
+          status?: string | null
           telefone?: string | null
           updated_at?: string
         }
