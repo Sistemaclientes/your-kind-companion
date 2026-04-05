@@ -50,7 +50,7 @@ export function StudentResultDetailPage() {
             <XCircle className="w-8 h-8 text-error" />
           </div>
           <h1 className="text-2xl font-black text-on-surface font-headline">{error}</h1>
-          <button onClick={() => navigate('/aluno/dashboard')} className="btn-primary px-8 py-3 rounded-xl font-bold text-sm">
+          <button onClick={() => navigate('/student/dashboard')} className="btn-primary px-8 py-3 rounded-xl font-bold text-sm">
             Voltar à Dashboard
           </button>
         </motion.div>
