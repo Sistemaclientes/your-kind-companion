@@ -3,7 +3,10 @@ import { Mail, Lock, Eye, EyeOff, LogIn, AlertCircle, Loader2, GraduationCap, Ar
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { api } from '../lib/api';
 import { useAuthStore } from '../lib/authStore';
+import { useTheme } from '../lib/ThemeContext';
 import { motion, AnimatePresence } from 'motion/react';
+import chapeuDark from '../assets/chapeu_dark.png';
+import chapeuWhite from '../assets/chapeu_white.png';
 
 type View = 'login' | 'forgot' | 'reset';
 
@@ -11,6 +14,7 @@ export function LoginPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { user, loginAdmin } = useAuthStore();
+  const { theme } = useTheme();
   const [view, setView] = React.useState<View>(() => {
     if (searchParams.get('token') && searchParams.get('email')) return 'reset';
     return 'login';
@@ -159,7 +163,8 @@ export function LoginPage() {
           <AnimatePresence mode="wait">
             {view === 'login' && (
               <motion.div key="login" initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 10 }} transition={{ duration: 0.2 }}>
-                <header className="mb-8">
+                <header className="mb-8 text-center">
+                  <img src={theme === 'dark' ? chapeuWhite : chapeuDark} alt="Logo" className="w-16 h-16 mx-auto mb-4 object-contain" />
                   <h1 className="text-2xl font-headline font-bold text-on-surface tracking-tight">Bem-vindo de volta</h1>
                   <p className="text-on-surface-variant text-sm mt-1 font-medium">Insira suas credenciais para acessar o painel.</p>
                 </header>
