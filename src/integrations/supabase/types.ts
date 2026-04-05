@@ -424,31 +424,31 @@ export type Database = {
       }
       profiles: {
         Row: {
-          created_at: string | null
+          created_at: string
           display_name: string | null
-          email: string | null
+          email: string
           id: string
           nome: string | null
-          role: string | null
-          updated_at: string | null
+          role: Database["public"]["Enums"]["user_role"]
+          updated_at: string
         }
         Insert: {
-          created_at?: string | null
+          created_at?: string
           display_name?: string | null
-          email?: string | null
+          email: string
           id: string
           nome?: string | null
-          role?: string | null
-          updated_at?: string | null
+          role?: Database["public"]["Enums"]["user_role"]
+          updated_at?: string
         }
         Update: {
-          created_at?: string | null
+          created_at?: string
           display_name?: string | null
-          email?: string | null
+          email?: string
           id?: string
           nome?: string | null
-          role?: string | null
-          updated_at?: string | null
+          role?: Database["public"]["Enums"]["user_role"]
+          updated_at?: string
         }
         Relationships: []
       }
@@ -956,7 +956,7 @@ export type Database = {
       login_aluno: { Args: { p_email: string; p_senha: string }; Returns: Json }
     }
     Enums: {
-      [_ in never]: never
+      user_role: "admin" | "student"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1083,6 +1083,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      user_role: ["admin", "student"],
+    },
   },
 } as const
