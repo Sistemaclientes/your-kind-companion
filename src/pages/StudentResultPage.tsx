@@ -25,6 +25,7 @@ export function StudentResultPage() {
   const navigate = useNavigate();
   const [result, setResult] = React.useState<any>(null);
   const [studentInfo, setStudentInfo] = React.useState<any>(null);
+  const [countdown, setCountdown] = React.useState(15);
 
   React.useEffect(() => {
     const res = localStorage.getItem('last_result');
@@ -32,6 +33,21 @@ export function StudentResultPage() {
     if (res) setResult(JSON.parse(res));
     if (info) setStudentInfo(JSON.parse(info));
   }, []);
+
+  React.useEffect(() => {
+    if (!result?.slug) return;
+    const timer = setInterval(() => {
+      setCountdown(prev => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          navigate(`/aluno/resultado/${result.slug}`);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [result, navigate]);
 
   React.useEffect(() => {
     if (result && result.pontuacao >= 70) {
