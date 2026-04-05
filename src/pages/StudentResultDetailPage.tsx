@@ -229,6 +229,12 @@ export function StudentResultDetailPage() {
                           );
                         })}
                       </div>
+                      {question.explicacao && (
+                        <div className="ml-11 mt-3 px-4 py-3 rounded-xl bg-surface-container-low border border-outline/50 text-sm text-on-surface-variant leading-relaxed">
+                          <span className="text-[9px] font-black uppercase tracking-widest text-primary block mb-1">Explicação</span>
+                          {question.explicacao}
+                        </div>
+                      )}
                     </motion.div>
                   );
                 })}
