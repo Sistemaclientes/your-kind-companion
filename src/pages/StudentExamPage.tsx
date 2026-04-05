@@ -303,24 +303,16 @@ export function StudentExamPage() {
         </AnimatePresence>
       </main>
 
-      {/* Bottom Navigation */}
-      <footer className="h-24 bg-surface-container border-t border-outline flex items-center justify-center px-6 md:px-10 sticky bottom-0 z-50 backdrop-blur-md bg-surface-container/90">
-        <div className="flex items-center gap-3 md:gap-4">
-          <button 
-            onClick={handlePrev}
-            disabled={currentQuestionIdx === 0}
-            className="flex items-center gap-2 px-5 md:px-8 py-3.5 rounded-2xl border border-outline text-on-surface-variant font-bold text-xs uppercase tracking-widest hover:bg-surface-container-high transition-all disabled:opacity-30 disabled:pointer-events-none hover:scale-[1.03] active:scale-[0.98]"
-          >
-            <ChevronLeft className="w-5 h-5" />
-            <span className="hidden sm:inline">Anterior</span>
-          </button>
-          <button 
-            onClick={handleNext}
-            className="flex items-center gap-2 px-5 md:px-8 py-3.5 rounded-2xl bg-primary text-white font-bold text-xs uppercase tracking-widest shadow-xl shadow-primary/20 hover:bg-primary-container transition-all hover:scale-[1.03] active:scale-[0.98]"
-          >
-            <span className="hidden sm:inline">{currentQuestionIdx === totalQuestions - 1 ? 'Revisar' : 'Próxima'}</span>
-            <ChevronRight className="w-5 h-5" />
-          </button>
+      {/* Bottom Navigation - Question counter only */}
+      <footer className="h-16 bg-surface-container border-t border-outline flex items-center justify-center px-6 md:px-10 sticky bottom-0 z-50 backdrop-blur-md bg-surface-container/90">
+        <div className="flex items-center gap-3">
+          <span className="text-xs font-bold text-on-surface-variant uppercase tracking-widest">
+            Questão {currentQuestionIdx + 1} de {totalQuestions}
+          </span>
+          <span className="text-xs text-on-surface-variant">•</span>
+          <span className="text-xs font-bold text-primary uppercase tracking-widest">
+            {Object.keys(answers).length} respondidas
+          </span>
         </div>
       </footer>
 
