@@ -24,30 +24,35 @@ import confetti from 'canvas-confetti';
 export function StudentResultPage() {
   const navigate = useNavigate();
   const [result, setResult] = React.useState<any>(null);
+  const [exam, setExam] = React.useState<any>(null);
   const [studentInfo, setStudentInfo] = React.useState<any>(null);
-  const [countdown, setCountdown] = React.useState(15);
+  const [loading, setLoading] = React.useState(true);
 
   React.useEffect(() => {
-    const res = localStorage.getItem('last_result');
-    const info = localStorage.getItem('student_info');
-    if (res) setResult(JSON.parse(res));
-    if (info) setStudentInfo(JSON.parse(info));
-  }, []);
+    const loadData = async () => {
+      try {
+        const lastRes = localStorage.getItem('last_result');
+        const info = localStorage.getItem('student_info');
+        if (info) setStudentInfo(JSON.parse(info));
 
-  React.useEffect(() => {
-    if (!result?.slug) return;
-    const timer = setInterval(() => {
-      setCountdown(prev => {
-        if (prev <= 1) {
-          clearInterval(timer);
-          navigate(`/aluno/resultado/${result.slug}`);
-          return 0;
+        if (lastRes) {
+          const parsedRes = JSON.parse(lastRes);
+          if (parsedRes.slug) {
+            const fullResult = await api.get(`/resultados/slug/${parsedRes.slug}`);
+            setResult(fullResult);
+            setExam(fullResult.exam);
+          } else {
+            setResult(parsedRes);
+          }
         }
-        return prev - 1;
-      });
-    }, 1000);
-    return () => clearInterval(timer);
-  }, [result, navigate]);
+      } catch (err) {
+        console.error('Error loading full result:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadData();
+  }, []);
 
   React.useEffect(() => {
     if (result && result.pontuacao >= 70) {
