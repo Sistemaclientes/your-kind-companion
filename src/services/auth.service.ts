@@ -84,7 +84,12 @@ export const authService = {
       status: 'Ativo',
     });
 
-    if (error) throw new Error(error.message);
+    if (error) {
+      if (error.message.includes('alunos_cpf_key')) {
+        throw new Error('Este CPF já está cadastrado. Por favor, insira um CPF válido.');
+      }
+      throw new Error(error.message);
+    }
     return { message: 'Cadastro realizado com sucesso!' };
   },
 
