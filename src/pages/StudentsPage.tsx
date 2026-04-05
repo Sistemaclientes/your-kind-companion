@@ -245,7 +245,69 @@ export function StudentsPage() {
                         {new Date(student.ultimo_acesso).toLocaleDateString('pt-BR')}
                       </td>
                       <td className="px-6 py-6 text-right">
-                        <ChevronRight className="w-5 h-5 text-on-surface-variant inline-block group-hover:text-primary transition-colors" />
+                        <div className="flex items-center justify-end gap-2" onClick={(e) => e.stopPropagation()}>
+                          {editingStudent === student.email ? (
+                            <>
+                              <button
+                                disabled={actionLoading}
+                                onClick={async () => {
+                                  setActionLoading(true);
+                                  try {
+                                    await studentsService.updateStudent(student.email, editForm);
+                                    setStudents(prev => prev.map(s => s.email === student.email ? { ...s, ...editForm } : s));
+                                    setEditingStudent(null);
+                                  } catch (err: any) {
+                                    alert(err.message || 'Erro ao salvar');
+                                  } finally {
+                                    setActionLoading(false);
+                                  }
+                                }}
+                                className="p-2 rounded-lg bg-orange-500/10 text-orange-600 hover:bg-orange-500/20 transition-all"
+                                title="Salvar"
+                              >
+                                <Save className="w-4 h-4" />
+                              </button>
+                              <button
+                                onClick={() => setEditingStudent(null)}
+                                className="p-2 rounded-lg bg-surface-container-high text-on-surface-variant hover:text-on-surface transition-all"
+                                title="Cancelar"
+                              >
+                                <X className="w-4 h-4" />
+                              </button>
+                            </>
+                          ) : (
+                            <>
+                              <button
+                                onClick={() => {
+                                  setEditingStudent(student.email);
+                                  setEditForm({ nome: student.nome, cpf: student.cpf || '', telefone: student.telefone || '' });
+                                }}
+                                className="p-2 rounded-lg hover:bg-primary/10 text-on-surface-variant hover:text-primary transition-all"
+                                title="Editar"
+                              >
+                                <Pencil className="w-4 h-4" />
+                              </button>
+                              <button
+                                onClick={async () => {
+                                  if (!confirm(`Deseja realmente excluir o aluno "${student.nome}"? Todos os resultados serão removidos.`)) return;
+                                  setActionLoading(true);
+                                  try {
+                                    await studentsService.deleteStudent(student.email);
+                                    setStudents(prev => prev.filter(s => s.email !== student.email));
+                                  } catch (err: any) {
+                                    alert(err.message || 'Erro ao excluir');
+                                  } finally {
+                                    setActionLoading(false);
+                                  }
+                                }}
+                                className="p-2 rounded-lg hover:bg-red-500/10 text-on-surface-variant hover:text-red-500 transition-all"
+                                title="Excluir"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </>
+                          )}
+                        </div>
                       </td>
                     </tr>
                   ))
