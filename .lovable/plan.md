@@ -1,69 +1,46 @@
 
 
-# Plano de Seguranca - Hardening Completo do Sistema
+# Plano de Seguranca - Hardening Completo
 
 ## Situacao Atual
 
-Apos analise detalhada do banco e codigo:
-
-**Ja feito em migracoes anteriores:** extensao pgcrypto no schema extensions, coluna password_hash em alunos, funcoes hash_password() e login_user() com SECURITY DEFINER, RLS ativado em alunos e admins.
+**Ja feito:** extensao pgcrypto no schema extensions, coluna password_hash em alunos, funcoes hash_password() e login_user() com SECURITY DEFINER, RLS ativado em alunos e admins.
 
 **Ainda vulneravel:**
-- 0 de 8 alunos tem password_hash preenchido - senhas em texto puro na coluna senha
-- Admin com senha visivel no banco (Baudasorte123@)
-- Codigo front-end compara senhas com toLowerCase() sem hash
-- Funcao login_aluno compara senha em texto puro
-- Politicas RLS duplicadas e permissivas (USING true, WITH CHECK true)
-- Politica de admins permite acesso quando auth.uid() IS NULL
-- Storage sem politicas restritivas
-- Lembrar-me salva senha em texto puro no localStorage
+- 0 de 8 alunos tem password_hash preenchido - senhas em texto puro
+- Admin com senha visivel no banco
+- Codigo compara senhas sem hash
+- Funcao login_aluno compara texto puro
+- Politicas RLS permissivas (USING true)
+- Storage sem restricoes
+- Lembrar-me salva senha no localStorage
 
----
-
-## Execucao em 4 Etapas
-
-### Etapa 1 - Migracao SQL (via ferramenta de migracao)
+## Etapa 1 - Migracao SQL
 
 1. Adicionar password_hash a tabela admins
-2. Migrar senhas existentes de alunos e admins para bcrypt usando extensions.crypt()
-3. Atualizar funcao login_aluno para validar via bcrypt
-4. Criar funcao login_admin como RPC segura com bcrypt
-5. Criar funcao register_aluno que ja faz hash da senha
-6. Criar funcao change_admin_password que valida e faz hash
-7. Remover politicas RLS inseguras/duplicadas:
-   - Permitir consulta publica de existencia de email (USING true)
-   - Auto-registro publico de alunos (WITH CHECK true)
-   - admin only access (duplicada/generica)
-   - select own user, update own user, delete own user (duplicadas)
-   - Corrigir Visualizacao de admins removendo condicao auth.uid() IS NULL
-8. Criar politicas de storage para avatars e banners
+2. Migrar senhas existentes para bcrypt
+3. Atualizar login_aluno para bcrypt
+4. Criar login_admin como RPC segura
+5. Criar register_aluno e change_admin_password
+6. Remover politicas inseguras/duplicadas
+7. Criar politicas de storage
 
-### Etapa 2 - Atualizar codigo de autenticacao
+## Etapa 2 - Atualizar codigo
 
-**src/services/auth.service.ts:**
-- loginAdmin(): trocar SELECT direto + comparacao texto puro por chamada RPC login_admin
-- registerStudent(): usar RPC register_aluno em vez de insert direto com senha em texto puro
-- changeAdminPassword(): usar RPC change_admin_password
+- auth.service.ts: usar RPCs em vez de SELECT direto
+- admin.service.ts: hash da senha ao criar admin
 
-**src/services/admin.service.ts:**
-- Criar admin com senha hashada via RPC
+## Etapa 3 - Remover lembrar senha inseguro
 
-### Etapa 3 - Remover lembrar senha inseguro
+- LoginPage.tsx e StudentLoginPage.tsx: salvar apenas email
 
-**src/pages/LoginPage.tsx:** parar de salvar admin_remembered_pw no localStorage, manter apenas email
+## Etapa 4 - Limpeza
 
-**src/pages/StudentLoginPage.tsx:** idem para student_remembered
+- Garantir que nenhuma query expoe senha ou password_hash
+- is_correta exposto ao front durante prova (risco de cola)
 
-### Etapa 4 - Limpeza
+## Alertas
 
-- Verificar que nenhuma query do front-end pede senha ou password_hash
-- Nota: is_correta e retornado nas alternativas durante a prova - alunos podem ver respostas corretas no DevTools (risco de cola)
-
----
-
-## Alertas Importantes
-
-- A coluna senha sera mantida temporariamente ate confirmar que o login com bcrypt funciona
-- As politicas WITH CHECK (true) em resultados e respostas_aluno precisam permanecer porque o sistema usa autenticacao customizada (sem auth.users) - alunos nao tem auth.uid()
-- O campo is_correta nas alternativas e enviado ao front durante a prova
+- Coluna senha mantida temporariamente ate confirmar bcrypt
+- WITH CHECK (true) em resultados/respostas_aluno necessario (auth customizada)
 
