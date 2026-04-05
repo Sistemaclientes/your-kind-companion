@@ -20,6 +20,7 @@ export function StudentDashboardPage() {
   const navigate = useNavigate();
   const [studentInfo, setStudentInfo] = React.useState<any>(null);
   const [results, setResults] = React.useState<any[]>([]);
+  const [availableExams, setAvailableExams] = React.useState<any[]>([]);
   const [loading, setLoading] = React.useState(true);
 
   React.useEffect(() => {
@@ -30,8 +31,14 @@ export function StudentDashboardPage() {
 
     const fetchData = async () => {
       try {
-        const data = await api.get('/resultados');
-        setResults(data);
+        const [resultsData, examsData] = await Promise.all([
+          api.get('/resultados'),
+          api.get('/provas')
+        ]);
+        setResults(resultsData);
+        
+        const approvedExamIds = new Set(resultsData.filter((r: any) => r.pontuacao >= 70).map((r: any) => r.prova_id));
+        setAvailableExams(examsData.filter((exam: any) => !approvedExamIds.has(exam.id)));
       } catch (err) {
         console.error('Error loading dashboard:', err);
       } finally {
