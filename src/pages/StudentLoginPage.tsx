@@ -16,6 +16,7 @@ export function StudentLoginPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { user, loginStudent } = useAuthStore();
+  const { theme } = useTheme();
   const redirectUrl = searchParams.get('redirect') || '/student/dashboard';
   const [tab, setTab] = React.useState<Tab>('login');
 
@@ -378,9 +379,7 @@ export function StudentLoginPage() {
         className="w-full max-w-md bg-surface-container p-8 sm:p-10 rounded-3xl shadow-2xl shadow-primary/5 border border-outline relative z-10"
       >
         <div className="text-center mb-6">
-          <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-4">
-            <ShieldCheck className="w-7 h-7 text-primary" />
-          </div>
+          <img src={theme === 'dark' ? livroWhite : livroDark} alt="Logo" className="w-16 h-16 mx-auto mb-4 object-contain" />
           <h1 className="text-2xl font-black text-on-surface font-headline tracking-tight">Painel do Aluno</h1>
           <p className="text-sm text-on-surface-variant font-medium mt-1">Acesse seus resultados e provas</p>
         </div>
