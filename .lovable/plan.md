@@ -57,13 +57,13 @@ Após análise detalhada do banco e código:
 ### Etapa 4 — Limpeza
 
 - Verificar que nenhuma query do front-end pede `senha` ou `password_hash`
-- Nota: `is_correta` e retornado nas alternativas durante a prova — alunos podem ver respostas corretas no DevTools (risco de cola)
+- Nota: `is_correta` é retornado nas alternativas durante a prova -- alunos podem ver respostas corretas no DevTools (risco de cola)
 
 ---
 
 ## Alertas Importantes
 
-- A coluna `senha` sera mantida temporariamente ate confirmar que o login com bcrypt funciona
-- As politicas `WITH CHECK (true)` em `resultados` e `respostas_aluno` precisam permanecer porque o sistema usa autenticacao customizada (sem `auth.users`) — alunos nao tem `auth.uid()`
-- O campo `is_correta` nas alternativas e enviado ao front durante a prova
+- A coluna `senha` será mantida temporariamente até confirmar que o login com bcrypt funciona
+- As políticas `WITH CHECK (true)` em `resultados` e `respostas_aluno` precisam permanecer porque o sistema usa autenticação customizada (sem `auth.users`) -- alunos não têm `auth.uid()`
+- O campo `is_correta` nas alternativas é enviado ao front durante a prova
 
