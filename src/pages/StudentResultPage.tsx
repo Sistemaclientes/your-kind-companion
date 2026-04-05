@@ -14,12 +14,14 @@ import {
   FileCheck,
   Award,
   BarChart3,
-  Eye
+  Eye,
+  XCircle
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { cn } from '../lib/utils';
 import { motion } from 'motion/react';
 import confetti from 'canvas-confetti';
+import { api } from '../lib/api';
 
 export function StudentResultPage() {
   const navigate = useNavigate();
