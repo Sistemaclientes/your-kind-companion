@@ -69,23 +69,42 @@ Deno.serve(async (req: Request) => {
 
     console.log(`Reset link generated for ${email}: ${resetUrl}`);
 
-    // Try to send email via transactional email system
-    try {
-      await supabase.functions.invoke("send-transactional-email", {
-        body: {
-          templateName: "password-reset",
-          recipientEmail: email.trim().toLowerCase(),
-          idempotencyKey: `reset-${user.id}-${token}`,
-          templateData: {
-            name: user.nome,
-            resetUrl,
+    // Send email via Resend API
+    const resendApiKey = Deno.env.get("RESEND_API_KEY");
+    if (resendApiKey) {
+      try {
+        const res = await fetch("https://api.resend.com/emails", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${resendApiKey}`,
           },
-        },
-      });
-      console.log(`Reset email sent to ${email}`);
-    } catch (emailError) {
-      // If transactional email is not set up yet, log and continue
-      console.warn("Transactional email not available, token stored but email not sent:", emailError);
+          body: JSON.stringify({
+            from: "Academico <onboarding@resend.dev>",
+            to: [email.trim().toLowerCase()],
+            subject: "Redefinição de Senha - Academico",
+            html: `
+              <h1>Redefinição de Senha</h1>
+              <p>Olá ${user.nome},</p>
+              <p>Você solicitou a redefinição de sua senha. Clique no link abaixo para criar uma nova senha:</p>
+              <p><a href="${resetUrl}">${resetUrl}</a></p>
+              <p>Este link é válido por 1 hora.</p>
+              <p>Se você não solicitou isso, ignore este e-mail.</p>
+            `,
+          }),
+        });
+
+        if (res.ok) {
+          console.log(`Reset email sent to ${email} via Resend`);
+        } else {
+          const errorText = await res.text();
+          console.error("Error sending email via Resend:", errorText);
+        }
+      } catch (emailError) {
+        console.error("Error invoking Resend API:", emailError);
+      }
+    } else {
+      console.log(`RESEND_API_KEY not found. Reset link: ${resetUrl}`);
     }
 
     return new Response(
