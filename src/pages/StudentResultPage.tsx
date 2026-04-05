@@ -14,40 +14,47 @@ import {
   FileCheck,
   Award,
   BarChart3,
-  Eye
+  Eye,
+  XCircle
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { cn } from '../lib/utils';
 import { motion } from 'motion/react';
 import confetti from 'canvas-confetti';
+import { api } from '../lib/api';
 
 export function StudentResultPage() {
   const navigate = useNavigate();
   const [result, setResult] = React.useState<any>(null);
+  const [exam, setExam] = React.useState<any>(null);
   const [studentInfo, setStudentInfo] = React.useState<any>(null);
-  const [countdown, setCountdown] = React.useState(15);
+  const [loading, setLoading] = React.useState(true);
 
   React.useEffect(() => {
-    const res = localStorage.getItem('last_result');
-    const info = localStorage.getItem('student_info');
-    if (res) setResult(JSON.parse(res));
-    if (info) setStudentInfo(JSON.parse(info));
-  }, []);
+    const loadData = async () => {
+      try {
+        const lastRes = localStorage.getItem('last_result');
+        const info = localStorage.getItem('student_info');
+        if (info) setStudentInfo(JSON.parse(info));
 
-  React.useEffect(() => {
-    if (!result?.slug) return;
-    const timer = setInterval(() => {
-      setCountdown(prev => {
-        if (prev <= 1) {
-          clearInterval(timer);
-          navigate(`/aluno/resultado/${result.slug}`);
-          return 0;
+        if (lastRes) {
+          const parsedRes = JSON.parse(lastRes);
+          if (parsedRes.slug) {
+            const fullResult = await api.get(`/resultados/slug/${parsedRes.slug}`);
+            setResult(fullResult);
+            setExam(fullResult.exam);
+          } else {
+            setResult(parsedRes);
+          }
         }
-        return prev - 1;
-      });
-    }, 1000);
-    return () => clearInterval(timer);
-  }, [result, navigate]);
+      } catch (err) {
+        console.error('Error loading full result:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadData();
+  }, []);
 
   React.useEffect(() => {
     if (result && result.pontuacao >= 70) {
@@ -181,30 +188,108 @@ export function StudentResultPage() {
           </motion.div>
         </motion.div>
 
-        {/* View Details CTA - Prominent */}
-        {result?.slug && (
+        {/* View Details - Breakdown */}
+        {result && exam && (
           <motion.div
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.4 }}
-            className="w-full max-w-4xl mb-8 sm:mb-10"
+            className="w-full max-w-4xl mb-10"
           >
-            <button
-              onClick={() => navigate(`/aluno/resultado/${result.slug}`)}
-              className="w-full card-saas !p-6 sm:!p-8 flex flex-col sm:flex-row items-center gap-4 sm:gap-6 text-center sm:text-left hover:bg-surface-container-high transition-colors cursor-pointer group border-2 border-primary/20 hover:border-primary/40"
-            >
-              <div className="w-14 h-14 sm:w-16 sm:h-16 bg-primary/10 rounded-2xl flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
-                <Eye className="w-7 h-7 sm:w-8 sm:h-8 text-primary" />
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                <BarChart3 className="w-4 h-4 text-primary" />
               </div>
-              <div className="flex-1">
-                <h3 className="text-xl sm:text-2xl font-bold font-headline mb-1">Ver Detalhes da Prova</h3>
-                <p className="text-on-surface-variant text-sm font-medium">Veja quais questões você acertou e errou, com as respostas corretas destacadas.</p>
-              </div>
-              <div className="btn-primary py-3.5 px-8 text-sm uppercase tracking-widest shrink-0 flex flex-col items-center">
-                <span>Ver Questões</span>
-                <span className="text-[9px] opacity-70 mt-1">Redirecionando em {countdown}s</span>
-              </div>
-            </button>
+              <h2 className="text-xl font-black text-on-surface font-headline tracking-tight">Análise por Questão</h2>
+            </div>
+
+            <div className="space-y-4">
+              {exam.perguntas?.map((question: any, qIdx: number) => {
+                const correctAltId = exam.correctAlts?.[question.id];
+                const studentAnswerId = result.respostas?.[question.id];
+                const studentGotRight = studentAnswerId === correctAltId;
+
+                return (
+                  <motion.div
+                    key={question.id}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.05 * qIdx }}
+                    className="card-saas !p-5 sm:!p-8 border-l-4"
+                    style={{ borderLeftColor: studentGotRight ? 'var(--primary)' : 'var(--error)' }}
+                  >
+                    <div className="flex items-start gap-4 mb-6">
+                      <div className={cn(
+                        "w-10 h-10 rounded-xl flex items-center justify-center font-headline font-black text-sm shrink-0 shadow-sm",
+                        studentGotRight ? "bg-primary text-white" : "bg-error text-white"
+                      )}>
+                        {qIdx + 1}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-base sm:text-lg font-bold text-on-surface leading-snug">{question.enunciado}</p>
+                        <span className={cn(
+                          "inline-flex items-center gap-1.5 mt-2 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest",
+                          studentGotRight ? "bg-primary/10 text-primary" : "bg-error/10 text-error"
+                        )}>
+                          {studentGotRight ? <CheckCircle2 className="w-3.5 h-3.5" /> : <XCircle className="w-3.5 h-3.5" />}
+                          {studentGotRight ? 'Acertou' : 'Errou'}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="space-y-3 ml-0 sm:ml-14">
+                      {question.alternativas?.map((alt: any) => {
+                        const isCorrect = alt.id === correctAltId || alt.is_correta;
+                        const isStudentAnswer = alt.id === studentAnswerId;
+                        const isWrongAnswer = isStudentAnswer && !isCorrect;
+
+                        return (
+                          <div
+                            key={alt.id}
+                            className={cn(
+                              "flex items-center gap-4 px-5 py-4 rounded-2xl border text-sm font-semibold transition-all",
+                              isCorrect
+                                ? "bg-primary/10 border-primary text-primary shadow-sm shadow-primary/5"
+                                : isWrongAnswer
+                                  ? "bg-error/5 border-error/40 text-error"
+                                  : "bg-surface-container-low border-outline text-on-surface-variant/80"
+                            )}
+                          >
+                            <div className={cn(
+                              "w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition-transform duration-300",
+                              isCorrect ? "bg-primary border-primary" : isWrongAnswer ? "bg-error border-error" : "border-outline"
+                            )}>
+                              {isCorrect ? (
+                                <CheckCircle2 className="w-3.5 h-3.5 text-white" />
+                              ) : isWrongAnswer ? (
+                                <XCircle className="w-3.5 h-3.5 text-white" />
+                              ) : null}
+                            </div>
+                            <span className="flex-1">{alt.texto}</span>
+                            {isCorrect && (
+                              <span className="ml-auto text-[10px] font-black text-primary uppercase tracking-widest bg-primary/10 px-2 py-0.5 rounded-md">Correta</span>
+                            )}
+                            {isWrongAnswer && (
+                              <span className="ml-auto text-[10px] font-black text-error uppercase tracking-widest bg-error/10 px-2 py-0.5 rounded-md">Sua Resposta</span>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+
+                    {question.explicacao && (
+                      <div className="ml-0 sm:ml-14 mt-6 p-5 rounded-2xl bg-surface-container border border-outline/50 text-sm text-on-surface-variant leading-relaxed shadow-inner">
+                        <div className="flex items-center gap-2 mb-2 text-primary">
+                          <Brain className="w-4 h-4" />
+                          <span className="text-[10px] font-black uppercase tracking-widest">Explicação</span>
+                        </div>
+                        {question.explicacao}
+                      </div>
+                    )}
+                  </motion.div>
+                );
+              })}
+            </div>
           </motion.div>
         )}
 

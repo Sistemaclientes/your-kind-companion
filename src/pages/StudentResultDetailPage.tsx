@@ -50,7 +50,7 @@ export function StudentResultDetailPage() {
             <XCircle className="w-8 h-8 text-error" />
           </div>
           <h1 className="text-2xl font-black text-on-surface font-headline">{error}</h1>
-          <button onClick={() => navigate('/aluno/dashboard')} className="btn-primary px-8 py-3 rounded-xl font-bold text-sm">
+          <button onClick={() => navigate('/student/dashboard')} className="btn-primary px-8 py-3 rounded-xl font-bold text-sm">
             Voltar à Dashboard
           </button>
         </motion.div>
@@ -73,7 +73,7 @@ export function StudentResultDetailPage() {
         <motion.button
           initial={{ opacity: 0, x: -10 }}
           animate={{ opacity: 1, x: 0 }}
-          onClick={() => navigate('/aluno/dashboard')}
+          onClick={() => navigate('/student/dashboard')}
           className="flex items-center gap-2 text-on-surface-variant hover:text-primary transition-colors font-bold text-xs uppercase tracking-widest mb-8"
         >
           <ChevronLeft className="w-4 h-4" />
@@ -249,7 +249,7 @@ export function StudentResultDetailPage() {
               className="mt-10 flex justify-center"
             >
               <button
-                onClick={() => navigate('/aluno/dashboard')}
+                onClick={() => navigate('/student/dashboard')}
                 className="btn-primary px-8 py-3.5 rounded-xl font-bold text-sm"
               >
                 <ChevronLeft className="w-4 h-4" />
