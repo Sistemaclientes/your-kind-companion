@@ -69,15 +69,18 @@ export const studentsService = {
     if (!aluno) throw new Error('Aluno não encontrado');
 
     // Delete related results first
-    await supabase.from('respostas_aluno').delete().eq('aluno_id', aluno.id);
-    await supabase.from('resultados').delete().eq('aluno_id', aluno.id);
+    const { error: errRespostas } = await supabase.from('respostas_aluno').delete().eq('aluno_id', aluno.id);
+    if (errRespostas) throw new Error('Erro ao excluir respostas: ' + errRespostas.message);
+
+    const { error: errResultados } = await supabase.from('resultados').delete().eq('aluno_id', aluno.id);
+    if (errResultados) throw new Error('Erro ao excluir resultados: ' + errResultados.message);
 
     const { error } = await supabase
       .from('alunos')
       .delete()
       .eq('id', aluno.id);
 
-    if (error) throw new Error(error.message);
+    if (error) throw new Error('Erro ao excluir aluno: ' + error.message);
     return { message: 'Aluno excluído com sucesso' };
   },
 
