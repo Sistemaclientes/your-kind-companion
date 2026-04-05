@@ -20,6 +20,7 @@ export function StudentDashboardPage() {
   const navigate = useNavigate();
   const [studentInfo, setStudentInfo] = React.useState<any>(null);
   const [results, setResults] = React.useState<any[]>([]);
+  const [availableExams, setAvailableExams] = React.useState<any[]>([]);
   const [loading, setLoading] = React.useState(true);
 
   React.useEffect(() => {
@@ -30,8 +31,14 @@ export function StudentDashboardPage() {
 
     const fetchData = async () => {
       try {
-        const data = await api.get('/resultados');
-        setResults(data);
+        const [resultsData, examsData] = await Promise.all([
+          api.get('/resultados'),
+          api.get('/provas')
+        ]);
+        setResults(resultsData);
+        
+        const approvedExamIds = new Set(resultsData.filter((r: any) => r.pontuacao >= 70).map((r: any) => r.prova_id));
+        setAvailableExams(examsData.filter((exam: any) => !approvedExamIds.has(exam.id)));
       } catch (err) {
         console.error('Error loading dashboard:', err);
       } finally {
@@ -119,46 +126,94 @@ export function StudentDashboardPage() {
           )}
         </motion.div>
 
-        {/* Recent Results */}
-        {!loading && results.length > 0 && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-          >
-            <h2 className="text-lg font-black text-on-surface font-headline tracking-tight mb-4">Últimos Resultados</h2>
-            <div className="space-y-3">
-              {results.slice(0, 5).map((result) => {
-                const isApproved = result.pontuacao >= 70;
-                const dateStr = result.data ? new Date(result.data).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' }) : '—';
-                return (
-                  <div 
-                    key={result.id} 
-                    onClick={() => navigate(`/aluno/resultado/${result.slug}`)}
-                    className="card-saas !p-4 flex items-center gap-4 cursor-pointer hover:bg-surface-container-high transition-colors group"
-                  >
-                    <div className={cn(
-                      "w-10 h-10 rounded-xl flex items-center justify-center shrink-0 font-headline font-black text-lg",
-                      isApproved ? "bg-primary/10 text-primary" : "bg-error/10 text-error"
-                    )}>
-                      {(result.pontuacao / 10).toFixed(0)}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-bold text-on-surface truncate">{result.prova_titulo}</p>
-                      <span className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">{dateStr}</span>
-                    </div>
-                    <span className={cn(
-                      "text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full border",
-                      isApproved ? "text-primary bg-primary/10 border-primary/20" : "text-error bg-error/10 border-error/20"
-                    )}>
-                      {isApproved ? 'Aprovado' : 'Reprovado'}
-                    </span>
+        {/* Main Content Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* Available Exams */}
+          {!loading && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+            >
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-black text-on-surface font-headline tracking-tight">Provas Disponíveis</h2>
+                <button 
+                  onClick={() => navigate('/student/exams')}
+                  className="text-xs font-bold text-primary uppercase tracking-widest hover:underline"
+                >
+                  Ver Todas
+                </button>
+              </div>
+              <div className="space-y-3">
+                {availableExams.length === 0 ? (
+                  <div className="card-saas !p-6 text-center">
+                    <p className="text-sm text-on-surface-variant font-medium">Você concluiu todas as provas disponíveis! 🎉</p>
                   </div>
-                );
-              })}
-            </div>
-          </motion.div>
-        )}
+                ) : (
+                  availableExams.slice(0, 3).map((exam) => (
+                    <div 
+                      key={exam.id} 
+                      onClick={() => navigate(`/prova/${exam.slug}`)}
+                      className="card-saas !p-4 flex items-center gap-4 cursor-pointer hover:bg-surface-container-high transition-colors group"
+                    >
+                      <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary shrink-0 group-hover:scale-110 transition-transform">
+                        <BookOpen className="w-5 h-5" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-bold text-on-surface truncate">{exam.titulo}</p>
+                        <span className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">{exam.perguntas?.length || 0} questões</span>
+                      </div>
+                      <div className="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant group-hover:bg-primary group-hover:text-white transition-colors">
+                        <Clock className="w-4 h-4" />
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            </motion.div>
+          )}
+
+          {/* Recent Results */}
+          {!loading && results.length > 0 && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+            >
+              <h2 className="text-lg font-black text-on-surface font-headline tracking-tight mb-4">Últimos Resultados</h2>
+              <div className="space-y-3">
+                {results.slice(0, 5).map((result) => {
+                  const isApproved = result.pontuacao >= 70;
+                  const dateStr = result.data ? new Date(result.data).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' }) : '—';
+                  return (
+                    <div 
+                      key={result.id} 
+                      onClick={() => navigate(`/aluno/resultado/${result.slug}`)}
+                      className="card-saas !p-4 flex items-center gap-4 cursor-pointer hover:bg-surface-container-high transition-colors group"
+                    >
+                      <div className={cn(
+                        "w-10 h-10 rounded-xl flex items-center justify-center shrink-0 font-headline font-black text-lg",
+                        isApproved ? "bg-primary/10 text-primary" : "bg-error/10 text-error"
+                      )}>
+                        {(result.pontuacao / 10).toFixed(0)}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-bold text-on-surface truncate">{result.prova_titulo}</p>
+                        <span className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">{dateStr}</span>
+                      </div>
+                      <span className={cn(
+                        "text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full border",
+                        isApproved ? "text-primary bg-primary/10 border-primary/20" : "text-error bg-error/10 border-error/20"
+                      )}>
+                        {isApproved ? 'Aprovado' : 'Reprovado'}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            </motion.div>
+          )}
+        </div>
       </div>
     </>
   );

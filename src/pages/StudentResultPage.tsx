@@ -25,6 +25,7 @@ export function StudentResultPage() {
   const navigate = useNavigate();
   const [result, setResult] = React.useState<any>(null);
   const [studentInfo, setStudentInfo] = React.useState<any>(null);
+  const [countdown, setCountdown] = React.useState(15);
 
   React.useEffect(() => {
     const res = localStorage.getItem('last_result');
@@ -32,6 +33,21 @@ export function StudentResultPage() {
     if (res) setResult(JSON.parse(res));
     if (info) setStudentInfo(JSON.parse(info));
   }, []);
+
+  React.useEffect(() => {
+    if (!result?.slug) return;
+    const timer = setInterval(() => {
+      setCountdown(prev => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          navigate(`/aluno/resultado/${result.slug}`);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [result, navigate]);
 
   React.useEffect(() => {
     if (result && result.pontuacao >= 70) {
@@ -184,8 +200,9 @@ export function StudentResultPage() {
                 <h3 className="text-xl sm:text-2xl font-bold font-headline mb-1">Ver Detalhes da Prova</h3>
                 <p className="text-on-surface-variant text-sm font-medium">Veja quais questões você acertou e errou, com as respostas corretas destacadas.</p>
               </div>
-              <div className="btn-primary py-3.5 px-8 text-sm uppercase tracking-widest shrink-0">
-                Ver Questões
+              <div className="btn-primary py-3.5 px-8 text-sm uppercase tracking-widest shrink-0 flex flex-col items-center">
+                <span>Ver Questões</span>
+                <span className="text-[9px] opacity-70 mt-1">Redirecionando em {countdown}s</span>
               </div>
             </button>
           </motion.div>
