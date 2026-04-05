@@ -200,8 +200,9 @@ export function StudentResultPage() {
                 <h3 className="text-xl sm:text-2xl font-bold font-headline mb-1">Ver Detalhes da Prova</h3>
                 <p className="text-on-surface-variant text-sm font-medium">Veja quais questões você acertou e errou, com as respostas corretas destacadas.</p>
               </div>
-              <div className="btn-primary py-3.5 px-8 text-sm uppercase tracking-widest shrink-0">
-                Ver Questões
+              <div className="btn-primary py-3.5 px-8 text-sm uppercase tracking-widest shrink-0 flex flex-col items-center">
+                <span>Ver Questões</span>
+                <span className="text-[9px] opacity-70 mt-1">Redirecionando em {countdown}s</span>
               </div>
             </button>
           </motion.div>
