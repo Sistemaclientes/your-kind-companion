@@ -135,6 +135,14 @@ export function StudentExamPage() {
   const selectOption = (optionId: number) => {
     if (!currentQuestion) return;
     setAnswers(prev => ({ ...prev, [currentQuestion.id]: optionId }));
+    // Auto-advance to next question after a short delay
+    setTimeout(() => {
+      if (currentQuestionIdx < totalQuestions - 1) {
+        setCurrentQuestionIdx(prev => prev + 1);
+      } else {
+        setShowFinishConfirm(true);
+      }
+    }, 400);
   };
 
   if (loading || !exam) {
