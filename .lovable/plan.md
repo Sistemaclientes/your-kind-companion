@@ -11,7 +11,7 @@ Adicionar um bloco de explicação abaixo das alternativas de cada questão na t
 **Arquivo: `src/pages/StudentResultDetailPage.tsx`**
 
 Após o bloco de alternativas de cada questão (linha 231), inserir um card condicional:
-- Ícone de lâmpada ou rótulo "Explicação" em texto pequeno com destaque primary
+- Rótulo "Explicação" em texto pequeno com destaque primary
 - Texto da explicação em estilo sutil (fundo `surface-container-low`, borda, texto `on-surface-variant`)
 - Aparece somente quando `question.explicacao` tiver conteúdo
 
