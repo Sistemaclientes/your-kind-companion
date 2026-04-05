@@ -525,17 +525,24 @@ export type Database = {
           cnpj: string | null
           cpf: string | null
           created_at: string
+          data_abertura: string | null
           display_name: string | null
           email: string
+          email_comercial: string | null
+          endereco_comercial: string | null
           id: string
           is_master: boolean | null
           is_protected: boolean | null
           last_activity: string | null
           last_login: string | null
           nome: string | null
+          nome_fantasia: string | null
+          razao_social: string | null
           role: Database["public"]["Enums"]["user_role"]
+          situacao_cadastral: string | null
           status: string | null
           telefone: string | null
+          telefone_comercial: string | null
           updated_at: string
         }
         Insert: {
@@ -544,17 +551,24 @@ export type Database = {
           cnpj?: string | null
           cpf?: string | null
           created_at?: string
+          data_abertura?: string | null
           display_name?: string | null
           email: string
+          email_comercial?: string | null
+          endereco_comercial?: string | null
           id: string
           is_master?: boolean | null
           is_protected?: boolean | null
           last_activity?: string | null
           last_login?: string | null
           nome?: string | null
+          nome_fantasia?: string | null
+          razao_social?: string | null
           role?: Database["public"]["Enums"]["user_role"]
+          situacao_cadastral?: string | null
           status?: string | null
           telefone?: string | null
+          telefone_comercial?: string | null
           updated_at?: string
         }
         Update: {
@@ -563,17 +577,24 @@ export type Database = {
           cnpj?: string | null
           cpf?: string | null
           created_at?: string
+          data_abertura?: string | null
           display_name?: string | null
           email?: string
+          email_comercial?: string | null
+          endereco_comercial?: string | null
           id?: string
           is_master?: boolean | null
           is_protected?: boolean | null
           last_activity?: string | null
           last_login?: string | null
           nome?: string | null
+          nome_fantasia?: string | null
+          razao_social?: string | null
           role?: Database["public"]["Enums"]["user_role"]
+          situacao_cadastral?: string | null
           status?: string | null
           telefone?: string | null
+          telefone_comercial?: string | null
           updated_at?: string
         }
         Relationships: []
@@ -826,7 +847,7 @@ export type Database = {
       resultados: {
         Row: {
           acertos: number | null
-          aluno_id: string | null
+          aluno_id: string
           created_at: string
           data: string | null
           data_conclusao: string | null
@@ -853,7 +874,7 @@ export type Database = {
         }
         Insert: {
           acertos?: number | null
-          aluno_id?: string | null
+          aluno_id: string
           created_at?: string
           data?: string | null
           data_conclusao?: string | null
@@ -880,7 +901,7 @@ export type Database = {
         }
         Update: {
           acertos?: number | null
-          aluno_id?: string | null
+          aluno_id?: string
           created_at?: string
           data?: string | null
           data_conclusao?: string | null
