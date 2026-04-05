@@ -481,6 +481,7 @@ export type Database = {
       }
       provas: {
         Row: {
+          allow_guest: boolean | null
           allow_pause: boolean | null
           banner_url: string | null
           bloquear_navegacao: boolean | null
@@ -502,6 +503,8 @@ export type Database = {
           nota_corte: number | null
           permite_retroceder: boolean | null
           permitir_revisao: boolean | null
+          show_progress: boolean | null
+          show_timer: boolean | null
           slug: string | null
           status: string | null
           subtitulo: string | null
@@ -516,6 +519,7 @@ export type Database = {
           view_count: number | null
         }
         Insert: {
+          allow_guest?: boolean | null
           allow_pause?: boolean | null
           banner_url?: string | null
           bloquear_navegacao?: boolean | null
@@ -537,6 +541,8 @@ export type Database = {
           nota_corte?: number | null
           permite_retroceder?: boolean | null
           permitir_revisao?: boolean | null
+          show_progress?: boolean | null
+          show_timer?: boolean | null
           slug?: string | null
           status?: string | null
           subtitulo?: string | null
@@ -551,6 +557,7 @@ export type Database = {
           view_count?: number | null
         }
         Update: {
+          allow_guest?: boolean | null
           allow_pause?: boolean | null
           banner_url?: string | null
           bloquear_navegacao?: boolean | null
@@ -572,6 +579,8 @@ export type Database = {
           nota_corte?: number | null
           permite_retroceder?: boolean | null
           permitir_revisao?: boolean | null
+          show_progress?: boolean | null
+          show_timer?: boolean | null
           slug?: string | null
           status?: string | null
           subtitulo?: string | null
