@@ -481,6 +481,7 @@ export type Database = {
       }
       provas: {
         Row: {
+          allow_pause: boolean | null
           banner_url: string | null
           bloquear_navegacao: boolean | null
           categoria_id: string | null
@@ -506,6 +507,7 @@ export type Database = {
           subtitulo: string | null
           tags: string[] | null
           tentativas_maximas: number | null
+          timer_per_question: boolean | null
           titulo: string
           total_pontos: number | null
           total_questoes: number | null
@@ -514,6 +516,7 @@ export type Database = {
           view_count: number | null
         }
         Insert: {
+          allow_pause?: boolean | null
           banner_url?: string | null
           bloquear_navegacao?: boolean | null
           categoria_id?: string | null
@@ -539,6 +542,7 @@ export type Database = {
           subtitulo?: string | null
           tags?: string[] | null
           tentativas_maximas?: number | null
+          timer_per_question?: boolean | null
           titulo: string
           total_pontos?: number | null
           total_questoes?: number | null
@@ -547,6 +551,7 @@ export type Database = {
           view_count?: number | null
         }
         Update: {
+          allow_pause?: boolean | null
           banner_url?: string | null
           bloquear_navegacao?: boolean | null
           categoria_id?: string | null
@@ -572,6 +577,7 @@ export type Database = {
           subtitulo?: string | null
           tags?: string[] | null
           tentativas_maximas?: number | null
+          timer_per_question?: boolean | null
           titulo?: string
           total_pontos?: number | null
           total_questoes?: number | null
@@ -734,6 +740,7 @@ export type Database = {
           total: number | null
           total_questoes: number | null
           total_time: number | null
+          turma_id: string | null
           updated_at: string | null
         }
         Insert: {
@@ -760,6 +767,7 @@ export type Database = {
           total?: number | null
           total_questoes?: number | null
           total_time?: number | null
+          turma_id?: string | null
           updated_at?: string | null
         }
         Update: {
@@ -786,6 +794,7 @@ export type Database = {
           total?: number | null
           total_questoes?: number | null
           total_time?: number | null
+          turma_id?: string | null
           updated_at?: string | null
         }
         Relationships: [
@@ -816,6 +825,20 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "vw_provas_stats"
             referencedColumns: ["prova_id"]
+          },
+          {
+            foreignKeyName: "resultados_turma_id_fkey"
+            columns: ["turma_id"]
+            isOneToOne: false
+            referencedRelation: "turmas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "resultados_turma_id_fkey"
+            columns: ["turma_id"]
+            isOneToOne: false
+            referencedRelation: "vw_turmas_performance"
+            referencedColumns: ["turma_id"]
           },
         ]
       }
