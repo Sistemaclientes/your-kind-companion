@@ -1,48 +1,21 @@
 
 
-# Plano: Ver acertos/erros + ocultar provas aprovadas
+# Plano: Mostrar explicação da resposta correta
 
-## O que já funciona
-A tela de **detalhes do resultado** (`StudentResultDetailPage`) já mostra cada questão com marcação verde (acertou) e vermelha (errou), incluindo a resposta correta destacada.
+## O que será feito
 
-## Alterações necessárias
+Na tela de detalhes do resultado (`StudentResultDetailPage.tsx`), adicionar um bloco de explicação abaixo das alternativas de cada questão, visível apenas quando o campo `explicacao` da pergunta estiver preenchido.
 
-### 1. `src/pages/StudentExamsListPage.tsx` — Usar resultados do banco de dados
+## Alteração
 
-A lista de provas disponíveis usa `localStorage` para saber quais provas foram aprovadas. Isso não funciona entre dispositivos e pode ficar desatualizado.
+**Arquivo: `src/pages/StudentResultDetailPage.tsx`**
 
-**Correção:** Na linha 28, substituir:
-```
-Promise.resolve(JSON.parse(localStorage.getItem('local_resultados') || '[]'))
-```
-por:
-```
-api.get('/resultados')
-```
+Após o bloco de alternativas de cada questão (linha 231), inserir um card condicional com:
+- Ícone de lâmpada (Lightbulb do Lucide) + rótulo "Explicação" em destaque primary
+- Texto da explicação com estilo sutil (fundo `surface-container-low`, borda, texto `on-surface-variant`)
+- Visível somente quando `question.explicacao` tiver conteúdo
 
-E na linha 31, remover o `.filter((r: any) => r.email_aluno === parsed.email)` — a API já retorna apenas os resultados do aluno logado. O resultado fica:
-```
-setResults(allResults);
-```
+## Sem alteração de banco de dados
 
-O filtro `pontuacao >= 70` na linha 41 já existe e continuará funcionando — provas aprovadas desaparecem da lista automaticamente.
-
-### 2. `src/pages/StudentResultPage.tsx` — Botão "Ver Detalhes" proeminente
-
-Após a prova, o botão para ver questões acertadas/erradas está escondido. Precisamos torná-lo visível.
-
-**Correção:** Substituir o bloco do "Certificado de Conclusão" (linhas 169-209) por um card proeminente:
-- Ícone Eye grande (16x16) com fundo primary/10
-- Título: "Ver Detalhes da Prova"
-- Subtítulo: "Veja quais questões você acertou e errou, com as respostas corretas destacadas."
-- Botão primary "Ver Questões" que navega para `/aluno/resultado/${result.slug}`
-- Card com borda `border-2 border-primary/20 hover:border-primary/40`
-- Abaixo, manter botões "Dashboard" e "Nova Prova" como secundários
-
-### Nenhuma alteração de banco de dados necessária.
-
-### Resultado
-1. Aluno finaliza prova → vê nota → clica "Ver Detalhes da Prova" → vê cada questão com acerto/erro
-2. Aluno volta à lista de provas → prova aprovada (>=70%) não aparece mais
-3. Funciona entre dispositivos pois usa dados do Supabase
+O campo `explicacao` já existe na tabela `perguntas` e já é retornado pela query usada nesta página.
 
