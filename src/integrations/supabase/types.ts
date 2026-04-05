@@ -433,6 +433,7 @@ export type Database = {
           id: string
           is_master: boolean | null
           is_protected: boolean | null
+          last_activity: string | null
           last_login: string | null
           nome: string | null
           role: Database["public"]["Enums"]["user_role"]
@@ -450,6 +451,7 @@ export type Database = {
           id: string
           is_master?: boolean | null
           is_protected?: boolean | null
+          last_activity?: string | null
           last_login?: string | null
           nome?: string | null
           role?: Database["public"]["Enums"]["user_role"]
@@ -467,6 +469,7 @@ export type Database = {
           id?: string
           is_master?: boolean | null
           is_protected?: boolean | null
+          last_activity?: string | null
           last_login?: string | null
           nome?: string | null
           role?: Database["public"]["Enums"]["user_role"]
@@ -974,6 +977,7 @@ export type Database = {
       }
     }
     Functions: {
+      bulk_resend_confirmation: { Args: never; Returns: Json }
       check_is_admin: { Args: never; Returns: boolean }
       generate_slug: { Args: { title: string }; Returns: string }
       get_my_role: { Args: never; Returns: string }
