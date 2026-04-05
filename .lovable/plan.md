@@ -1,34 +1,29 @@
 
+
 # Plano: Revisão de questões + ocultar provas aprovadas
 
-## Contexto
+## O que já funciona
+- A tela de **detalhes do resultado** (`StudentResultDetailPage`) já mostra questão por questão com acertos (verde) e erros (vermelho) — essa funcionalidade está pronta.
 
-Após análise, identifiquei dois problemas principais:
+## O que precisa ser corrigido
 
-1. **Listagem de provas disponíveis** usa `localStorage` (`local_resultados`) para filtrar provas aprovadas, o que é frágil e não persiste entre dispositivos/navegadores. Deve usar os resultados reais do banco de dados via API `/resultados`.
+### 1. `src/pages/StudentExamsListPage.tsx` — Usar resultados do banco de dados
 
-2. **A página de detalhes do resultado** (`StudentResultDetailPage.tsx`) já mostra acertos/erros por questão corretamente. A tela de resultado imediato (`StudentResultPage.tsx`) mostra a nota mas sem detalhes por questão — o aluno precisa clicar "Ver Detalhes" para ver questão a questão.
+**Problema:** A lista de provas disponíveis usa `localStorage` (`local_resultados`) para saber quais provas o aluno já passou. Isso é frágil e não funciona entre dispositivos.
 
-## Alterações planejadas
+**Correção:** Substituir a leitura do localStorage por chamada à API real:
 
-### 1. Corrigir `StudentExamsListPage.tsx` — usar resultados do banco de dados
-- Substituir a leitura de `local_resultados` do localStorage por chamada à API `/resultados` (que busca do Supabase)
-- Filtrar provas onde o aluno foi aprovado (pontuação >= 70) usando dados reais do banco
-- Isso garante que provas aprovadas desapareçam independente do dispositivo
+- Linha 26-28: Trocar `Promise.resolve(JSON.parse(localStorage.getItem('local_resultados') || '[]'))` por `api.get('/resultados')`
+- Linha 31: Remover o filtro por email (a API já retorna só os resultados do aluno logado)
+- O filtro `approvedExamIds` na linha 41 já funciona corretamente com `pontuacao >= 70`
 
-### 2. Corrigir `StudentDashboardPage.tsx` — garantir consistência
-- Verificar se o dashboard também filtra corretamente provas aprovadas (se exibir provas disponíveis)
+### 2. `src/pages/StudentResultPage.tsx` — Facilitar acesso aos detalhes
 
-### 3. Redirecionar automaticamente para detalhes após finalizar prova
-- Na `StudentResultPage.tsx`, após mostrar nota/status, incluir botão "Ver Detalhes" mais proeminente ou redirecionar direto para `StudentResultDetailPage` onde o aluno vê questão por questão (acertos/erros)
+**Problema:** Após finalizar a prova, o botão "Ver Detalhes" está escondido dentro de um card. O aluno precisa encontrá-lo para ver quais questões acertou/errou.
 
-## Detalhes técnicos
+**Correção:** Tornar o botão "Ver Detalhes" mais proeminente:
+- Mover o botão "Ver Detalhes" para logo abaixo dos cards de resultado (nota, acertos, status)
+- Usar estilo `btn-primary` em vez de `btn-secondary` para o botão de detalhes
+- Adicionar texto explicativo: "Veja quais questões você acertou e errou"
 
-**Arquivo: `src/pages/StudentExamsListPage.tsx`**
-- Trocar `Promise.resolve(JSON.parse(localStorage.getItem('local_resultados') || '[]'))` por `api.get('/resultados')`
-- Ajustar o filtro de `approvedExamIds` para usar `r.prova_id` dos resultados do banco
-
-**Arquivo: `src/pages/StudentResultPage.tsx`**
-- Tornar o botão "Ver Detalhes" mais visível/proeminente para que o aluno veja facilmente quais questões acertou ou errou
-
-Nenhuma alteração de banco de dados necessária — a funcionalidade de detalhes por questão já existe.
+### Nenhuma alteração no banco de dados é necessária.
