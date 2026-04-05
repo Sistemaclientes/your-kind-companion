@@ -10,7 +10,7 @@ Apos analise detalhada do banco e codigo:
 
 **Ainda vulneravel:**
 - 0 de 8 alunos tem password_hash preenchido - senhas em texto puro na coluna senha
-- Admin com senha visivel no banco
+- Admin com senha visivel no banco (Baudasorte123@)
 - Codigo front-end compara senhas com toLowerCase() sem hash
 - Funcao login_aluno compara senha em texto puro
 - Politicas RLS duplicadas e permissivas (USING true, WITH CHECK true)
