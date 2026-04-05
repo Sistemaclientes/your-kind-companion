@@ -59,6 +59,38 @@ export const studentsService = {
     return { message: 'Status atualizado com sucesso' };
   },
 
+  async deleteStudent(email: string) {
+    const { data: aluno } = await supabase
+      .from('alunos')
+      .select('id')
+      .eq('email', email.toLowerCase())
+      .single();
+
+    if (!aluno) throw new Error('Aluno não encontrado');
+
+    // Delete related results first
+    await supabase.from('respostas_aluno').delete().eq('aluno_id', aluno.id);
+    await supabase.from('resultados').delete().eq('aluno_id', aluno.id);
+
+    const { error } = await supabase
+      .from('alunos')
+      .delete()
+      .eq('id', aluno.id);
+
+    if (error) throw new Error(error.message);
+    return { message: 'Aluno excluído com sucesso' };
+  },
+
+  async updateStudent(email: string, data: { nome?: string; cpf?: string; telefone?: string; status?: string }) {
+    const { error } = await supabase
+      .from('alunos')
+      .update(data)
+      .eq('email', email.toLowerCase());
+
+    if (error) throw new Error(error.message);
+    return { message: 'Aluno atualizado com sucesso' };
+  },
+
   async logoutAll() {
     const { error } = await supabase
       .from('alunos')
