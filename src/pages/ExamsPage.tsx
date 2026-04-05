@@ -174,7 +174,7 @@ export function ExamsPage() {
                 <span className="text-4xl font-extrabold text-on-surface font-headline tracking-tight">{s.value}</span>
                 <span className={cn(
                   "text-xs font-bold px-2 py-1 rounded-lg",
-                  s.color === 'blue' ? "bg-primary/10 text-primary" : "bg-green-500/10 text-green-600 dark:text-green-400"
+                  s.color === 'blue' ? "bg-primary/10 text-primary" : "bg-orange-500/10 text-orange-600 dark:text-orange-400"
                 )}>{s.sub}</span>
               </div>
             </div>
