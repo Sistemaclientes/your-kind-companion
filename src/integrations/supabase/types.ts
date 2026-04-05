@@ -253,6 +253,75 @@ export type Database = {
         }
         Relationships: []
       }
+      das_reports: {
+        Row: {
+          amount: number | null
+          created_at: string | null
+          due_date: string | null
+          id: string
+          month: number
+          pdf_url: string | null
+          status: string
+          updated_at: string | null
+          user_id: string
+          year: number
+        }
+        Insert: {
+          amount?: number | null
+          created_at?: string | null
+          due_date?: string | null
+          id?: string
+          month: number
+          pdf_url?: string | null
+          status?: string
+          updated_at?: string | null
+          user_id: string
+          year: number
+        }
+        Update: {
+          amount?: number | null
+          created_at?: string | null
+          due_date?: string | null
+          id?: string
+          month?: number
+          pdf_url?: string | null
+          status?: string
+          updated_at?: string | null
+          user_id?: string
+          year?: number
+        }
+        Relationships: []
+      }
+      declarations: {
+        Row: {
+          created_at: string | null
+          id: string
+          pdf_url: string | null
+          status: string
+          updated_at: string | null
+          user_id: string
+          year: number
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          pdf_url?: string | null
+          status?: string
+          updated_at?: string | null
+          user_id: string
+          year: number
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          pdf_url?: string | null
+          status?: string
+          updated_at?: string | null
+          user_id?: string
+          year?: number
+        }
+        Relationships: []
+      }
       dicas_sistema: {
         Row: {
           ativa: boolean | null
@@ -349,6 +418,33 @@ export type Database = {
         }
         Relationships: []
       }
+      notifications: {
+        Row: {
+          created_at: string | null
+          id: string
+          message: string
+          read: boolean | null
+          title: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          message: string
+          read?: boolean | null
+          title: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          message?: string
+          read?: boolean | null
+          title?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       perguntas: {
         Row: {
           categoria_id: string | null
@@ -426,6 +522,7 @@ export type Database = {
         Row: {
           active: boolean | null
           avatar_url: string | null
+          cnpj: string | null
           cpf: string | null
           created_at: string
           display_name: string | null
@@ -444,6 +541,7 @@ export type Database = {
         Insert: {
           active?: boolean | null
           avatar_url?: string | null
+          cnpj?: string | null
           cpf?: string | null
           created_at?: string
           display_name?: string | null
@@ -462,6 +560,7 @@ export type Database = {
         Update: {
           active?: boolean | null
           avatar_url?: string | null
+          cnpj?: string | null
           cpf?: string | null
           created_at?: string
           display_name?: string | null
