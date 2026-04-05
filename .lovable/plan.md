@@ -16,7 +16,7 @@ Apos analise detalhada do banco e codigo:
 - Politicas RLS duplicadas e permissivas (USING true, WITH CHECK true)
 - Politica de admins permite acesso quando auth.uid() IS NULL
 - Storage sem politicas restritivas
-- "Lembrar-me" salva senha em texto puro no localStorage
+- Lembrar-me salva senha em texto puro no localStorage
 
 ---
 
@@ -48,7 +48,7 @@ Apos analise detalhada do banco e codigo:
 **src/services/admin.service.ts:**
 - Criar admin com senha hashada via RPC
 
-### Etapa 3 - Remover "lembrar senha" inseguro
+### Etapa 3 - Remover lembrar senha inseguro
 
 **src/pages/LoginPage.tsx:** parar de salvar admin_remembered_pw no localStorage, manter apenas email
 
