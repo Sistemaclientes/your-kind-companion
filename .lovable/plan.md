@@ -3,37 +3,46 @@
 # Plano: Ver acertos/erros + ocultar provas aprovadas
 
 ## O que já funciona
-A tela de **detalhes do resultado** (`StudentResultDetailPage`) já mostra cada questão com marcação verde (acertou) e vermelha (errou), incluindo a resposta correta destacada. Essa funcionalidade está pronta.
+A tela de **detalhes do resultado** (`StudentResultDetailPage`) já mostra cada questão com marcação verde (acertou) e vermelha (errou), incluindo a resposta correta destacada.
 
-## O que precisa ser corrigido
+## Alterações necessárias
 
-### 1. Lista de provas disponíveis — usar dados reais do banco
+### 1. `src/pages/StudentExamsListPage.tsx` — Usar resultados do banco de dados
 
-**Arquivo:** `src/pages/StudentExamsListPage.tsx`
+A lista de provas disponíveis usa `localStorage` para saber quais provas foram aprovadas. Isso não funciona entre dispositivos e pode ficar desatualizado.
 
-**Problema:** A filtragem de provas aprovadas usa `localStorage` (`local_resultados`), que não persiste entre dispositivos e pode ficar desatualizado.
+**Correção:** Na linha 28, substituir:
+```
+Promise.resolve(JSON.parse(localStorage.getItem('local_resultados') || '[]'))
+```
+por:
+```
+api.get('/resultados')
+```
 
-**Correção:**
-- Substituir `Promise.resolve(JSON.parse(localStorage.getItem('local_resultados') || '[]'))` por `api.get('/resultados')` (que busca resultados reais do Supabase)
-- Remover o filtro por email (a API já retorna apenas os resultados do aluno logado)
-- O filtro `pontuacao >= 70` já existe e continuará funcionando — provas aprovadas desaparecem da lista
+E na linha 31, remover o `.filter((r: any) => r.email_aluno === parsed.email)` — a API já retorna apenas os resultados do aluno logado. O resultado fica:
+```
+setResults(allResults);
+```
 
-### 2. Tela de resultado — facilitar acesso aos detalhes por questão
+O filtro `pontuacao >= 70` na linha 41 já existe e continuará funcionando — provas aprovadas desaparecem da lista automaticamente.
 
-**Arquivo:** `src/pages/StudentResultPage.tsx`
+### 2. `src/pages/StudentResultPage.tsx` — Botão "Ver Detalhes" proeminente
 
-**Problema:** Após finalizar a prova, o botão "Ver Detalhes" fica pouco visível dentro de um card genérico. O aluno não percebe que pode ver questão por questão.
+Após a prova, o botão para ver questões acertadas/erradas está escondido. Precisamos torná-lo visível.
 
-**Correção:**
-- Adicionar um card/botão proeminente logo abaixo dos cards de nota/acertos/status
-- Texto: "Ver Detalhes da Prova — Veja quais questões você acertou e errou"
-- Estilo: card com borda primary, ícone Eye grande, botão "Ver Questões"
-- Remover o card antigo de "Certificado de Conclusão" que misturava ações
-
-### Resultado esperado
-1. Aluno finaliza prova → vê nota → clica "Ver Detalhes" → vê cada questão com acerto/erro
-2. Aluno volta à lista de provas → prova aprovada (>=70%) não aparece mais
-3. Funciona entre dispositivos porque usa dados do banco de dados
+**Correção:** Substituir o bloco do "Certificado de Conclusão" (linhas 169-209) por um card proeminente:
+- Ícone Eye grande (16x16) com fundo primary/10
+- Título: "Ver Detalhes da Prova"
+- Subtítulo: "Veja quais questões você acertou e errou, com as respostas corretas destacadas."
+- Botão primary "Ver Questões" que navega para `/aluno/resultado/${result.slug}`
+- Card com borda `border-2 border-primary/20 hover:border-primary/40`
+- Abaixo, manter botões "Dashboard" e "Nova Prova" como secundários
 
 ### Nenhuma alteração de banco de dados necessária.
+
+### Resultado
+1. Aluno finaliza prova → vê nota → clica "Ver Detalhes da Prova" → vê cada questão com acerto/erro
+2. Aluno volta à lista de provas → prova aprovada (>=70%) não aparece mais
+3. Funciona entre dispositivos pois usa dados do Supabase
 
