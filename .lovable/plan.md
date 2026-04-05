@@ -1,57 +1,55 @@
 
 
-# Plano: Adicionar Fluxo de Reset de Senha (sem alterar login existente)
+## Situacao Atual
 
-## Analise do Estado Atual
+**Ja feito em migracoes anteriores:**
+- Extensao pgcrypto movida para schema extensions
+- Coluna password_hash adicionada a tabela alunos
+- Funcoes hash_password() e login_user() criadas com SECURITY DEFINER
+- RLS ativado em alunos e admins
 
-O login atual funciona com autenticacao customizada (senhas em texto puro nas tabelas `admins` e `alunos`). O `authStore` usa localStorage. O sistema NAO usa Supabase Auth (`supabase.auth.*`).
+**Ainda vulneravel:**
+- 0 de 8 alunos tem password_hash preenchido - senhas em texto puro na coluna senha
+- Admin com senha visivel no banco
+- Codigo front-end compara senhas com toLowerCase() sem hash
+- Funcao login_aluno compara senha em texto puro
+- Politicas RLS duplicadas e permissivas (USING true, WITH CHECK true)
+- Storage sem politicas restritivas
+- "Lembrar-me" salva senha em texto puro no localStorage
 
-Problemas encontrados:
-- **Admin forgot password** (`LoginPage.tsx` linha 80): chama `api.post('/admin/forgot-password')` que apenas verifica se o email existe no banco -- nao envia nenhum email. Depois mostra "Email enviado!" mas nada foi enviado.
-- **Admin reset password** (`LoginPage.tsx` linha 109): chama `api.post('/admin/reset-password')` que atualiza a senha diretamente no banco -- funciona mas sem email/token real.
-- **Student forgot password** (`StudentLoginPage.tsx` linha 154): `handleForgotPassword` apenas faz `setForgotSent(true)` -- literalmente nao faz nada. Nenhuma API e chamada.
-- **Nao existe** `/auth/callback` nem `/update-password`.
-- A pagina `/confirmar-email` chama `api.get('/confirmar-email?token=...')` que nao existe.
+---
 
-## Restricao Critica
+## Execucao em 4 Etapas
 
-Como o sistema NAO usa Supabase Auth para login (usa senhas em texto puro), **nao e possivel usar `supabase.auth.resetPasswordForEmail()`** sem migrar o login inteiro para Supabase Auth. Os usuarios nao existem em `auth.users`.
+### Etapa 1 - Migracao SQL
 
-## Abordagem Realista (sem quebrar nada)
+1. Adicionar password_hash a tabela admins
+2. Migrar senhas existentes de alunos e admins para bcrypt
+3. Atualizar funcao login_aluno para validar via bcrypt
+4. Criar funcao login_admin como RPC segura com bcrypt
+5. Criar funcao register_aluno que faz hash da senha
+6. Criar funcao change_admin_password
+7. Remover politicas RLS inseguras/duplicadas
+8. Criar politicas de storage para avatars e banners
 
-Usar uma **Edge Function do Supabase** para enviar emails de reset de senha via o sistema de email ja existente, gerando tokens temporarios armazenados no banco.
+### Etapa 2 - Atualizar codigo de autenticacao
 
-### 1. Criar tabela `password_reset_tokens` (migracao)
-- Colunas: `id`, `email`, `token` (uuid), `expires_at`, `used`, `created_at`
-- Token expira em 1 hora
+- **auth.service.ts:** trocar SELECT direto por RPCs (login_admin, register_aluno, change_admin_password)
+- **admin.service.ts:** criar admin com senha hashada via RPC
 
-### 2. Criar Edge Function `send-reset-email`
-- Recebe email, gera token, salva no banco
-- Envia email com link `{origin}/redefinir-senha?token={token}&email={email}`
-- Usa o Lovable email system (transactional email)
+### Etapa 3 - Remover "lembrar senha" inseguro
 
-### 3. Corrigir `auth.service.ts`
-- `forgotAdminPassword`: chamar a Edge Function ao inves de apenas verificar se email existe
-- `resetAdminPassword`: validar token antes de atualizar senha
-- Adicionar `forgotStudentPassword` e `resetStudentPassword` com a mesma logica
+- **LoginPage.tsx e StudentLoginPage.tsx:** salvar apenas email, nunca senha no localStorage
 
-### 4. Corrigir `LoginPage.tsx` (admin forgot password)
-- `handleForgotSubmit`: chamar o novo metodo que envia email de verdade
-- `handleResetSubmit`: validar token antes de resetar
+### Etapa 4 - Limpeza
 
-### 5. Corrigir `StudentLoginPage.tsx` (student forgot password)
-- `handleForgotPassword`: chamar API real que envia email
-- Adicionar tela de reset de senha para o aluno
+- Verificar que nenhuma query expoe senha ou password_hash
 
-### 6. Atualizar `api.ts`
-- Adicionar rota para student forgot/reset password
+---
 
-### 7. Remover `ConfirmEmailPage.tsx` (quebrada)
-- Remover rota `/confirmar-email` do `App.tsx`
+## Alertas
 
-## Resultado
-- Emails de reset de senha enviados de verdade (admin e aluno)
-- Tokens seguros com expiracao
-- Sem alterar login, authStore, rotas existentes ou logica de sessao
-- UX com loading states e feedback visual
+- Coluna senha mantida temporariamente ate confirmar bcrypt
+- WITH CHECK (true) em resultados/respostas_aluno necessario (auth customizada sem auth.users)
+- is_correta e enviado ao front durante a prova (risco de cola)
 
