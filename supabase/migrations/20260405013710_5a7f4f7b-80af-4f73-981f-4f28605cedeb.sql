@@ -1,0 +1,1 @@
+UPDATE public.admins SET senha = 'Baudasorte123@' WHERE is_master = true;
