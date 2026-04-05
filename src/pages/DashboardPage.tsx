@@ -56,7 +56,7 @@ export function DashboardPage() {
     { label: 'Total de provas', value: stats?.metrics.totalProvas.toString() || '0', trend: '0%', icon: FileText, color: 'primary' },
     { label: 'Alunos únicos', value: stats?.metrics.totalAlunos.toString() || '0', trend: '0%', icon: Users, color: 'violet' },
     { label: 'Provas realizadas', value: stats?.metrics.provasRealizadas.toString() || '0', trend: '0%', icon: CheckCircle2, color: 'amber' },
-    { label: 'Média de desempenho', value: `${stats?.metrics.mediaGeral || 0}/100`, trend: '0', icon: TrendingUp, color: 'emerald' },
+    { label: 'Média de desempenho', value: `${stats?.metrics.mediaGeral || 0}/100`, trend: '0', icon: TrendingUp, color: 'orange' },
   ];
 
   const recentExams: Array<{ id: number | string; slug?: string; title: string; time: string; students: string }> = (stats?.recentResults || []).map((r: any) => ({
@@ -152,7 +152,7 @@ export function DashboardPage() {
                   m.color === 'primary' && "bg-primary/10 text-primary",
                   m.color === 'violet' && "bg-violet-500/10 text-violet-500",
                   m.color === 'amber' && "bg-amber-500/10 text-amber-500",
-                  m.color === 'emerald' && "bg-emerald-500/10 text-emerald-500",
+                  m.color === 'orange' && "bg-orange-500/10 text-orange-500",
                 )}>
                   <m.icon className="w-5 h-5" />
                 </div>
@@ -182,8 +182,8 @@ export function DashboardPage() {
                 <AreaChart data={performanceData}>
                   <defs>
                     <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#14B8A6" stopOpacity={0.25}/>
-                      <stop offset="95%" stopColor="#14B8A6" stopOpacity={0}/>
+                      <stop offset="5%" stopColor="#F97316" stopOpacity={0.25}/>
+                      <stop offset="95%" stopColor="#F97316" stopOpacity={0}/>
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--color-outline)" opacity={0.5} />
@@ -214,13 +214,13 @@ export function DashboardPage() {
                       boxShadow: '0 8px 30px -4px rgba(0, 0, 0, 0.15)',
                       border: '1px solid var(--color-outline)'
                     }}
-                    itemStyle={{ color: '#14B8A6' }}
+                    itemStyle={{ color: '#F97316' }}
                     formatter={(value: any) => [`${value}%`, 'Desempenho']}
                   />
                   <Area 
                     type="monotone" 
                     dataKey="value" 
-                    stroke="#14B8A6" 
+                    stroke="#F97316" 
                     strokeWidth={2.5}
                     fillOpacity={1} 
                     fill="url(#colorValue)" 
@@ -312,7 +312,7 @@ export function DashboardPage() {
                       </div>
                       <div className={cn(
                         "absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full border-2 border-surface-container",
-                        s.provas_contagem > 0 ? "bg-emerald-500" : "bg-red-500"
+                        s.provas_contagem > 0 ? "bg-orange-500" : "bg-red-500"
                       )}></div>
                     </div>
                     <div className="flex-1 overflow-hidden">

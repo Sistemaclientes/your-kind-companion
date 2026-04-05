@@ -215,7 +215,7 @@ export function StudentsPage() {
                       <td className="px-6 py-6 text-center">
                         <span className={cn(
                           "px-3 py-1.5 text-[10px] font-bold rounded-xl uppercase tracking-widest shadow-sm",
-                          student.status === 'Ativo' ? "bg-green-500/10 text-green-600" : 
+                          student.status === 'Ativo' ? "bg-orange-500/10 text-orange-600" : 
                           student.status === 'Aguardando Confirmação' ? "bg-orange-500/10 text-orange-600" :
                           "bg-blue-500/10 text-blue-600"
                         )}>
@@ -228,7 +228,7 @@ export function StudentsPage() {
                       <td className="px-6 py-6 text-center">
                         <span className={cn(
                           "px-4 py-1.5 text-[10px] font-bold rounded-xl uppercase tracking-widest shadow-sm",
-                          student.media_pontuacao >= 70 ? "bg-green-500/10 text-green-600" : "bg-orange-500/10 text-orange-600"
+                          student.media_pontuacao >= 70 ? "bg-orange-500/10 text-orange-600" : "bg-red-500/10 text-red-600"
                         )}>
                           {Math.round(student.media_pontuacao)}%
                         </span>

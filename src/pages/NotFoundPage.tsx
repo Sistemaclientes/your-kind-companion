@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { ArrowLeft, LayoutDashboard, MapPinOff } from 'lucide-react';
 
-const REDIRECT_SECONDS = 8;
+const REDIRECT_SECONDS = 4;
 const LAST_ROUTE_KEY = 'last_valid_route';
 const ADMIN_FALLBACK = '/admin/dashboard';
 
