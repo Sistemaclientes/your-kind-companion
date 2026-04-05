@@ -4,7 +4,7 @@
 
 ## O que será feito
 
-Adicionar um bloco de explicação abaixo das alternativas de cada questão na tela de detalhes do resultado (`StudentResultDetailPage.tsx`), visível apenas quando o campo `explicacao` da pergunta estiver preenchido.
+Adicionar um bloco de explicação abaixo das alternativas de cada questão na tela de detalhes do resultado, visível apenas quando o campo `explicacao` da pergunta estiver preenchido.
 
 ## Alteração
 
