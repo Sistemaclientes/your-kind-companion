@@ -44,7 +44,15 @@ export const authService = {
       p_senha: senha,
     });
 
-    if (error) throw new Error(error.message);
+    if (error) {
+      if (error.message.includes('Confirme seu cadastro')) {
+        const customError: any = new Error(error.message);
+        customError.unconfirmed = true;
+        customError.email = email.trim().toLowerCase();
+        throw customError;
+      }
+      throw new Error(error.message);
+    }
 
     const aluno = data as any;
     return {
