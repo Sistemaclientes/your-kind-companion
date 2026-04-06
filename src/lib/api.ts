@@ -33,6 +33,15 @@ async function handleRoute(method: string, endpoint: string, data?: any): Promis
   if (method === 'POST' && endpoint === '/student/reset-password') {
     return authService.resetStudentPassword(data.email, data.token, data.new_password);
   }
+  if (method === 'GET' && endpoint.startsWith('/confirmar-email')) {
+    const url = new URL(endpoint, window.location.origin);
+    const token = url.searchParams.get('token');
+    if (!token) throw new Error('Token não fornecido');
+    return authService.confirmEmail(token);
+  }
+  if (method === 'POST' && endpoint === '/student/resend-confirmation') {
+    return authService.resendConfirmation(data.email);
+  }
   if (method === 'PUT' && endpoint === '/admins/change-password') {
     const user = api.getUser();
     if (!user) throw new Error('Não autenticado');

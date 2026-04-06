@@ -23,7 +23,7 @@ export function ConfirmEmailPage() {
         const res = await api.get(`/confirmar-email?token=${token}`);
         setStatus('success');
         setMessage(res.message || 'E-mail confirmado com sucesso!');
-        setTimeout(() => navigate('/aluno/login'), 3000);
+        setTimeout(() => navigate('/student/login'), 3000);
       } catch (err: any) {
         setStatus('error');
         setMessage(err.message || 'Erro ao confirmar e-mail. O link pode ter expirado.');
@@ -42,8 +42,8 @@ export function ConfirmEmailPage() {
       >
         <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto">
           {status === 'loading' && <Loader2 className="w-8 h-8 text-primary animate-spin" />}
-          {status === 'success' && <ShieldCheck className="w-8 h-8 text-green-500" />}
-          {status === 'error' && <XCircle className="w-8 h-8 text-red-500" />}
+          {status === 'success' && <ShieldCheck className="w-8 h-8 text-primary" />}
+          {status === 'error' && <XCircle className="w-8 h-8 text-error" />}
         </div>
 
         <h1 className="text-2xl font-black text-on-surface">
@@ -58,7 +58,7 @@ export function ConfirmEmailPage() {
 
         {status !== 'loading' && (
           <button 
-            onClick={() => navigate('/aluno/login')}
+            onClick={() => navigate('/student/login')}
             className="btn-primary w-full py-3.5 rounded-xl font-bold"
           >
             Ir para Login

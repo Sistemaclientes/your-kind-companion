@@ -44,7 +44,15 @@ export const authService = {
       p_senha: senha,
     });
 
-    if (error) throw new Error(error.message);
+    if (error) {
+      if (error.message.includes('Confirme seu cadastro')) {
+        const customError: any = new Error(error.message);
+        customError.unconfirmed = true;
+        customError.email = email.trim().toLowerCase();
+        throw customError;
+      }
+      throw new Error(error.message);
+    }
 
     const aluno = data as any;
     return {
@@ -75,13 +83,19 @@ export const authService = {
 
     if (existing) throw new Error('Este e-mail já está cadastrado.');
 
+    const confirmationToken = crypto.randomUUID();
+    const tokenExpiresAt = new Date(Date.now() + 60 * 60 * 1000).toISOString(); // 1 hour
+
     const { error } = await supabase.from('alunos').insert({
       nome: data.nome.trim(),
       email: emailLower,
       telefone: data.telefone?.trim() || '',
       senha: data.senha,
       cpf: data.cpf?.trim() || null,
-      status: 'Ativo',
+      status: 'Aguardando Confirmação',
+      email_confirmed: false,
+      confirmation_token: confirmationToken,
+      token_expires_at: tokenExpiresAt,
     });
 
     if (error) {
@@ -90,7 +104,83 @@ export const authService = {
       }
       throw new Error(error.message);
     }
-    return { message: 'Cadastro realizado com sucesso!' };
+
+    // Call edge function to send confirmation email
+    try {
+      await supabase.functions.invoke('send-confirmation-email', {
+        body: {
+          email: emailLower,
+          nome: data.nome.trim(),
+          token: confirmationToken,
+          origin: window.location.origin,
+        },
+      });
+    } catch (err) {
+      console.error('Error calling send-confirmation-email:', err);
+      // Don't throw here, the account was created successfully
+    }
+
+    return { 
+      message: 'Cadastro realizado com sucesso! Verifique seu e-mail para ativar sua conta.' 
+    };
+  },
+
+  async confirmEmail(token: string) {
+    const { data, error } = await supabase.rpc('confirmar_aluno', {
+      p_token: token,
+    });
+
+    if (error) throw new Error(error.message);
+    return data;
+  },
+
+  async resendConfirmation(email: string) {
+    const emailLower = email.trim().toLowerCase();
+    
+    // Check if user exists and is not confirmed
+    const { data: user, error: fetchError } = await supabase
+      .from('alunos')
+      .select('id, nome, email_confirmed')
+      .eq('email', emailLower)
+      .single();
+
+    if (fetchError || !user) {
+      // Return success anyway to avoid enumeration
+      return { message: 'Se o e-mail estiver cadastrado, um novo link será enviado.' };
+    }
+
+    if (user.email_confirmed) {
+      return { message: 'E-mail já confirmado.' };
+    }
+
+    const confirmationToken = crypto.randomUUID();
+    const tokenExpiresAt = new Date(Date.now() + 60 * 60 * 1000).toISOString(); // 1 hour
+
+    const { error: updateError } = await supabase
+      .from('alunos')
+      .update({
+        confirmation_token: confirmationToken,
+        token_expires_at: tokenExpiresAt,
+      })
+      .eq('id', user.id);
+
+    if (updateError) throw new Error('Erro ao processar solicitação.');
+
+    // Call edge function to send confirmation email
+    try {
+      await supabase.functions.invoke('send-confirmation-email', {
+        body: {
+          email: emailLower,
+          nome: user.nome,
+          token: confirmationToken,
+          origin: window.location.origin,
+        },
+      });
+    } catch (err) {
+      console.error('Error calling send-confirmation-email:', err);
+    }
+
+    return { message: 'Se o e-mail estiver cadastrado, um novo link será enviado.' };
   },
 
   async forgotPassword(email: string, userType: 'admin' | 'student') {

@@ -143,13 +143,12 @@ export function StudentLoginPage() {
 
       setRegSuccess(true);
 
-      setTimeout(() => {
-        setEmail(regEmail);
-        setPassword(regPassword);
-        setTab('login');
-        setRegSuccess(false);
-        setRegName(''); setRegEmail(''); setRegPhone(''); setRegCpf(''); setRegPassword(''); setRegConfirmPassword('');
-      }, 1500);
+      // Do not auto-redirect, let the user read the success message
+      // and go to login manually if they want, but the message is clear about checking email.
+      // Wait longer before resetting state if we wanted to redirect, 
+      // but for now, we'll let the user decide.
+      // We can add a "Back to Login" button in the success state or just stay there.
+      setRegName(''); setRegEmail(''); setRegPhone(''); setRegCpf(''); setRegPassword(''); setRegConfirmPassword('');
     } catch (err: any) {
       setRegError(err.message || 'Erro ao cadastrar. Tente novamente.');
     }
@@ -493,7 +492,14 @@ export function StudentLoginPage() {
                     <ShieldCheck className="w-7 h-7 text-primary" />
                   </div>
                   <p className="text-lg font-black text-on-surface font-headline">Cadastro realizado!</p>
-                  <p className="text-sm text-on-surface-variant">Um e-mail de confirmação foi enviado. Por favor, confirme seu cadastro para acessar a plataforma.</p>
+                  <p className="text-sm text-on-surface-variant font-medium">Um e-mail de confirmação foi enviado para {regEmail}. Por favor, confirme seu cadastro para acessar a plataforma.</p>
+                  <button 
+                    type="button" 
+                    onClick={() => { setTab('login'); setRegSuccess(false); }}
+                    className="btn-primary w-full py-3.5 rounded-xl font-bold mt-4"
+                  >
+                    Voltar ao Login
+                  </button>
                 </motion.div>
               ) : (
                 <>
