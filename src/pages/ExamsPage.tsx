@@ -69,6 +69,7 @@ export function ExamsPage() {
 
   React.useEffect(() => {
     fetchExams();
+    fetchStats();
   }, []);
 
   const handleDeleteAll = async () => {
