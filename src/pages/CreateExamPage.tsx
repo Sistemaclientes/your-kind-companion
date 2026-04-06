@@ -425,24 +425,12 @@ export function CreateExamPage() {
                           Categoria
                         </label>
                         <button 
-                          onClick={async () => {
-                            const nome = prompt('Digite o nome da nova categoria:');
-                            if (nome && nome.trim()) {
-                              try {
-                                const newCat = await api.post('/categorias', { nome });
-                                setCategories(prev => [...prev, newCat].sort((a, b) => a.nome.localeCompare(b.nome)));
-                                setCategoryId(newCat.id);
-                                setCategory(newCat.nome);
-                                toast.success('Categoria criada com sucesso!');
-                              } catch (err: any) {
-                                toast.error('Erro ao criar categoria: ' + err.message);
-                              }
-                            }
-                          }}
+                          type="button"
+                          onClick={() => setIsCategoryModalOpen(true)}
                           className="text-[10px] font-black uppercase tracking-widest text-primary hover:text-primary/70 transition-colors flex items-center gap-1"
                         >
                           <Plus className="w-3 h-3" />
-                          Nova
+                          Gerenciar
                         </button>
                       </div>
                       <div className="relative group">
