@@ -45,7 +45,6 @@ export function ExamsPage() {
   };
 
   const fetchExams = async () => {
-    setIsLoading(true);
     try {
       const data = await api.get('/provas');
       // Map backend fields to frontend format
@@ -62,8 +61,6 @@ export function ExamsPage() {
       setExams(mapped);
     } catch (err) {
       console.error('Error fetching exams:', err);
-    } finally {
-      setIsLoading(false);
     }
   };
 
