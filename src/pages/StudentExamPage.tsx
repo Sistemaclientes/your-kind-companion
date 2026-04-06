@@ -169,7 +169,7 @@ export function StudentExamPage() {
             <p className="text-[10px] text-on-surface-variant font-bold uppercase tracking-widest">{studentInfo?.email}</p>
           </div>
           <button 
-            className="btn-primary py-2.5 px-6 text-xs uppercase tracking-widest"
+            className="btn-primary py-2.5 px-4 sm:px-6 text-xs uppercase tracking-widest shadow-md"
             onClick={() => setShowFinishConfirm(true)}
           >
             <span>Finalizar</span>
@@ -289,17 +289,47 @@ export function StudentExamPage() {
         </AnimatePresence>
       </main>
 
-      {/* Bottom Navigation - Question counter only */}
-      <footer className="h-16 bg-surface-container border-t border-outline flex items-center justify-center px-6 md:px-10 sticky bottom-0 z-50 backdrop-blur-md bg-surface-container/90">
-        <div className="flex items-center gap-3">
-          <span className="text-xs font-bold text-on-surface-variant uppercase tracking-widest">
+      {/* Bottom Navigation - Enhanced with Navigation Buttons */}
+      <footer className="h-20 bg-surface-container border-t border-outline flex items-center justify-between px-4 md:px-10 sticky bottom-0 z-50 backdrop-blur-md bg-surface-container/90">
+        <div className="flex items-center gap-2 md:gap-4 flex-1">
+          <button 
+            onClick={handlePrev}
+            disabled={currentQuestionIdx === 0}
+            className="flex items-center gap-2 px-3 sm:px-5 py-2.5 rounded-xl border border-outline text-on-surface-variant hover:text-primary hover:bg-primary/5 transition-all disabled:opacity-30 disabled:pointer-events-none font-bold text-xs uppercase tracking-widest"
+          >
+            <ChevronLeft className="w-4 h-4" />
+            <span className="hidden sm:inline">Anterior</span>
+          </button>
+          
+          <button 
+            onClick={() => setShowMap(true)}
+            className="flex items-center gap-2 px-3 sm:px-5 py-2.5 rounded-xl border border-outline text-on-surface-variant hover:text-primary hover:bg-primary/5 transition-all font-bold text-xs uppercase tracking-widest"
+          >
+            <LayoutGrid className="w-4 h-4" />
+            <span className="hidden sm:inline">Ver Mapa</span>
+          </button>
+        </div>
+
+        <div className="flex-1 flex flex-col items-center justify-center text-center px-2">
+          <span className="text-[10px] sm:text-xs font-black text-on-surface-variant uppercase tracking-[0.15em] mb-0.5">
             Questão {currentQuestionIdx + 1} de {totalQuestions}
           </span>
-          <span className="text-xs text-on-surface-variant">•</span>
-          <span className="text-xs font-bold text-primary uppercase tracking-widest">
-            {Object.keys(answers).length} respondidas
-          </span>
+          <div className="hidden sm:flex items-center gap-1.5">
+            <div className="w-1.5 h-1.5 rounded-full bg-primary" />
+            <span className="text-[10px] font-bold text-primary uppercase tracking-widest">
+              {Object.keys(answers).length} respondidas
+            </span>
+          </div>
         </div>
+
+          <button 
+            onClick={handleNext}
+            className="flex items-center gap-2 px-3 sm:px-6 py-2.5 rounded-xl bg-primary text-white hover:bg-primary-container transition-all font-bold text-xs uppercase tracking-widest shadow-lg shadow-primary/20"
+          >
+            <span className="hidden sm:inline">{currentQuestionIdx === totalQuestions - 1 ? 'Finalizar' : 'Próxima'}</span>
+            <span className="inline sm:hidden">{currentQuestionIdx === totalQuestions - 1 ? 'Fim' : 'Próx'}</span>
+            <ChevronRight className="w-4 h-4" />
+          </button>
       </footer>
 
       {/* Question Map Modal */}

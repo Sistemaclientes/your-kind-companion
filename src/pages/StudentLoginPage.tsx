@@ -389,31 +389,31 @@ export function StudentLoginPage() {
           <button
             onClick={() => { setTab('login'); setError(''); setRegError(''); }}
             className={cn(
-              "flex-1 py-2.5 rounded-lg text-sm font-bold transition-all flex items-center justify-center gap-2",
+              "flex-1 py-2.5 rounded-lg text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-2",
               tab === 'login'
                 ? "bg-primary text-on-primary shadow-md"
                 : "text-on-surface-variant hover:text-on-surface"
             )}
           >
-            <LogIn className="w-4 h-4" />
+            <LogIn className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             Entrar
           </button>
           <button
             onClick={() => { setTab('register'); setError(''); setRegError(''); }}
             className={cn(
-              "flex-1 py-2.5 rounded-lg text-sm font-bold transition-all flex items-center justify-center gap-2",
+              "flex-1 py-2.5 rounded-lg text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-2",
               tab === 'register'
                 ? "bg-primary text-on-primary shadow-md"
                 : "text-on-surface-variant hover:text-on-surface"
             )}
           >
-            <UserPlus className="w-4 h-4" />
+            <UserPlus className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             Cadastrar
           </button>
         </div>
 
         <AnimatePresence mode="wait">
-          {tab === 'login' ? (
+          {tab === 'login' ?
             <motion.form
               key="login"
               initial={{ opacity: 0, x: -10 }}
@@ -477,7 +477,7 @@ export function StudentLoginPage() {
                 Entrar
               </button>
             </motion.form>
-          ) : (
+          :
             <motion.form
               key="register"
               initial={{ opacity: 0, x: 10 }}
@@ -561,7 +561,7 @@ export function StudentLoginPage() {
                 </>
               )}
             </motion.form>
-          )}
+          }
         </AnimatePresence>
 
         <p className="mt-8 text-center text-[10px] text-on-surface-variant font-bold uppercase tracking-widest opacity-40">

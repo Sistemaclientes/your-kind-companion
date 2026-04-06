@@ -275,7 +275,7 @@ export function StudentStartPage() {
 
             <div className="pt-2 sm:pt-4">
               <button 
-                className="w-full btn-primary py-3.5 sm:py-4 rounded-xl sm:rounded-2xl font-black text-base sm:text-lg shadow-xl shadow-primary/20 flex items-center justify-center gap-3 group"
+                className="w-full btn-primary py-3.5 sm:py-4 rounded-xl sm:rounded-2xl font-black text-sm sm:text-lg shadow-xl shadow-primary/20 flex items-center justify-center gap-3 group"
                 type="submit"
               >
                 <Play className="w-5 h-5 fill-current group-hover:scale-110 transition-transform" />
