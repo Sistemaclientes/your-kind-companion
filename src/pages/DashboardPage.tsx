@@ -63,7 +63,7 @@ export function DashboardPage() {
     id: r.prova_id,
     slug: r.prova_slug || r.slug,
     title: r.prova_titulo,
-    time: new Date(r.data).toLocaleDateString(),
+    time: r.data ? new Date(r.data).toLocaleDateString('pt-BR') : 'Recentemente',
     students: r.nome_aluno
   }));
 
