@@ -27,6 +27,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { api } from '../lib/api';
 import { Question } from '../types';
 import { CategoryModal } from '../components/CategoryModal';
+import { AIGenerator } from '../components/AIGenerator';
 
 export function CreateExamPage() {
   const navigate = useNavigate();
@@ -942,6 +943,14 @@ export function CreateExamPage() {
         isOpen={isCategoryModalOpen}
         onClose={() => setIsCategoryModalOpen(false)}
         onCategoryChange={fetchCategories}
+      />
+
+      <AIGenerator 
+        isOpen={showAIGenerator}
+        onClose={() => setShowAIGenerator(false)}
+        onQuestionsGenerated={(newQuestions) => {
+          setQuestions([...questions, ...newQuestions]);
+        }}
       />
     </div>
   );
