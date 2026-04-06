@@ -65,8 +65,15 @@ export function ExamsPage() {
   };
 
   React.useEffect(() => {
-    fetchExams();
-    fetchStats();
+    const loadAll = async () => {
+      setIsLoading(true);
+      try {
+        await Promise.all([fetchExams(), fetchStats()]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    loadAll();
   }, []);
 
   const handleDeleteAll = async () => {
