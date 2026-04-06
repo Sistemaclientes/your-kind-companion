@@ -169,11 +169,11 @@ export function SettingsPage() {
   return (
     <>
       <TopBar title="Painel Administrativo" subtitle="Configurações Gerais" />
-      <main className="pt-20 px-4 sm:px-6 pb-20 max-w-6xl mx-auto">
+      <main className="pt-24 px-4 sm:px-6 pb-20 max-w-7xl mx-auto">
         <header className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <h3 className="text-2xl sm:text-3xl font-bold text-on-surface mb-1 font-headline tracking-tight">Configurações</h3>
-            <p className="text-on-surface-variant font-medium text-sm">Gerencie os parâmetros globais das suas avaliações.</p>
+            <p className="text-on-surface-variant text-sm">Gerencie os parâmetros globais das suas avaliações.</p>
           </div>
           
           <AnimatePresence>
@@ -182,7 +182,7 @@ export function SettingsPage() {
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
-                className="bg-primary/10 text-primary px-4 py-2.5 rounded-xl flex items-center gap-2 border border-primary/20"
+                className="bg-primary/10 text-primary px-4 py-2 rounded-2xl flex items-center gap-2 border border-primary/20 shadow-sm"
               >
                 <div className="bg-primary/20 p-1 rounded-full">
                   <Check className="w-3.5 h-3.5" />
@@ -194,22 +194,24 @@ export function SettingsPage() {
         </header>
 
         {/* Section Navigation Tabs */}
-        <div className="flex gap-2 mb-8 overflow-x-auto pb-2 no-scrollbar">
-          {sections.map((section) => (
-            <button
-              key={section.id}
-              onClick={() => setActiveSection(section.id)}
-              className={cn(
-                "flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider whitespace-nowrap transition-all border",
-                activeSection === section.id
-                  ? "bg-primary/10 text-primary border-primary/20"
-                  : "bg-surface-container text-on-surface-variant border-outline hover:border-primary/20 hover:text-primary"
-              )}
-            >
-              <section.icon className="w-4 h-4" />
-              {section.label}
-            </button>
-          ))}
+        <div className="flex items-center gap-2 mb-8 overflow-x-auto pb-2 no-scrollbar scroll-smooth">
+          <div className="flex items-center gap-2 p-1 bg-surface-container-low/50 rounded-2xl border border-outline/30 backdrop-blur-sm">
+            {sections.map((section) => (
+              <button
+                key={section.id}
+                onClick={() => setActiveSection(section.id)}
+                className={cn(
+                  "flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold whitespace-nowrap transition-all duration-200 h-11",
+                  activeSection === section.id
+                    ? "bg-surface-container-high text-primary border border-primary/20 shadow-sm"
+                    : "text-on-surface-variant hover:text-on-surface hover:bg-surface-container/50 border border-transparent"
+                )}
+              >
+                <section.icon className={cn("w-4.5 h-4.5", activeSection === section.id ? "text-primary" : "text-on-surface-variant/70")} />
+                {section.label}
+              </button>
+            ))}
+          </div>
         </div>
 
         <form onSubmit={(e) => e.preventDefault()}>
