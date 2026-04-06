@@ -123,13 +123,13 @@ export function StudentsPage() {
   return (
     <>
       <TopBar title="Painel Administrativo" subtitle="Gestão de Alunos" />
-      <main className="pt-24 px-4 sm:px-6 pb-12 max-w-7xl mx-auto">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
+      <main className="pt-24 px-4 sm:px-6 pb-20 max-w-7xl mx-auto">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 mb-10">
           <div>
-            <h1 className="text-3xl font-bold text-on-surface font-headline tracking-tight">Gestão de Alunos</h1>
-            <p className="text-on-surface-variant font-medium mt-1">Visualize e gerencie todos os estudantes que já realizaram provas.</p>
+            <h1 className="text-2xl sm:text-3xl font-bold text-on-surface font-headline tracking-tight">Gestão de Alunos</h1>
+            <p className="text-on-surface-variant font-medium mt-1 text-sm">Visualize e gerencie todos os estudantes que já realizaram provas.</p>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex flex-col sm:flex-row items-center gap-3">
             <button 
               onClick={async () => {
                 if (confirm('Deseja reenviar e-mail de confirmação para TODOS os alunos não confirmados?')) {
@@ -141,7 +141,7 @@ export function StudentsPage() {
                   }
                 }
               }} 
-              className="btn-secondary px-5 py-2.5 flex items-center gap-2 text-primary hover:bg-primary/5"
+              className="w-full sm:w-auto btn-primary px-6 h-11 flex items-center justify-center gap-2 rounded-2xl shadow-sm transition-all text-sm font-semibold"
             >
               <Mail className="w-4 h-4" />
               Reenviar Confirmações
@@ -158,13 +158,13 @@ export function StudentsPage() {
                   }
                 }
               }} 
-              className="btn-secondary px-5 py-2.5 flex items-center gap-2 text-red-600 hover:bg-red-50"
+              className="w-full sm:w-auto btn-secondary bg-surface-container-high hover:bg-red-500/10 hover:text-red-500 px-6 h-11 flex items-center justify-center gap-2 rounded-2xl border-none shadow-sm transition-all text-sm font-semibold"
             >
               <LogOut className="w-4 h-4" />
               Deslogar Todos
             </button>
 
-            <button onClick={handleExport} className="btn-secondary px-5 py-2.5 flex items-center gap-2">
+            <button onClick={handleExport} className="w-full sm:w-auto btn-secondary px-6 h-11 flex items-center justify-center gap-2 rounded-2xl bg-surface-container shadow-sm border-none transition-all text-sm font-semibold">
               <Download className="w-4 h-4 text-primary" />
               Exportar
             </button>
