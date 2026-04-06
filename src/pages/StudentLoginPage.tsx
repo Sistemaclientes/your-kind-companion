@@ -410,13 +410,6 @@ export function StudentLoginPage() {
             <UserPlus className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             Cadastrar
           </button>
-                ? "bg-primary text-on-primary shadow-md"
-                : "text-on-surface-variant hover:text-on-surface"
-            )}
-          >
-            <UserPlus className="w-4 h-4" />
-            Cadastrar
-          </button>
         </div>
 
         <AnimatePresence mode="wait">
