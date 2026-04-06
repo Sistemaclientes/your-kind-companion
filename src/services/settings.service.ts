@@ -8,21 +8,35 @@ export interface VisualIdentity {
 
 export const settingsService = {
   async getVisualIdentity(): Promise<VisualIdentity> {
-    const { data, error } = await supabase
-      .from('configuracoes')
-      .select('valor')
-      .eq('chave', 'visual_identity')
-      .single();
+    try {
+      const { data, error } = await supabase
+        .from('configuracoes')
+        .select('valor')
+        .eq('chave', 'visual_identity')
+        .maybeSingle();
 
-    if (error || !data) {
+      if (error || !data) {
+        return {
+          logo_url: '',
+          primary_color: '#0F8B8D',
+          success_color: '#10B981',
+        };
+      }
+
+      const valor = data.valor as any;
+      return {
+        logo_url: valor.logo_url || '',
+        primary_color: valor.primary_color || '#0F8B8D',
+        success_color: valor.success_color || '#10B981',
+      };
+    } catch (err) {
+      console.error('Error in getVisualIdentity:', err);
       return {
         logo_url: '',
         primary_color: '#0F8B8D',
         success_color: '#10B981',
       };
     }
-
-    return data.valor as VisualIdentity;
   },
 
   async updateVisualIdentity(identity: Partial<VisualIdentity>) {
