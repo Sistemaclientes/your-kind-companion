@@ -289,28 +289,12 @@ export function StudentsPage() {
                                 <Pencil className="w-4 h-4" />
                               </button>
                               <button
-                                onClick={async () => {
-                                  if (!confirm(`Deseja realmente excluir o aluno "${student.nome}"? Todos os resultados serão removidos.`)) return;
-                                  setActionLoading(true);
-                                  try {
-                                    await studentsService.deleteStudent(student.email);
-                                    // Re-fetch from database to confirm deletion
-                                    const data = await api.get('/dashboard/students');
-                                    const map = getStudentSlugMap();
-                                    const mapped = data.map((s: any) => {
-                                      const slug = buildStudentSlug(s.nome, s.email);
-                                      map[slug] = s.email;
-                                      return { ...s, slug };
-                                    });
-                                    setStudentSlugMap(map);
-                                    setStudents(mapped);
-                                  } catch (err: any) {
-                                    alert(err.message || 'Erro ao excluir');
-                                  } finally {
-                                    setActionLoading(false);
-                                  }
+                                disabled={actionLoading}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setStudentToDelete({ email: student.email, nome: student.nome });
                                 }}
-                                className="p-2 rounded-lg hover:bg-red-500/10 text-on-surface-variant hover:text-red-500 transition-all"
+                                className="p-2 rounded-lg hover:bg-red-500/10 text-on-surface-variant hover:text-red-500 transition-all disabled:opacity-50"
                                 title="Excluir"
                               >
                                 <Trash2 className="w-4 h-4" />
