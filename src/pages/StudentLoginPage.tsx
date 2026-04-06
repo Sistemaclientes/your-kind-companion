@@ -38,7 +38,7 @@ export function StudentLoginPage() {
   const [regName, setRegName] = React.useState('');
   const [regEmail, setRegEmail] = React.useState('');
   const [regPhone, setRegPhone] = React.useState('');
-  const [regCpf, setRegCpf] = React.useState('');
+  // regCpf removed
   const [regPassword, setRegPassword] = React.useState('');
   const [regConfirmPassword, setRegConfirmPassword] = React.useState('');
   const [showRegPassword, setShowRegPassword] = React.useState(false);
@@ -138,7 +138,6 @@ export function StudentLoginPage() {
         email: regEmail,
         telefone: regPhone,
         senha: regPassword,
-        cpf: regCpf
       });
 
       setRegSuccess(true);
@@ -148,7 +147,7 @@ export function StudentLoginPage() {
       // Wait longer before resetting state if we wanted to redirect, 
       // but for now, we'll let the user decide.
       // We can add a "Back to Login" button in the success state or just stay there.
-      setRegName(''); setRegEmail(''); setRegPhone(''); setRegCpf(''); setRegPassword(''); setRegConfirmPassword('');
+      setRegName(''); setRegEmail(''); setRegPhone(''); setRegPassword(''); setRegConfirmPassword('');
     } catch (err: any) {
       setRegError(err.message || 'Erro ao cadastrar. Tente novamente.');
     }
@@ -527,13 +526,7 @@ export function StudentLoginPage() {
                     </div>
                   </div>
 
-                  <div className="space-y-2">
-                    <label className={labelClass}>CPF</label>
-                    <div className="relative group">
-                      <User className={iconClass} />
-                      <input className={inputClass} placeholder="000.000.000-00" type="text" value={regCpf} onChange={(e) => setRegCpf(e.target.value)} required />
-                    </div>
-                  </div>
+                  {/* Removed CPF field */}
 
                   <div className="space-y-2">
                     <label className={labelClass}>Senha</label>
