@@ -35,6 +35,8 @@ const fadeUp = {
 
 export function DashboardPage() {
   const navigate = useNavigate();
+  const user = api.getUser();
+  const [stats, setStats] = React.useState<any>(null);
   const [stats, setStats] = React.useState<any>(null);
   const [loading, setLoading] = React.useState(true);
 
@@ -125,7 +127,7 @@ export function DashboardPage() {
         <motion.div variants={fadeUp} className="mb-10 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
           <div>
             <h1 className="text-3xl md:text-4xl font-bold text-on-surface tracking-tight leading-tight">
-              Bem-vindo, <span className="text-primary">Administrador</span>
+              Bem-vindo, <span className="text-primary">{user?.nome?.split(' ')[0] || 'Administrador'}</span>
             </h1>
             <p className="text-on-surface-variant font-medium mt-2 text-base md:text-lg">Resumo do desempenho da sua instituição.</p>
           </div>
