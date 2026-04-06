@@ -44,6 +44,7 @@ export function StudentLoginPage() {
   const [showRegPassword, setShowRegPassword] = React.useState(false);
   const [regError, setRegError] = React.useState('');
   const [regSuccess, setRegSuccess] = React.useState(false);
+  const [registeredEmail, setRegisteredEmail] = React.useState('');
 
   // Load saved credentials
   React.useEffect(() => {
@@ -141,6 +142,7 @@ export function StudentLoginPage() {
       });
 
       setRegSuccess(true);
+      setRegisteredEmail(regEmail);
 
       // Do not auto-redirect, let the user read the success message
       // and go to login manually if they want, but the message is clear about checking email.
@@ -491,7 +493,7 @@ export function StudentLoginPage() {
                     <ShieldCheck className="w-7 h-7 text-primary" />
                   </div>
                   <p className="text-lg font-black text-on-surface font-headline">Cadastro realizado!</p>
-                  <p className="text-sm text-on-surface-variant font-medium">Um e-mail de confirmação foi enviado para {regEmail}. Por favor, confirme seu cadastro para acessar a plataforma.</p>
+                  <p className="text-sm text-on-surface-variant font-medium">Um e-mail de confirmação foi enviado para {registeredEmail}. Por favor, confirme seu cadastro para acessar a plataforma.</p>
                   <button 
                     type="button" 
                     onClick={() => { setTab('login'); setRegSuccess(false); }}
