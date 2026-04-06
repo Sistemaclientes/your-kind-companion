@@ -25,7 +25,7 @@ export function StudentSidebar({ isOpen, onClose }: StudentSidebarProps) {
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const [currentTime, setCurrentTime] = React.useState(new Date());
-  const [customLogo, setCustomLogo] = React.useState<string | null>(null);
+  const { settings } = useVisualSettings();
 
   const [studentInfo, setStudentInfo] = React.useState<any>(() => {
     try {
