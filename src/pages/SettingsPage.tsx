@@ -31,19 +31,14 @@ export function SettingsPage() {
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [newAdmin, setNewAdmin] = useState({ nome: '', email: '', senha: '' });
   const [isCreatingAdmin, setIsCreatingAdmin] = useState(false);
-  const [logoPreview, setLogoPreview] = useState<string | null>(null);
+  const { settings, updateSettings, isLoading: settingsLoading } = useVisualSettings();
   const [passwordData, setPasswordData] = useState({ current: '', new: '', confirm: '' });
   const [isChangingPassword, setIsChangingPassword] = useState(false);
   const [passwordMsg, setPasswordMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [activeSection, setActiveSection] = useState<string>('academicas');
   const logoInputRef = React.useRef<HTMLInputElement>(null);
 
-  React.useEffect(() => {
-    const saved = localStorage.getItem('institution_logo');
-    if (saved) setLogoPreview(saved);
-  }, []);
-
-  const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     if (file.size > 2 * 1024 * 1024) {
@@ -55,23 +50,31 @@ export function SettingsPage() {
       return;
     }
     const reader = new FileReader();
-    reader.onload = () => {
+    reader.onload = async () => {
       const result = reader.result as string;
-      setLogoPreview(result);
-      localStorage.setItem('institution_logo', result);
-      window.dispatchEvent(new Event('logo-updated'));
+      try {
+        await updateSettings({ logo_url: result });
+        toast.success('Logo atualizada!');
+        window.dispatchEvent(new Event('logo-updated'));
+      } catch (err) {
+        toast.error('Erro ao salvar logo no banco de dados');
+      }
     };
     reader.readAsDataURL(file);
   };
 
-  const handleRemoveLogo = () => {
-    setLogoPreview(null);
-    localStorage.removeItem('institution_logo');
-    window.dispatchEvent(new Event('logo-updated'));
-    if (logoInputRef.current) logoInputRef.current.value = '';
+  const handleRemoveLogo = async () => {
+    try {
+      await updateSettings({ logo_url: '' });
+      toast.success('Logo removida!');
+      window.dispatchEvent(new Event('logo-updated'));
+      if (logoInputRef.current) logoInputRef.current.value = '';
+    } catch (err) {
+      toast.error('Erro ao remover logo');
+    }
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     const userJson = localStorage.getItem('saas_user');
     if (userJson) {
       const user = JSON.parse(userJson);
