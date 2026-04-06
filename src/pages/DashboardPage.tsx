@@ -54,7 +54,7 @@ export function DashboardPage() {
 
   const metrics = [
     { label: 'Total de provas', value: stats?.metrics.totalProvas.toString() || '0', trend: '0%', icon: FileText, color: 'primary' },
-    { label: 'Alunos únicos', value: stats?.metrics.totalAlunos.toString() || '0', trend: '0%', icon: Users, color: 'violet' },
+    { label: 'Total de alunos', value: stats?.metrics.totalAlunos.toString() || '0', trend: '0%', icon: Users, color: 'violet' },
     { label: 'Provas realizadas', value: stats?.metrics.provasRealizadas.toString() || '0', trend: '0%', icon: CheckCircle2, color: 'amber' },
     { label: 'Média de desempenho', value: `${stats?.metrics.mediaGeral || 0}/100`, trend: '0', icon: TrendingUp, color: 'orange' },
   ];
