@@ -12,6 +12,7 @@ import { RouteTracker } from './components/RouteTracker';
 import { PrivateRoute } from './components/PrivateRoute';
 import { PublicRoute } from './components/PublicRoute';
 import { AuthProvider, useAuthStore } from './lib/authStore';
+import { VisualSettingsProvider } from './components/VisualSettingsProvider';
 
 // Lazy load pages
 const LoginPage = lazy(() => import('./pages/LoginPage').then(m => ({ default: m.LoginPage })));
