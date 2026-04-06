@@ -355,6 +355,39 @@ export type Database = {
         }
         Relationships: []
       }
+      email_logs: {
+        Row: {
+          created_at: string
+          error_message: string | null
+          id: string
+          resend_id: string | null
+          status: string
+          subject: string
+          template: string
+          to_email: string
+        }
+        Insert: {
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          resend_id?: string | null
+          status?: string
+          subject: string
+          template: string
+          to_email: string
+        }
+        Update: {
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          resend_id?: string | null
+          status?: string
+          subject?: string
+          template?: string
+          to_email?: string
+        }
+        Relationships: []
+      }
       logs_atividade: {
         Row: {
           acao: string
