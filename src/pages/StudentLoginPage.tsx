@@ -492,7 +492,14 @@ export function StudentLoginPage() {
                     <ShieldCheck className="w-7 h-7 text-primary" />
                   </div>
                   <p className="text-lg font-black text-on-surface font-headline">Cadastro realizado!</p>
-                  <p className="text-sm text-on-surface-variant">Um e-mail de confirmação foi enviado. Por favor, confirme seu cadastro para acessar a plataforma.</p>
+                  <p className="text-sm text-on-surface-variant font-medium">Um e-mail de confirmação foi enviado para {regEmail}. Por favor, confirme seu cadastro para acessar a plataforma.</p>
+                  <button 
+                    type="button" 
+                    onClick={() => { setTab('login'); setRegSuccess(false); }}
+                    className="btn-primary w-full py-3.5 rounded-xl font-bold mt-4"
+                  >
+                    Voltar ao Login
+                  </button>
                 </motion.div>
               ) : (
                 <>
