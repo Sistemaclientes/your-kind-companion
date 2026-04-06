@@ -547,6 +547,10 @@ export type Database = {
           role: Database["public"]["Enums"]["user_role"]
           situacao_cadastral: string | null
           status: string | null
+          stripe_customer_id: string | null
+          stripe_subscription_id: string | null
+          subscription_plan: string | null
+          subscription_status: string | null
           telefone: string | null
           telefone_comercial: string | null
           updated_at: string
@@ -573,6 +577,10 @@ export type Database = {
           role?: Database["public"]["Enums"]["user_role"]
           situacao_cadastral?: string | null
           status?: string | null
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          subscription_plan?: string | null
+          subscription_status?: string | null
           telefone?: string | null
           telefone_comercial?: string | null
           updated_at?: string
@@ -599,6 +607,10 @@ export type Database = {
           role?: Database["public"]["Enums"]["user_role"]
           situacao_cadastral?: string | null
           status?: string | null
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          subscription_plan?: string | null
+          subscription_status?: string | null
           telefone?: string | null
           telefone_comercial?: string | null
           updated_at?: string
