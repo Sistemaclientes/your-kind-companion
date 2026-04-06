@@ -944,6 +944,14 @@ export function CreateExamPage() {
         onClose={() => setIsCategoryModalOpen(false)}
         onCategoryChange={fetchCategories}
       />
+
+      <AIGenerator 
+        isOpen={showAIGenerator}
+        onClose={() => setShowAIGenerator(false)}
+        onQuestionsGenerated={(newQuestions) => {
+          setQuestions([...questions, ...newQuestions]);
+        }}
+      />
     </div>
   );
 }
