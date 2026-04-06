@@ -322,15 +322,14 @@ export function StudentExamPage() {
           </div>
         </div>
 
-        <div className="flex-1 flex justify-end">
           <button 
             onClick={handleNext}
             className="flex items-center gap-2 px-3 sm:px-6 py-2.5 rounded-xl bg-primary text-white hover:bg-primary-container transition-all font-bold text-xs uppercase tracking-widest shadow-lg shadow-primary/20"
           >
             <span className="hidden sm:inline">{currentQuestionIdx === totalQuestions - 1 ? 'Finalizar' : 'Próxima'}</span>
+            <span className="inline sm:hidden">{currentQuestionIdx === totalQuestions - 1 ? 'Fim' : 'Próx'}</span>
             <ChevronRight className="w-4 h-4" />
           </button>
-        </div>
       </footer>
 
       {/* Question Map Modal */}
