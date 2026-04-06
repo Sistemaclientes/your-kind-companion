@@ -1,18 +1,22 @@
 import React from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { 
   LayoutDashboard, 
-  FileText, 
+  BookOpen, 
   Users, 
   Settings, 
-  LogOut,
-  Sun,
-  Moon
+  LogOut, 
+  ChevronLeft,
+  ChevronRight,
+  Menu,
+  X,
+  PlusCircle,
+  BarChart3,
+  Shield
 } from 'lucide-react';
 import { cn } from '../lib/utils';
-import { useTheme } from '../lib/ThemeContext';
-import { api } from '../lib/api';
 import { useAuthStore } from '../lib/authStore';
+import { useVisualSettings } from './VisualSettingsProvider';
 import logoWhite from '../assets/livro_logo_white.png';
 import logoDark from '../assets/livro_logo_dark.png';
 
