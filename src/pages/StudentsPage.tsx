@@ -35,6 +35,7 @@ export function StudentsPage() {
   const [editingStudent, setEditingStudent] = useState<string | null>(null);
   const [editForm, setEditForm] = useState<{ nome: string; cpf: string; telefone: string }>({ nome: '', cpf: '', telefone: '' });
   const [actionLoading, setActionLoading] = useState(false);
+  const [studentToDelete, setStudentToDelete] = useState<{ email: string; nome: string } | null>(null);
 
   const itemsPerPage = 10;
 
