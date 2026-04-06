@@ -121,6 +121,7 @@ export type Database = {
       alunos: {
         Row: {
           avatar_url: string | null
+          bio: string | null
           confirmation_token: string | null
           cpf: string | null
           created_at: string | null
@@ -143,6 +144,7 @@ export type Database = {
         }
         Insert: {
           avatar_url?: string | null
+          bio?: string | null
           confirmation_token?: string | null
           cpf?: string | null
           created_at?: string | null
@@ -165,6 +167,7 @@ export type Database = {
         }
         Update: {
           avatar_url?: string | null
+          bio?: string | null
           confirmation_token?: string | null
           cpf?: string | null
           created_at?: string | null
@@ -561,6 +564,7 @@ export type Database = {
         Row: {
           active: boolean | null
           avatar_url: string | null
+          bio: string | null
           cnpj: string | null
           cpf: string | null
           created_at: string
@@ -579,6 +583,7 @@ export type Database = {
           razao_social: string | null
           role: Database["public"]["Enums"]["user_role"]
           situacao_cadastral: string | null
+          social_links: Json | null
           status: string | null
           stripe_customer_id: string | null
           stripe_subscription_id: string | null
@@ -591,6 +596,7 @@ export type Database = {
         Insert: {
           active?: boolean | null
           avatar_url?: string | null
+          bio?: string | null
           cnpj?: string | null
           cpf?: string | null
           created_at?: string
@@ -609,6 +615,7 @@ export type Database = {
           razao_social?: string | null
           role?: Database["public"]["Enums"]["user_role"]
           situacao_cadastral?: string | null
+          social_links?: Json | null
           status?: string | null
           stripe_customer_id?: string | null
           stripe_subscription_id?: string | null
@@ -621,6 +628,7 @@ export type Database = {
         Update: {
           active?: boolean | null
           avatar_url?: string | null
+          bio?: string | null
           cnpj?: string | null
           cpf?: string | null
           created_at?: string
@@ -639,6 +647,7 @@ export type Database = {
           razao_social?: string | null
           role?: Database["public"]["Enums"]["user_role"]
           situacao_cadastral?: string | null
+          social_links?: Json | null
           status?: string | null
           stripe_customer_id?: string | null
           stripe_subscription_id?: string | null
@@ -1024,6 +1033,7 @@ export type Database = {
       }
       turmas: {
         Row: {
+          codigo_acesso: string | null
           created_at: string
           descricao: string | null
           id: string
@@ -1034,6 +1044,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          codigo_acesso?: string | null
           created_at?: string
           descricao?: string | null
           id?: string
@@ -1044,6 +1055,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          codigo_acesso?: string | null
           created_at?: string
           descricao?: string | null
           id?: string
