@@ -56,16 +56,6 @@ export function StudentSidebar({ isOpen, onClose }: StudentSidebarProps) {
     return () => clearInterval(timer);
   }, []);
 
-  React.useEffect(() => {
-    const loadLogo = () => {
-      const saved = localStorage.getItem('institution_logo');
-      setCustomLogo(saved);
-    };
-    loadLogo();
-    window.addEventListener('logo-updated', loadLogo);
-    return () => window.removeEventListener('logo-updated', loadLogo);
-  }, []);
-
   const { logout } = useAuthStore();
 
   const handleLogout = () => {
@@ -88,7 +78,11 @@ export function StudentSidebar({ isOpen, onClose }: StudentSidebarProps) {
     )}>
       {/* Logo & Time */}
       <div className="px-3 py-5 mb-3 flex flex-col items-start gap-3">
-        <img src={customLogo || (theme === 'dark' ? logoWhite : logoDark)} alt="Logo" className="w-12 h-12 rounded-xl object-cover ring-2 ring-outline shadow-md" />
+        <img 
+          src={settings.logo_url || (theme === 'dark' ? logoWhite : logoDark)} 
+          alt="Logo" 
+          className="w-12 h-12 rounded-xl object-cover ring-2 ring-outline shadow-md" 
+        />
         <div className="flex flex-col">
           <p className="text-sm font-semibold text-on-surface tabular-nums">
             Hora: {currentTime.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
