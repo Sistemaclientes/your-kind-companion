@@ -37,7 +37,6 @@ export function DashboardPage() {
   const navigate = useNavigate();
   const user = api.getUser();
   const [stats, setStats] = React.useState<any>(null);
-  const [stats, setStats] = React.useState<any>(null);
   const [loading, setLoading] = React.useState(true);
 
   React.useEffect(() => {
@@ -184,8 +183,8 @@ export function DashboardPage() {
                 <AreaChart data={performanceData}>
                   <defs>
                     <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#F97316" stopOpacity={0.25}/>
-                      <stop offset="95%" stopColor="#F97316" stopOpacity={0}/>
+                      <stop offset="5%" stopColor="var(--color-primary)" stopOpacity={0.25}/>
+                      <stop offset="95%" stopColor="var(--color-primary)" stopOpacity={0}/>
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--color-outline)" opacity={0.5} />
@@ -216,13 +215,13 @@ export function DashboardPage() {
                       boxShadow: '0 8px 30px -4px rgba(0, 0, 0, 0.15)',
                       border: '1px solid var(--color-outline)'
                     }}
-                    itemStyle={{ color: '#F97316' }}
+                    itemStyle={{ color: 'var(--color-primary)' }}
                     formatter={(value: any) => [`${value}%`, 'Desempenho']}
                   />
                   <Area 
                     type="monotone" 
                     dataKey="value" 
-                    stroke="#F97316" 
+                    stroke="var(--color-primary)" 
                     strokeWidth={2.5}
                     fillOpacity={1} 
                     fill="url(#colorValue)" 
