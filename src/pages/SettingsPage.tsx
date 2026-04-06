@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { TopBar } from '../components/TopBar';
 import { 
@@ -22,6 +22,7 @@ import {
 import { cn } from '../lib/utils';
 import { motion, AnimatePresence } from 'motion/react';
 import { api } from '../lib/api';
+import { useVisualSettings } from '../components/VisualSettingsProvider';
 
 export function SettingsPage() {
   const [isSaving, setIsSaving] = useState(false);
