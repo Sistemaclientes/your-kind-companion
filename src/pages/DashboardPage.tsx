@@ -35,6 +35,7 @@ const fadeUp = {
 
 export function DashboardPage() {
   const navigate = useNavigate();
+  const user = api.getUser();
   const [stats, setStats] = React.useState<any>(null);
   const [loading, setLoading] = React.useState(true);
 
@@ -63,7 +64,7 @@ export function DashboardPage() {
     id: r.prova_id,
     slug: r.prova_slug || r.slug,
     title: r.prova_titulo,
-    time: new Date(r.data).toLocaleDateString(),
+    time: r.data ? new Date(r.data).toLocaleDateString('pt-BR') : 'Recentemente',
     students: r.nome_aluno
   }));
 
@@ -125,7 +126,7 @@ export function DashboardPage() {
         <motion.div variants={fadeUp} className="mb-10 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
           <div>
             <h1 className="text-3xl md:text-4xl font-bold text-on-surface tracking-tight leading-tight">
-              Bem-vindo, <span className="text-primary">Administrador</span>
+              Bem-vindo, <span className="text-primary">{user?.nome?.split(' ')[0] || 'Administrador'}</span>
             </h1>
             <p className="text-on-surface-variant font-medium mt-2 text-base md:text-lg">Resumo do desempenho da sua instituição.</p>
           </div>
@@ -182,8 +183,8 @@ export function DashboardPage() {
                 <AreaChart data={performanceData}>
                   <defs>
                     <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#F97316" stopOpacity={0.25}/>
-                      <stop offset="95%" stopColor="#F97316" stopOpacity={0}/>
+                      <stop offset="5%" stopColor="var(--color-primary)" stopOpacity={0.25}/>
+                      <stop offset="95%" stopColor="var(--color-primary)" stopOpacity={0}/>
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--color-outline)" opacity={0.5} />
@@ -214,13 +215,13 @@ export function DashboardPage() {
                       boxShadow: '0 8px 30px -4px rgba(0, 0, 0, 0.15)',
                       border: '1px solid var(--color-outline)'
                     }}
-                    itemStyle={{ color: '#F97316' }}
+                    itemStyle={{ color: 'var(--color-primary)' }}
                     formatter={(value: any) => [`${value}%`, 'Desempenho']}
                   />
                   <Area 
                     type="monotone" 
                     dataKey="value" 
-                    stroke="#F97316" 
+                    stroke="var(--color-primary)" 
                     strokeWidth={2.5}
                     fillOpacity={1} 
                     fill="url(#colorValue)" 
