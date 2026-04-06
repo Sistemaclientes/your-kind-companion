@@ -28,11 +28,21 @@ import { motion, AnimatePresence } from 'motion/react';
 export function ExamsPage() {
   const navigate = useNavigate();
   const [exams, setExams] = React.useState<any[]>([]);
+  const [dashboardStats, setDashboardStats] = React.useState<any>(null);
   const [isLoading, setIsLoading] = React.useState(true);
   const [showDeleteConfirm, setShowDeleteConfirm] = React.useState(false);
   const [examToDelete, setExamToDelete] = React.useState<string | null>(null);
   const [dateFilter, setDateFilter] = React.useState('Todos');
   const [sortBy, setSortBy] = React.useState('Recentes');
+
+  const fetchStats = async () => {
+    try {
+      const data = await api.get('/dashboard/stats');
+      setDashboardStats(data);
+    } catch (err) {
+      console.error('Error fetching dashboard stats:', err);
+    }
+  };
 
   const fetchExams = async () => {
     setIsLoading(true);
