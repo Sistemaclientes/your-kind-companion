@@ -169,7 +169,7 @@ export function StudentExamPage() {
             <p className="text-[10px] text-on-surface-variant font-bold uppercase tracking-widest">{studentInfo?.email}</p>
           </div>
           <button 
-            className="btn-primary py-2.5 px-6 text-xs uppercase tracking-widest"
+            className="btn-primary py-2.5 px-4 sm:px-6 text-xs uppercase tracking-widest shadow-md"
             onClick={() => setShowFinishConfirm(true)}
           >
             <span>Finalizar</span>
