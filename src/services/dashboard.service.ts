@@ -3,13 +3,13 @@ import { supabase } from './supabase';
 export const dashboardService = {
   async getStats() {
     const { data: provas } = await supabase.from('provas').select('id');
+    const { count: totalAlunos } = await supabase.from('alunos').select('*', { count: 'exact', head: true });
     const { data: resultados } = await supabase
       .from('resultados')
       .select('*, alunos(nome, email), provas(titulo, slug)')
       .order('data', { ascending: false });
 
     const results = resultados || [];
-    const uniqueEmails = new Set(results.map((r: any) => r.alunos?.email));
     const avg = results.length > 0
       ? results.reduce((s: number, r: any) => s + (r.pontuacao || 0), 0) / results.length
       : 0;
@@ -17,7 +17,7 @@ export const dashboardService = {
     return {
       metrics: {
         totalProvas: provas?.length || 0,
-        totalAlunos: uniqueEmails.size,
+        totalAlunos: totalAlunos || 0,
         provasRealizadas: results.length,
         mediaGeral: Math.round(avg),
       },
