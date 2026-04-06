@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { TopBar } from '../components/TopBar';
 import { 
@@ -22,6 +22,7 @@ import {
 import { cn } from '../lib/utils';
 import { motion, AnimatePresence } from 'motion/react';
 import { api } from '../lib/api';
+import { useVisualSettings } from '../components/VisualSettingsProvider';
 
 export function SettingsPage() {
   const [isSaving, setIsSaving] = useState(false);
@@ -30,19 +31,14 @@ export function SettingsPage() {
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [newAdmin, setNewAdmin] = useState({ nome: '', email: '', senha: '' });
   const [isCreatingAdmin, setIsCreatingAdmin] = useState(false);
-  const [logoPreview, setLogoPreview] = useState<string | null>(null);
+  const { settings, updateSettings, isLoading: settingsLoading } = useVisualSettings();
   const [passwordData, setPasswordData] = useState({ current: '', new: '', confirm: '' });
   const [isChangingPassword, setIsChangingPassword] = useState(false);
   const [passwordMsg, setPasswordMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [activeSection, setActiveSection] = useState<string>('academicas');
   const logoInputRef = React.useRef<HTMLInputElement>(null);
 
-  React.useEffect(() => {
-    const saved = localStorage.getItem('institution_logo');
-    if (saved) setLogoPreview(saved);
-  }, []);
-
-  const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     if (file.size > 2 * 1024 * 1024) {
@@ -54,23 +50,31 @@ export function SettingsPage() {
       return;
     }
     const reader = new FileReader();
-    reader.onload = () => {
+    reader.onload = async () => {
       const result = reader.result as string;
-      setLogoPreview(result);
-      localStorage.setItem('institution_logo', result);
-      window.dispatchEvent(new Event('logo-updated'));
+      try {
+        await updateSettings({ logo_url: result });
+        toast.success('Logo atualizada!');
+        window.dispatchEvent(new Event('logo-updated'));
+      } catch (err) {
+        toast.error('Erro ao salvar logo no banco de dados');
+      }
     };
     reader.readAsDataURL(file);
   };
 
-  const handleRemoveLogo = () => {
-    setLogoPreview(null);
-    localStorage.removeItem('institution_logo');
-    window.dispatchEvent(new Event('logo-updated'));
-    if (logoInputRef.current) logoInputRef.current.value = '';
+  const handleRemoveLogo = async () => {
+    try {
+      await updateSettings({ logo_url: '' });
+      toast.success('Logo removida!');
+      window.dispatchEvent(new Event('logo-updated'));
+      if (logoInputRef.current) logoInputRef.current.value = '';
+    } catch (err) {
+      toast.error('Erro ao remover logo');
+    }
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     const userJson = localStorage.getItem('saas_user');
     if (userJson) {
       const user = JSON.parse(userJson);
@@ -340,9 +344,9 @@ export function SettingsPage() {
                         className="aspect-video w-full max-w-sm rounded-xl bg-surface-container-low overflow-hidden relative group border-2 border-dashed border-outline hover:border-primary/50 transition-all flex items-center justify-center cursor-pointer"
                         onClick={() => logoInputRef.current?.click()}
                       >
-                        {logoPreview ? (
+                        {settings.logo_url ? (
                           <>
-                            <img src={logoPreview} className="absolute inset-0 w-full h-full object-contain p-4" alt="Logo" />
+                            <img src={settings.logo_url} className="absolute inset-0 w-full h-full object-contain p-4" alt="Logo" />
                             <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center z-10">
                               <div className="text-center">
                                 <div className="w-10 h-10 bg-surface-container rounded-full flex items-center justify-center mx-auto mb-2 shadow-sm border border-outline">
@@ -369,7 +373,7 @@ export function SettingsPage() {
                           </>
                         )}
                       </div>
-                      {logoPreview && (
+                      {settings.logo_url && (
                         <button
                           type="button"
                           onClick={handleRemoveLogo}
@@ -381,7 +385,6 @@ export function SettingsPage() {
                       )}
                     </div>
 
-                    {/* Colors */}
                     <div className="space-y-4">
                       <p className="text-sm font-semibold text-on-surface">Cores da Plataforma</p>
                       <div className="grid grid-cols-2 gap-4">
@@ -391,8 +394,13 @@ export function SettingsPage() {
                             <Tooltip text="Cor de botões, ícones e elementos de destaque." />
                           </label>
                           <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-lg bg-primary shadow-sm ring-2 ring-surface-container"></div>
-                            <span className="text-xs font-mono font-bold text-on-surface">#0F8B8D</span>
+                            <input 
+                              type="color" 
+                              value={settings.primary_color} 
+                              onChange={(e) => updateSettings({ primary_color: e.target.value })}
+                              className="w-8 h-8 rounded-lg cursor-pointer bg-transparent border-none p-0"
+                            />
+                            <span className="text-xs font-mono font-bold text-on-surface uppercase">{settings.primary_color}</span>
                           </div>
                         </div>
                         <div className="p-4 rounded-xl bg-surface-container-low border border-outline">
@@ -401,8 +409,13 @@ export function SettingsPage() {
                             <Tooltip text="Cor para aprovações e ações concluídas." />
                           </label>
                           <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-lg bg-secondary shadow-sm ring-2 ring-surface-container"></div>
-                            <span className="text-xs font-mono font-bold text-on-surface">#10B981</span>
+                            <input 
+                              type="color" 
+                              value={settings.success_color} 
+                              onChange={(e) => updateSettings({ success_color: e.target.value })}
+                              className="w-8 h-8 rounded-lg cursor-pointer bg-transparent border-none p-0"
+                            />
+                            <span className="text-xs font-mono font-bold text-on-surface uppercase">{settings.success_color}</span>
                           </div>
                         </div>
                       </div>
