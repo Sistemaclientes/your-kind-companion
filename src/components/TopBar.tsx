@@ -36,7 +36,7 @@ export function TopBar({ title, subtitle }: TopBarProps) {
 
   return (
     <header className="fixed top-0 right-0 w-full lg:w-[calc(100%-16rem)] z-40 bg-surface/70 backdrop-blur-xl flex items-center justify-between px-4 sm:px-8 py-3.5 border-b border-outline">
-      <div className="flex items-center gap-4 sm:gap-6 ml-12 lg:ml-0">
+      <div className="flex items-center gap-4 sm:gap-6 ml-14 lg:ml-0">
         <div className="flex flex-col">
           <h2 className="font-semibold text-on-surface text-base sm:text-lg leading-tight tracking-tight">{title}</h2>
           {subtitle && <span className="text-xs text-on-surface-variant font-medium hidden sm:block mt-0.5">{subtitle}</span>}
