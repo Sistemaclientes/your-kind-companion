@@ -143,13 +143,12 @@ export function StudentLoginPage() {
 
       setRegSuccess(true);
 
-      setTimeout(() => {
-        setEmail(regEmail);
-        setPassword(regPassword);
-        setTab('login');
-        setRegSuccess(false);
-        setRegName(''); setRegEmail(''); setRegPhone(''); setRegCpf(''); setRegPassword(''); setRegConfirmPassword('');
-      }, 1500);
+      // Do not auto-redirect, let the user read the success message
+      // and go to login manually if they want, but the message is clear about checking email.
+      // Wait longer before resetting state if we wanted to redirect, 
+      // but for now, we'll let the user decide.
+      // We can add a "Back to Login" button in the success state or just stay there.
+      setRegName(''); setRegEmail(''); setRegPhone(''); setRegCpf(''); setRegPassword(''); setRegConfirmPassword('');
     } catch (err: any) {
       setRegError(err.message || 'Erro ao cadastrar. Tente novamente.');
     }
