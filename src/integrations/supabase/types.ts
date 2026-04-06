@@ -1182,6 +1182,7 @@ export type Database = {
     Functions: {
       bulk_resend_confirmation: { Args: never; Returns: Json }
       check_is_admin: { Args: never; Returns: boolean }
+      confirmar_aluno: { Args: { p_token: string }; Returns: Json }
       delete_aluno_cascade: { Args: { p_email: string }; Returns: Json }
       generate_slug: { Args: { title: string }; Returns: string }
       get_my_role: { Args: never; Returns: string }
