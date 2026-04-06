@@ -12,6 +12,7 @@ import {
 import { cn } from '../lib/utils';
 import { useTheme } from '../lib/ThemeContext';
 import { useAuthStore } from '../lib/authStore';
+import { useVisualSettings } from './VisualSettingsProvider';
 import logoWhite from '../assets/livro_logo_white.png';
 import logoDark from '../assets/livro_logo_dark.png';
 
