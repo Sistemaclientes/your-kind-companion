@@ -53,6 +53,7 @@ export function CreateExamPage() {
   const [showPreview, setShowPreview] = useState(false);
   const [showAIGenerator, setShowAIGenerator] = useState(false);
   const [openTypeDropdownId, setOpenTypeDropdownId] = useState<string | number | null>(null);
+  const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
 
   const fetchCategories = useCallback(async () => {
     try {
@@ -948,6 +949,12 @@ export function CreateExamPage() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      <CategoryModal 
+        isOpen={isCategoryModalOpen}
+        onClose={() => setIsCategoryModalOpen(false)}
+        onCategoryChange={fetchCategories}
+      />
     </div>
   );
 }
