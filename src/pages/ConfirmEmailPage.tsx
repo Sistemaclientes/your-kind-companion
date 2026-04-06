@@ -42,8 +42,8 @@ export function ConfirmEmailPage() {
       >
         <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto">
           {status === 'loading' && <Loader2 className="w-8 h-8 text-primary animate-spin" />}
-          {status === 'success' && <ShieldCheck className="w-8 h-8 text-green-500" />}
-          {status === 'error' && <XCircle className="w-8 h-8 text-red-500" />}
+          {status === 'success' && <ShieldCheck className="w-8 h-8 text-primary" />}
+          {status === 'error' && <XCircle className="w-8 h-8 text-error" />}
         </div>
 
         <h1 className="text-2xl font-black text-on-surface">
