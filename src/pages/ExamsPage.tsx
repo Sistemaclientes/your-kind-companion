@@ -138,8 +138,20 @@ export function ExamsPage() {
 
   const stats = [
     { label: 'Total de Provas', value: exams.length.toString(), sub: 'Ativo', color: 'slate' },
-    { label: 'Alunos Ativos', value: '0', sub: 'Engajamento 0%', color: 'blue' },
-    { label: 'Média Geral', value: '0.0', sub: 'Escala 0-10', color: 'slate' },
+    { 
+      label: 'Alunos Ativos', 
+      value: (dashboardStats?.metrics?.totalAlunos || 0).toString(), 
+      sub: `Engajamento ${dashboardStats?.metrics?.totalAlunos > 0 && dashboardStats?.metrics?.totalProvas > 0 
+        ? Math.min(100, Math.round((dashboardStats.metrics.provasRealizadas / (dashboardStats.metrics.totalAlunos * dashboardStats.metrics.totalProvas)) * 100)) 
+        : 0}%`, 
+      color: 'blue' 
+    },
+    { 
+      label: 'Média Geral', 
+      value: (dashboardStats?.metrics?.mediaGeral || 0).toFixed(1), 
+      sub: 'Escala 0-10', 
+      color: 'slate' 
+    },
   ];
 
   return (
