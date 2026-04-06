@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { toast } from 'sonner';
 import { 
   ArrowLeft, 
@@ -26,6 +26,7 @@ import { cn } from '../lib/utils';
 import { motion, AnimatePresence } from 'motion/react';
 import { api } from '../lib/api';
 import { Question } from '../types';
+import { CategoryModal } from '../components/CategoryModal';
 
 export function CreateExamPage() {
   const navigate = useNavigate();
@@ -52,20 +53,22 @@ export function CreateExamPage() {
   const [showPreview, setShowPreview] = useState(false);
   const [showAIGenerator, setShowAIGenerator] = useState(false);
   const [openTypeDropdownId, setOpenTypeDropdownId] = useState<string | number | null>(null);
+  const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
+
+  const fetchCategories = useCallback(async () => {
+    try {
+      const data = await api.get('/categorias');
+      setCategories(data);
+      if (data.length > 0 && !categoryId) {
+        setCategoryId(data[0].id);
+        setCategory(data[0].nome);
+      }
+    } catch (err) {
+      console.error('Error fetching categories:', err);
+    }
+  }, [categoryId]);
 
   React.useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const data = await api.get('/categorias');
-        setCategories(data);
-        if (data.length > 0 && !categoryId) {
-          setCategoryId(data[0].id);
-          setCategory(data[0].nome);
-        }
-      } catch (err) {
-        console.error('Error fetching categories:', err);
-      }
-    };
     fetchCategories();
 
     if (slug) {
@@ -422,24 +425,12 @@ export function CreateExamPage() {
                           Categoria
                         </label>
                         <button 
-                          onClick={async () => {
-                            const nome = prompt('Digite o nome da nova categoria:');
-                            if (nome && nome.trim()) {
-                              try {
-                                const newCat = await api.post('/categorias', { nome });
-                                setCategories(prev => [...prev, newCat].sort((a, b) => a.nome.localeCompare(b.nome)));
-                                setCategoryId(newCat.id);
-                                setCategory(newCat.nome);
-                                toast.success('Categoria criada com sucesso!');
-                              } catch (err: any) {
-                                toast.error('Erro ao criar categoria: ' + err.message);
-                              }
-                            }
-                          }}
+                          type="button"
+                          onClick={() => setIsCategoryModalOpen(true)}
                           className="text-[10px] font-black uppercase tracking-widest text-primary hover:text-primary/70 transition-colors flex items-center gap-1"
                         >
                           <Plus className="w-3 h-3" />
-                          Nova
+                          Gerenciar
                         </button>
                       </div>
                       <div className="relative group">
@@ -946,6 +937,12 @@ export function CreateExamPage() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      <CategoryModal 
+        isOpen={isCategoryModalOpen}
+        onClose={() => setIsCategoryModalOpen(false)}
+        onCategoryChange={fetchCategories}
+      />
     </div>
   );
 }
