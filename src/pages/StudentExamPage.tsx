@@ -27,7 +27,8 @@ export function StudentExamPage() {
   const [answers, setAnswers] = useState<Record<number, number>>({});
   const [flaggedQuestions, setFlaggedQuestions] = useState<number[]>([]);
   const [showMap, setShowMap] = useState(false);
-  const [showFinishConfirm, setShowFinishConfirm] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [countdown, setCountdown] = useState(5);
   const [reviewFilter, setReviewFilter] = useState(false);
   const [studentInfo, setStudentInfo] = useState<any>(null);
 
@@ -81,7 +82,7 @@ export function StudentExamPage() {
     if (currentQuestionIdx < totalQuestions - 1) {
       setCurrentQuestionIdx(prev => prev + 1);
     } else {
-      setShowFinishConfirm(true);
+      handleAutoFinish();
     }
   };
 
@@ -91,16 +92,11 @@ export function StudentExamPage() {
     }
   };
 
-  const handleFinish = async () => {
-    if (!exam) return;
+  const handleAutoFinish = async () => {
+    if (!exam || isSubmitting) return;
     
-    // Check if all questions are answered
-    if (Object.keys(answers).length < totalQuestions) {
-        if (!confirm('Você não respondeu todas as perguntas. Deseja enviar assim mesmo?')) {
-            setShowFinishConfirm(false);
-            return;
-        }
-    }
+    setIsSubmitting(true);
+    setCountdown(5);
 
     try {
       const result = await api.post('/responder-prova', {
@@ -110,10 +106,21 @@ export function StudentExamPage() {
         email_aluno: studentInfo.email
       });
       localStorage.setItem('last_result', JSON.stringify(result));
-      navigate('/student/result');
 
-      navigate('/student/result');
+      // Inicia contagem regressiva
+      const timer = setInterval(() => {
+        setCountdown(prev => {
+          if (prev <= 1) {
+            clearInterval(timer);
+            navigate('/student/result');
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+
     } catch (err) {
+      setIsSubmitting(false);
       toast.error('Erro ao enviar respostas. Tente novamente.');
     }
   };
@@ -126,7 +133,7 @@ export function StudentExamPage() {
       if (currentQuestionIdx < totalQuestions - 1) {
         setCurrentQuestionIdx(prev => prev + 1);
       } else {
-        setShowFinishConfirm(true);
+        handleAutoFinish();
       }
     }, 400);
   };
@@ -143,6 +150,45 @@ export function StudentExamPage() {
   }
 
   const progress = (Object.keys(answers).length / totalQuestions) * 100;
+
+  if (isSubmitting) {
+    return (
+      <div className="min-h-screen bg-surface flex flex-col items-center justify-center p-6 text-center">
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="max-w-md w-full space-y-8"
+        >
+          <div className="relative">
+            <div className="w-32 h-32 border-4 border-primary/20 border-t-primary rounded-full animate-spin mx-auto"></div>
+            <div className="absolute inset-0 flex items-center justify-center">
+              <span className="text-4xl font-black text-primary font-mono">{countdown}</span>
+            </div>
+          </div>
+          
+          <div className="space-y-4">
+            <h2 className="text-3xl font-black text-on-surface font-headline tracking-tight">
+              O sistema está corrigindo a sua prova
+            </h2>
+            <p className="text-on-surface-variant font-medium">
+              Por favor, aguarde enquanto processamos seus resultados.
+            </p>
+          </div>
+
+          <div className="flex justify-center gap-2">
+            {[1, 2, 3].map((i) => (
+              <motion.div
+                key={i}
+                animate={{ scale: [1, 1.2, 1], opacity: [0.3, 1, 0.3] }}
+                transition={{ duration: 1.5, repeat: Infinity, delay: i * 0.2 }}
+                className="w-2 h-2 rounded-full bg-primary"
+              />
+            ))}
+          </div>
+        </motion.div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-surface flex flex-col font-sans text-on-surface antialiased">
@@ -170,7 +216,7 @@ export function StudentExamPage() {
           </div>
           <button 
             className="btn-primary py-2.5 px-4 sm:px-6 text-xs uppercase tracking-widest shadow-md"
-            onClick={() => setShowFinishConfirm(true)}
+            onClick={handleAutoFinish}
           >
             <span>Finalizar</span>
             <Send className="w-3.5 h-3.5" />
@@ -451,52 +497,7 @@ export function StudentExamPage() {
         )}
       </AnimatePresence>
 
-      {/* Finish Confirmation Modal */}
-      <AnimatePresence>
-        {showFinishConfirm && (
-          <div className="fixed inset-0 z-[110] flex items-center justify-center p-4">
-            <motion.div 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="absolute inset-0 bg-black/60 backdrop-blur-sm"
-              onClick={() => setShowFinishConfirm(false)}
-            />
-            <motion.div 
-              initial={{ scale: 0.9, opacity: 0, y: 20 }}
-              animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.9, opacity: 0, y: 20 }}
-              className="bg-surface-container p-8 rounded-[32px] shadow-2xl border border-outline max-w-md w-full relative z-10 text-center"
-            >
-              <div className="w-20 h-20 bg-primary/10 text-primary rounded-3xl flex items-center justify-center mb-6 mx-auto border border-primary/20">
-                <Send className="w-10 h-10" />
-              </div>
-              <h4 className="text-2xl font-bold text-on-surface font-headline mb-2 tracking-tight">Finalizar Avaliação?</h4>
-              <p className="text-on-surface-variant font-medium mb-8">
-                Você respondeu <span className="text-primary font-bold">{Object.keys(answers).length}</span> de <span className="text-on-surface font-bold">{totalQuestions}</span> questões. Deseja enviar suas respostas agora?
-              </p>
-              
-              {Object.keys(answers).length < totalQuestions && (
-                <div className="mb-8 p-4 bg-secondary/10 rounded-2xl border border-secondary/20 flex items-start gap-3 text-left">
-                  <Info className="w-5 h-5 text-secondary shrink-0 mt-0.5" />
-                  <p className="text-xs font-bold text-secondary uppercase tracking-tight">
-                    Atenção: Você ainda possui questões sem resposta.
-                  </p>
-                </div>
-              )}
-
-              <div className="flex flex-col gap-3">
-                <button 
-                  className="w-full btn-primary py-4 text-sm uppercase tracking-widest"
-                  onClick={handleFinish}
-                >
-                  Sim, Finalizar Prova
-                </button>
-              </div>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
+      {/* Finish Confirmation Modal Removed */}
     </div>
   );
 }
