@@ -60,28 +60,18 @@ export const studentsService = {
   },
 
   async deleteStudent(email: string) {
-    const { data: aluno } = await supabase
-      .from('alunos')
-      .select('id')
-      .eq('email', email.toLowerCase())
-      .single();
-
-    if (!aluno) throw new Error('Aluno não encontrado');
-
-    // Delete related results first
-    const { error: errRespostas } = await supabase.from('respostas_aluno').delete().eq('aluno_id', aluno.id);
-    if (errRespostas) throw new Error('Erro ao excluir respostas: ' + errRespostas.message);
-
-    const { error: errResultados } = await supabase.from('resultados').delete().eq('aluno_id', aluno.id);
-    if (errResultados) throw new Error('Erro ao excluir resultados: ' + errResultados.message);
-
-    const { error } = await supabase
-      .from('alunos')
-      .delete()
-      .eq('id', aluno.id);
+    const { data, error } = await supabase.rpc('delete_aluno_cascade', {
+      p_email: email.toLowerCase(),
+    });
 
     if (error) throw new Error('Erro ao excluir aluno: ' + error.message);
-    return { message: 'Aluno excluído com sucesso' };
+    
+    const result = data as { success: boolean; message: string };
+    if (!result.success) {
+      throw new Error(result.message);
+    }
+    
+    return { message: result.message };
   },
 
   async updateStudent(email: string, data: { nome?: string; cpf?: string; telefone?: string; status?: string }) {
