@@ -413,7 +413,7 @@ export function StudentLoginPage() {
         </div>
 
         <AnimatePresence mode="wait">
-          {tab === 'login' ? (
+          {tab === 'login' ?
             <motion.form
               key="login"
               initial={{ opacity: 0, x: -10 }}
@@ -477,7 +477,7 @@ export function StudentLoginPage() {
                 Entrar
               </button>
             </motion.form>
-          ) : (
+          :
             <motion.form
               key="register"
               initial={{ opacity: 0, x: 10 }}
@@ -561,7 +561,7 @@ export function StudentLoginPage() {
                 </>
               )}
             </motion.form>
-          )}
+          }
         </AnimatePresence>
 
         <p className="mt-8 text-center text-[10px] text-on-surface-variant font-bold uppercase tracking-widest opacity-40">
