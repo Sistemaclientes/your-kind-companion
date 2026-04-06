@@ -420,7 +420,6 @@ export function SettingsPage() {
                         </div>
                       </div>
                     </div>
-                    </div>
                   </div>
                 </div>
               </motion.div>
