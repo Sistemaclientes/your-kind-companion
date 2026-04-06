@@ -28,14 +28,23 @@ import { motion, AnimatePresence } from 'motion/react';
 export function ExamsPage() {
   const navigate = useNavigate();
   const [exams, setExams] = React.useState<any[]>([]);
+  const [dashboardStats, setDashboardStats] = React.useState<any>(null);
   const [isLoading, setIsLoading] = React.useState(true);
   const [showDeleteConfirm, setShowDeleteConfirm] = React.useState(false);
   const [examToDelete, setExamToDelete] = React.useState<string | null>(null);
   const [dateFilter, setDateFilter] = React.useState('Todos');
   const [sortBy, setSortBy] = React.useState('Recentes');
 
+  const fetchStats = async () => {
+    try {
+      const data = await api.get('/dashboard/stats');
+      setDashboardStats(data);
+    } catch (err) {
+      console.error('Error fetching dashboard stats:', err);
+    }
+  };
+
   const fetchExams = async () => {
-    setIsLoading(true);
     try {
       const data = await api.get('/provas');
       // Map backend fields to frontend format
@@ -52,13 +61,19 @@ export function ExamsPage() {
       setExams(mapped);
     } catch (err) {
       console.error('Error fetching exams:', err);
-    } finally {
-      setIsLoading(false);
     }
   };
 
   React.useEffect(() => {
-    fetchExams();
+    const loadAll = async () => {
+      setIsLoading(true);
+      try {
+        await Promise.all([fetchExams(), fetchStats()]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    loadAll();
   }, []);
 
   const handleDeleteAll = async () => {
@@ -127,8 +142,20 @@ export function ExamsPage() {
 
   const stats = [
     { label: 'Total de Provas', value: exams.length.toString(), sub: 'Ativo', color: 'slate' },
-    { label: 'Alunos Ativos', value: '0', sub: 'Engajamento 0%', color: 'blue' },
-    { label: 'Média Geral', value: '0.0', sub: 'Escala 0-10', color: 'slate' },
+    { 
+      label: 'Alunos Ativos', 
+      value: (dashboardStats?.metrics?.totalAlunos || 0).toString(), 
+      sub: `Engajamento ${dashboardStats?.metrics?.totalAlunos > 0 && dashboardStats?.metrics?.totalProvas > 0 
+        ? Math.min(100, Math.round((dashboardStats.metrics.provasRealizadas / (dashboardStats.metrics.totalAlunos * dashboardStats.metrics.totalProvas)) * 100)) 
+        : 0}%`, 
+      color: 'blue' 
+    },
+    { 
+      label: 'Média Geral', 
+      value: (dashboardStats?.metrics?.mediaGeral || 0).toFixed(1), 
+      sub: 'Escala 0-10', 
+      color: 'slate' 
+    },
   ];
 
   return (
