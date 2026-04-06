@@ -357,6 +357,66 @@ export function StudentsPage() {
           </div>
         </div>
       </main>
+      
+      <AnimatePresence>
+        {studentToDelete && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="bg-surface-container-high border border-outline rounded-3xl p-8 max-w-md w-full shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="w-16 h-16 bg-red-500/10 rounded-2xl flex items-center justify-center text-red-500 mb-6 mx-auto">
+                <Trash2 className="w-8 h-8" />
+              </div>
+              
+              <h3 className="text-2xl font-bold text-on-surface text-center mb-2">Excluir Aluno?</h3>
+              <p className="text-on-surface-variant text-center mb-8">
+                Deseja realmente excluir o aluno <span className="text-on-surface font-bold">"{studentToDelete.nome}"</span>? 
+                Esta ação é irreversível e removerá todos os resultados e registros do estudante.
+              </p>
+              
+              <div className="flex flex-col sm:flex-row gap-3">
+                <button 
+                  onClick={() => setStudentToDelete(null)}
+                  disabled={actionLoading}
+                  className="flex-1 px-6 py-4 rounded-2xl font-bold text-on-surface-variant hover:bg-surface-container-highest transition-all disabled:opacity-50"
+                >
+                  Cancelar
+                </button>
+                <button 
+                  onClick={async () => {
+                    if (!studentToDelete) return;
+                    setActionLoading(true);
+                    try {
+                      await studentsService.deleteStudent(studentToDelete.email);
+                      setStudents(prev => prev.filter(s => s.email !== studentToDelete.email));
+                      setStudentToDelete(null);
+                    } catch (err: any) {
+                      alert(err.message || 'Erro ao excluir');
+                    } finally {
+                      setActionLoading(false);
+                    }
+                  }}
+                  disabled={actionLoading}
+                  className="flex-1 px-6 py-4 rounded-2xl bg-red-500 text-white font-bold hover:bg-red-600 shadow-lg shadow-red-500/20 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+                >
+                  {actionLoading ? (
+                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  ) : (
+                    <>
+                      <Trash2 className="w-4 h-4" />
+                      Excluir
+                    </>
+                  )}
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </>
   );
 }
