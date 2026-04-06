@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { toast } from 'sonner';
 import { 
   ArrowLeft, 
@@ -26,6 +26,7 @@ import { cn } from '../lib/utils';
 import { motion, AnimatePresence } from 'motion/react';
 import { api } from '../lib/api';
 import { Question } from '../types';
+import { CategoryModal } from '../components/CategoryModal';
 
 export function CreateExamPage() {
   const navigate = useNavigate();
@@ -53,19 +54,20 @@ export function CreateExamPage() {
   const [showAIGenerator, setShowAIGenerator] = useState(false);
   const [openTypeDropdownId, setOpenTypeDropdownId] = useState<string | number | null>(null);
 
-  React.useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const data = await api.get('/categorias');
-        setCategories(data);
-        if (data.length > 0 && !categoryId) {
-          setCategoryId(data[0].id);
-          setCategory(data[0].nome);
-        }
-      } catch (err) {
-        console.error('Error fetching categories:', err);
+  const fetchCategories = useCallback(async () => {
+    try {
+      const data = await api.get('/categorias');
+      setCategories(data);
+      if (data.length > 0 && !categoryId) {
+        setCategoryId(data[0].id);
+        setCategory(data[0].nome);
       }
-    };
+    } catch (err) {
+      console.error('Error fetching categories:', err);
+    }
+  }, [categoryId]);
+
+  React.useEffect(() => {
     fetchCategories();
 
     if (slug) {
