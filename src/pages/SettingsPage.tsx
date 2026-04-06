@@ -344,9 +344,9 @@ export function SettingsPage() {
                         className="aspect-video w-full max-w-sm rounded-xl bg-surface-container-low overflow-hidden relative group border-2 border-dashed border-outline hover:border-primary/50 transition-all flex items-center justify-center cursor-pointer"
                         onClick={() => logoInputRef.current?.click()}
                       >
-                        {logoPreview ? (
+                        {settings.logo_url ? (
                           <>
-                            <img src={logoPreview} className="absolute inset-0 w-full h-full object-contain p-4" alt="Logo" />
+                            <img src={settings.logo_url} className="absolute inset-0 w-full h-full object-contain p-4" alt="Logo" />
                             <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center z-10">
                               <div className="text-center">
                                 <div className="w-10 h-10 bg-surface-container rounded-full flex items-center justify-center mx-auto mb-2 shadow-sm border border-outline">
@@ -373,7 +373,7 @@ export function SettingsPage() {
                           </>
                         )}
                       </div>
-                      {logoPreview && (
+                      {settings.logo_url && (
                         <button
                           type="button"
                           onClick={handleRemoveLogo}
@@ -385,7 +385,6 @@ export function SettingsPage() {
                       )}
                     </div>
 
-                    {/* Colors */}
                     <div className="space-y-4">
                       <p className="text-sm font-semibold text-on-surface">Cores da Plataforma</p>
                       <div className="grid grid-cols-2 gap-4">
@@ -395,8 +394,13 @@ export function SettingsPage() {
                             <Tooltip text="Cor de botões, ícones e elementos de destaque." />
                           </label>
                           <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-lg bg-primary shadow-sm ring-2 ring-surface-container"></div>
-                            <span className="text-xs font-mono font-bold text-on-surface">#0F8B8D</span>
+                            <input 
+                              type="color" 
+                              value={settings.primary_color} 
+                              onChange={(e) => updateSettings({ primary_color: e.target.value })}
+                              className="w-8 h-8 rounded-lg cursor-pointer bg-transparent border-none p-0"
+                            />
+                            <span className="text-xs font-mono font-bold text-on-surface uppercase">{settings.primary_color}</span>
                           </div>
                         </div>
                         <div className="p-4 rounded-xl bg-surface-container-low border border-outline">
@@ -405,11 +409,17 @@ export function SettingsPage() {
                             <Tooltip text="Cor para aprovações e ações concluídas." />
                           </label>
                           <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-lg bg-secondary shadow-sm ring-2 ring-surface-container"></div>
-                            <span className="text-xs font-mono font-bold text-on-surface">#10B981</span>
+                            <input 
+                              type="color" 
+                              value={settings.success_color} 
+                              onChange={(e) => updateSettings({ success_color: e.target.value })}
+                              className="w-8 h-8 rounded-lg cursor-pointer bg-transparent border-none p-0"
+                            />
+                            <span className="text-xs font-mono font-bold text-on-surface uppercase">{settings.success_color}</span>
                           </div>
                         </div>
                       </div>
+                    </div>
                     </div>
                   </div>
                 </div>
