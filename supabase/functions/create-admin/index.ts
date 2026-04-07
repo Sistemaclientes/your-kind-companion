@@ -114,7 +114,7 @@ Deno.serve(async (req: Request) => {
       return jsonResponse({ error: listUsersError.message }, 500);
     }
 
-    const existingAuthUser = listedUsers.users.find(
+    const existingAuthUser = (listedUsers?.users ?? []).find(
       (user) => user.email?.trim().toLowerCase() === email,
     );
 
