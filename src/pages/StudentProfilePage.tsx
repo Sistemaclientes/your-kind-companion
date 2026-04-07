@@ -21,7 +21,7 @@ export function StudentProfilePage() {
   const fileInputRef = React.useRef<HTMLInputElement>(null);
 
   React.useEffect(() => {
-    if (!user) { navigate('/student/login'); return; }
+    if (!user) { navigate('/painel-do-aluno'); return; }
     setNome(user.nome || '');
     const savedAvatar = localStorage.getItem(`student_avatar_${user.id}`);
     if (savedAvatar) setAvatar(savedAvatar);

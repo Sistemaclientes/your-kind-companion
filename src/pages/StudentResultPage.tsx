@@ -91,7 +91,7 @@ export function StudentResultPage() {
         {/* Header Actions */}
         <div className="w-full flex justify-start mb-6 sm:mb-8">
           <button 
-            onClick={() => navigate('/aluno/dashboard')}
+            onClick={() => navigate('/student/dashboard')}
             className="flex items-center gap-2 text-on-surface-variant hover:text-primary transition-colors font-bold text-xs uppercase tracking-widest"
           >
             <ChevronLeft className="w-4 h-4" />
@@ -298,7 +298,7 @@ export function StudentResultPage() {
           className="w-full max-w-4xl flex flex-col sm:flex-row items-center justify-center gap-3 mb-8 sm:mb-16"
         >
           <button 
-            onClick={() => navigate('/aluno/dashboard')}
+            onClick={() => navigate('/student/dashboard')}
             className="btn-secondary py-3.5 sm:py-4 px-8 sm:px-10 w-full sm:w-auto text-sm uppercase tracking-widest group"
           >
             <BarChart3 className="w-5 h-5" />
@@ -322,7 +322,7 @@ export function StudentResultPage() {
         >
           <button 
             className="text-on-surface-variant font-black text-[10px] uppercase tracking-[0.2em] hover:text-primary transition-colors"
-            onClick={() => navigate('/aluno/dashboard')}
+            onClick={() => navigate('/student/dashboard')}
           >
             Voltar à Dashboard
           </button>

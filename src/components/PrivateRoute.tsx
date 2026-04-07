@@ -24,7 +24,7 @@ export function PrivateRoute({ role, children }: PrivateRouteProps) {
   if (isLoading) return <LoadingScreen />;
 
   if (!user) {
-    if (role === 'aluno') return <Navigate to="/student/login" replace />;
+    if (role === 'aluno') return <Navigate to="/painel-do-aluno" replace />;
     return <Navigate to="/admin/login" replace />;
   }
 
