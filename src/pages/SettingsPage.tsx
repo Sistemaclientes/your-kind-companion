@@ -672,7 +672,7 @@ export function SettingsPage() {
               <span>{isSaving ? 'Salvando...' : 'Salvar Configurações'}</span>
             </button>
           </div>
-        </form>
+        </div>
       </main>
     </>
   );
