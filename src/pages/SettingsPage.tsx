@@ -235,7 +235,7 @@ export function SettingsPage() {
           </div>
         </div>
 
-        <form onSubmit={(e) => e.preventDefault()}>
+        <div>
           <AnimatePresence mode="wait">
             {/* REGRAS ACADÊMICAS + EXPERIÊNCIA */}
             {activeSection === 'academicas' && (
