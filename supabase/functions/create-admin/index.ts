@@ -122,13 +122,21 @@ Deno.serve(async (req: Request) => {
     let createdAuthUser = false;
 
     if (existingAuthUser) {
-      const { error: updateUserError } = await adminClient.auth.admin.updateUserById(existingAuthUser.id, {
-        password: senha,
-        email_confirm: true,
+      // Use REST API directly to update user — avoids SDK version inconsistencies
+      const updateRes = await fetch(`${supabaseUrl}/auth/v1/admin/users/${existingAuthUser.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${serviceRoleKey}`,
+          'apikey': serviceRoleKey!,
+        },
+        body: JSON.stringify({ password: senha, email_confirm: true }),
       });
 
-      if (updateUserError) {
-        return jsonResponse({ error: updateUserError.message }, 400);
+      if (!updateRes.ok) {
+        const errBody = await updateRes.text();
+        return jsonResponse({ error: `Erro ao atualizar usuário: ${errBody}` }, 400);
+      }
       }
     } else {
       const { data: createdUserData, error: createUserError } = await adminClient.auth.admin.createUser({
