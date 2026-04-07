@@ -173,15 +173,6 @@ export function ExamsPage() {
             <p className="text-on-surface-variant mt-2 font-medium text-sm sm:text-lg">Crie, edite e acompanhe suas avaliações.</p>
           </div>
           <div className="flex items-center gap-2 sm:gap-4">
-            {exams.length > 0 && (
-              <button 
-                className="flex items-center gap-2 px-4 sm:px-6 py-3 sm:py-3.5 rounded-xl font-bold text-xs uppercase tracking-widest text-error hover:bg-error/5 transition-all border border-transparent hover:border-error/20"
-                onClick={() => setShowDeleteConfirm(true)}
-              >
-                <Trash2 className="w-4 sm:w-5 h-4 sm:h-5" />
-                <span className="hidden sm:inline">Excluir todas</span>
-              </button>
-            )}
             <button 
               className="btn-primary px-4 sm:px-8 py-3 sm:py-4 text-xs sm:text-sm uppercase tracking-widest"
               onClick={() => navigate('/admin/exams/new')}
