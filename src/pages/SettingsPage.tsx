@@ -17,7 +17,8 @@ import {
   Trash2,
   Mail,
   Lock,
-  AlertCircle
+  AlertCircle,
+  KeyRound
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { motion, AnimatePresence } from 'motion/react';
@@ -121,6 +122,19 @@ export function SettingsPage() {
       fetchAdmins();
     } catch (err: any) {
       toast.error(err.message || 'Erro ao excluir administrador');
+    }
+  };
+
+  const handleSendResetLink = async (email: string) => {
+    try {
+      const { supabase } = await import('@/integrations/supabase/client');
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/redefinir-senha`,
+      });
+      if (error) throw error;
+      toast.success(`Link de redefinição enviado para ${email}`);
+    } catch (err: any) {
+      toast.error(err.message || 'Erro ao enviar link de redefinição');
     }
   };
 
@@ -641,12 +655,21 @@ export function SettingsPage() {
                               </div>
                             </div>
                             {!admin.is_master && (
-                              <button 
-                                onClick={() => handleDeleteAdmin(admin.id)}
-                                className="p-2 text-on-surface-variant/30 hover:text-error hover:bg-error/10 rounded-xl transition-all shrink-0"
-                              >
-                                <Trash2 className="w-4 h-4" />
-                              </button>
+                              <div className="flex items-center gap-1 shrink-0">
+                                <button 
+                                  onClick={() => handleSendResetLink(admin.email)}
+                                  title="Enviar link de redefinição de senha"
+                                  className="p-2 text-on-surface-variant/30 hover:text-primary hover:bg-primary/10 rounded-xl transition-all"
+                                >
+                                  <KeyRound className="w-4 h-4" />
+                                </button>
+                                <button 
+                                  onClick={() => handleDeleteAdmin(admin.id)}
+                                  className="p-2 text-on-surface-variant/30 hover:text-error hover:bg-error/10 rounded-xl transition-all"
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </button>
+                              </div>
                             )}
                           </div>
                         ))}
