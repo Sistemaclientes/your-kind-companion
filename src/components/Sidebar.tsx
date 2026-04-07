@@ -24,14 +24,6 @@ interface SidebarProps {
 export function Sidebar({ isOpen, onClose }: SidebarProps) {
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
-  const [currentTime, setCurrentTime] = React.useState(new Date());
-  const { settings } = useVisualSettings();
-  const { user } = useAuthStore();
-
-  React.useEffect(() => {
-    const timer = setInterval(() => setCurrentTime(new Date()), 1000);
-    return () => clearInterval(timer);
-  }, []);
 
   const { logout } = useAuthStore();
 
