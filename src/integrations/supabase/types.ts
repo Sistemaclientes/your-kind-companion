@@ -16,27 +16,36 @@ export type Database = {
     Tables: {
       admins: {
         Row: {
+          avatar_url: string | null
           created_at: string | null
           email: string | null
           id: string
+          is_master: boolean | null
+          nome: string | null
           reset_token: string | null
           reset_token_expires_at: string | null
           role: string | null
           updated_at: string | null
         }
         Insert: {
+          avatar_url?: string | null
           created_at?: string | null
           email?: string | null
           id: string
+          is_master?: boolean | null
+          nome?: string | null
           reset_token?: string | null
           reset_token_expires_at?: string | null
           role?: string | null
           updated_at?: string | null
         }
         Update: {
+          avatar_url?: string | null
           created_at?: string | null
           email?: string | null
           id?: string
+          is_master?: boolean | null
+          nome?: string | null
           reset_token?: string | null
           reset_token_expires_at?: string | null
           role?: string | null
