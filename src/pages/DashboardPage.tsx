@@ -268,43 +268,6 @@ export function DashboardPage() {
           </div>
         </motion.div>
 
-        {/* Students */}
-        {students.length > 0 && (
-          <motion.div variants={fadeUp} className="mt-10">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-              <div>
-                <h4 className="text-xl font-bold text-on-surface tracking-tight">Status dos Alunos</h4>
-                <p className="text-sm text-on-surface-variant font-medium mt-0.5">Engajamento individual em tempo real</p>
-              </div>
-            </div>
-            
-            <div className="overflow-hidden -mx-4 px-4 group/marquee">
-              <div className="flex gap-5 animate-marquee group-hover/marquee:[animation-play-state:paused] w-max">
-                {[...students, ...students].map((s, i) => (
-                  <div 
-                    key={`${s.email}-${i}`} 
-                    className="min-w-[280px] card-saas flex items-center gap-4 cursor-pointer group/card select-none"
-                    onClick={() => navigate(`/admin/students/${s.slug}`)}
-                  >
-                    <div className="relative shrink-0">
-                      <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary font-bold text-lg border border-outline">
-                        {s.nome?.charAt(0)?.toUpperCase() || '?'}
-                      </div>
-                      <div className={cn(
-                        "absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full border-2 border-surface-container",
-                        s.provas_contagem > 0 ? "bg-orange-500" : "bg-red-500"
-                      )}></div>
-                    </div>
-                    <div className="flex-1 overflow-hidden">
-                      <p className="font-semibold text-on-surface group-hover/card:text-primary transition-colors truncate">{s.nome}</p>
-                      <p className="text-xs text-on-surface-variant font-medium mt-0.5">Média: {Math.round(s.media_pontuacao)}% • {s.provas_contagem} provas</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </motion.div>
-        )}
       </motion.main>
     </>
   );
