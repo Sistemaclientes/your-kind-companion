@@ -139,10 +139,11 @@ export function AdminInvitePage() {
         }
       }
 
-      // After login/signup, acceptInvite will be triggered by the useEffect
+      // Directly accept invite after successful auth (don't rely on useEffect)
+      setAuthLoading(false);
+      await acceptInvite();
     } catch (err: any) {
       setAuthError(err.message || 'Erro na autenticação');
-    } finally {
       setAuthLoading(false);
     }
   };
