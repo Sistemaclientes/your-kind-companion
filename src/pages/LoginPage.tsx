@@ -15,11 +15,12 @@ export function LoginPage() {
   const { user, loginAdmin } = useAuthStore();
   const { theme } = useTheme();
   const [view, setView] = React.useState<View>('login');
-  const [email, setEmail] = React.useState('');
+  const [email, setEmail] = React.useState(() => localStorage.getItem('admin_remember_email') || '');
   const [password, setPassword] = React.useState('');
   const [error, setError] = React.useState('');
   const [isLoading, setIsLoading] = React.useState(false);
   const [showPassword, setShowPassword] = React.useState(false);
+  const [rememberMe, setRememberMe] = React.useState(() => !!localStorage.getItem('admin_remember_email'));
 
   // Forgot password state
   const [forgotEmail, setForgotEmail] = React.useState('');
