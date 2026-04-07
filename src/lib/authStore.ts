@@ -1,23 +1,22 @@
 import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import type { User } from '@supabase/supabase-js';
 
 export type UserRole = 'admin' | 'aluno';
 
 export interface AuthUser {
-  id: number | string;
+  id: string;
   nome: string;
   email: string;
   role: UserRole;
-  is_master?: boolean;
-  cpf?: string;
 }
 
 interface AuthState {
   user: AuthUser | null;
   isLoading: boolean;
   checkSession: () => void;
-  loginAdmin: (token: string, adminUser: any) => void;
-  loginStudent: (studentInfo: any) => void;
+  loginAdmin: (authUser: User, admin: any) => void;
+  loginStudent: (authUser: User, aluno: any) => void;
   logout: () => void;
 }
 
@@ -27,123 +26,97 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  const checkSession = useCallback(async () => {
-    // Check admin session
-    const adminToken = localStorage.getItem('saas_token');
-    const adminUser = localStorage.getItem('saas_user');
-    if (adminToken && adminUser) {
-      try {
-        const parsed = JSON.parse(adminUser);
+  const resolveUser = useCallback(async (authUser: User) => {
+    // Check admin
+    const { data: admin } = await supabase
+      .from('admins')
+      .select('id, email, role')
+      .eq('id', authUser.id)
+      .single();
 
-        // Validate email_confirmed from DB
-        const { data: adminRecord } = await supabase
-          .from('admins')
-          .select('email_confirmed')
-          .eq('id', parsed.id)
-          .single();
-
-        if (adminRecord && adminRecord.email_confirmed === false) {
-          // Email not confirmed — clear session
-          localStorage.removeItem('saas_token');
-          localStorage.removeItem('saas_user');
-          setUser(null);
-          setIsLoading(false);
-          return;
-        }
-
-        setUser({
-          id: parsed.id,
-          nome: parsed.nome,
-          email: parsed.email,
-          role: 'admin',
-          is_master: parsed.is_master,
-        });
-        setIsLoading(false);
-        return;
-      } catch {
-        localStorage.removeItem('saas_token');
-        localStorage.removeItem('saas_user');
-      }
+    if (admin) {
+      setUser({
+        id: admin.id,
+        nome: admin.email?.split('@')[0] || 'Admin',
+        email: admin.email || authUser.email || '',
+        role: 'admin',
+      });
+      return;
     }
 
-    // Check student session
-    const studentInfo = localStorage.getItem('student_info');
-    if (studentInfo) {
-      try {
-        const parsed = JSON.parse(studentInfo);
+    // Check student
+    const { data: aluno } = await supabase
+      .from('alunos')
+      .select('id, nome, avatar_url, status')
+      .eq('id', authUser.id)
+      .single();
 
-        // Validate email_confirmed from DB
-        const { data: studentRecord } = await supabase
-          .from('alunos')
-          .select('email_confirmed')
-          .eq('email', parsed.email)
-          .single();
-
-        if (!studentRecord || studentRecord.email_confirmed !== true) {
-          // Email not confirmed — clear session
-          localStorage.removeItem('student_info');
-          setUser(null);
-          setIsLoading(false);
-          return;
-        }
-
-        setUser({
-          id: parsed.email,
-          nome: parsed.nome,
-          email: parsed.email,
-          role: 'aluno',
-          cpf: parsed.cpf,
-        });
-        setIsLoading(false);
-        return;
-      } catch {
-        localStorage.removeItem('student_info');
-      }
+    if (aluno) {
+      setUser({
+        id: aluno.id,
+        nome: aluno.nome || 'Aluno',
+        email: authUser.email || '',
+        role: 'aluno',
+      });
+      return;
     }
 
+    // User exists in auth but not in any table
     setUser(null);
-    setIsLoading(false);
   }, []);
 
-  const loginAdmin = useCallback((token: string, adminUser: any) => {
-    localStorage.setItem('saas_token', token);
-    localStorage.setItem('saas_user', JSON.stringify(adminUser));
+  const checkSession = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.user) {
+        await resolveUser(session.user);
+      } else {
+        setUser(null);
+      }
+    } catch {
+      setUser(null);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [resolveUser]);
+
+  const loginAdmin = useCallback((authUser: User, admin: any) => {
     setUser({
-      id: adminUser.id,
-      nome: adminUser.nome,
-      email: adminUser.email,
+      id: admin.id,
+      nome: admin.email?.split('@')[0] || 'Admin',
+      email: admin.email || authUser.email || '',
       role: 'admin',
-      is_master: adminUser.is_master,
     });
   }, []);
 
-  const loginStudent = useCallback((studentInfo: any) => {
-    localStorage.setItem('student_info', JSON.stringify({
-      nome: studentInfo.nome,
-      email: studentInfo.email,
-      telefone: studentInfo.telefone || '',
-      cpf: studentInfo.cpf || '',
-    }));
+  const loginStudent = useCallback((authUser: User, aluno: any) => {
     setUser({
-      id: studentInfo.email,
-      nome: studentInfo.nome,
-      email: studentInfo.email,
+      id: aluno.id,
+      nome: aluno.nome || 'Aluno',
+      email: authUser.email || '',
       role: 'aluno',
-      cpf: studentInfo.cpf || '',
     });
   }, []);
 
-  const logout = useCallback(() => {
-    localStorage.removeItem('saas_token');
-    localStorage.removeItem('saas_user');
-    localStorage.removeItem('student_info');
-    localStorage.removeItem('student_remembered');
+  const logout = useCallback(async () => {
+    await supabase.auth.signOut();
     setUser(null);
   }, []);
 
   useEffect(() => {
     checkSession();
-  }, [checkSession]);
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (event === 'SIGNED_OUT') {
+        setUser(null);
+      } else if (session?.user && (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED')) {
+        await resolveUser(session.user);
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [checkSession, resolveUser]);
 
   const value = React.useMemo(() => ({
     user,
