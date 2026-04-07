@@ -324,6 +324,7 @@ export type Database = {
           subtitulo: string | null
           tentativas_permitidas: number | null
           titulo: string | null
+          turma_id: string | null
           updated_at: string | null
         }
         Insert: {
@@ -343,6 +344,7 @@ export type Database = {
           subtitulo?: string | null
           tentativas_permitidas?: number | null
           titulo?: string | null
+          turma_id?: string | null
           updated_at?: string | null
         }
         Update: {
@@ -362,6 +364,7 @@ export type Database = {
           subtitulo?: string | null
           tentativas_permitidas?: number | null
           titulo?: string | null
+          turma_id?: string | null
           updated_at?: string | null
         }
         Relationships: [
@@ -377,6 +380,13 @@ export type Database = {
             columns: ["created_by"]
             isOneToOne: false
             referencedRelation: "admins"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "provas_turma_id_fkey"
+            columns: ["turma_id"]
+            isOneToOne: false
+            referencedRelation: "turmas"
             referencedColumns: ["id"]
           },
         ]
@@ -496,6 +506,7 @@ export type Database = {
           status: string | null
           tentativa_numero: number | null
           total: number | null
+          turma_id: string | null
         }
         Insert: {
           acertos?: number | null
@@ -512,6 +523,7 @@ export type Database = {
           status?: string | null
           tentativa_numero?: number | null
           total?: number | null
+          turma_id?: string | null
         }
         Update: {
           acertos?: number | null
@@ -528,6 +540,7 @@ export type Database = {
           status?: string | null
           tentativa_numero?: number | null
           total?: number | null
+          turma_id?: string | null
         }
         Relationships: [
           {
@@ -542,6 +555,13 @@ export type Database = {
             columns: ["prova_id"]
             isOneToOne: false
             referencedRelation: "provas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "resultados_turma_id_fkey"
+            columns: ["turma_id"]
+            isOneToOne: false
+            referencedRelation: "turmas"
             referencedColumns: ["id"]
           },
         ]
