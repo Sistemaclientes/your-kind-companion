@@ -261,17 +261,6 @@ export function AIGenerator({ isOpen, onClose, onQuestionsGenerated }: AIGenerat
                   </div>
 
                   {/* Summary Tip */}
-                  <div className="bg-surface-container p-6 rounded-[24px] border border-outline flex items-start gap-4">
-                    <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary shrink-0">
-                      <Sparkles className="w-5 h-5" />
-                    </div>
-                    <div>
-                      <p className="text-xs font-bold text-on-surface mb-1">Dica da Lovable IA</p>
-                      <p className="text-[11px] text-on-surface-variant leading-relaxed">
-                        Ao gerar questões para o nível <strong>{difficulty}</strong>, nossa IA focará em conceitos {difficulty === 'Iniciante' ? 'fundamentais' : difficulty === 'Especialista' ? 'extremamente complexos e práticos' : 'desafiadores e aplicados'}.
-                      </p>
-                    </div>
-                  </div>
                 </>
               )}
             </div>

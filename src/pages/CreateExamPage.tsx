@@ -859,20 +859,6 @@ export function CreateExamPage() {
               </div>
             </div>
 
-            <div className="bg-primary p-8 rounded-[32px] text-white relative overflow-hidden shadow-2xl shadow-primary/20">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl"></div>
-              <div className="relative z-10 flex items-start gap-4">
-                <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center shrink-0">
-                  <Brain className="w-5 h-5" />
-                </div>
-                <div>
-                  <h4 className="font-bold font-headline text-lg mb-2">Dica de Especialista</h4>
-                  <p className="text-sm text-white/80 leading-relaxed">
-                    Questões com imagens aumentam o engajamento e a compreensão em até 40%. Tente adicionar diagramas onde for possível.
-                  </p>
-                </div>
-              </div>
-            </div>
           </div>
         </aside>
       </div>

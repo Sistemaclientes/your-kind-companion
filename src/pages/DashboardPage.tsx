@@ -265,22 +265,6 @@ export function DashboardPage() {
               </button>
             </div>
 
-            <div className="bg-gradient-to-br from-primary to-primary-container p-7 rounded-2xl text-white relative overflow-hidden group">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl group-hover:scale-150 transition-transform duration-700"></div>
-              <div className="relative z-10">
-                <div className="w-9 h-9 bg-white/20 rounded-xl flex items-center justify-center mb-4">
-                  <TrendingUp className="w-5 h-5" />
-                </div>
-                <h4 className="text-lg font-bold mb-2 tracking-tight">Dica do Avaliador</h4>
-                <p className="text-sm opacity-90 font-medium leading-relaxed mb-4">
-                  Provas com menos de 10 questões têm 30% mais engajamento.
-                </p>
-                <a className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wider hover:gap-3 transition-all opacity-80 hover:opacity-100" href="#">
-                  Saiba mais
-                  <ArrowUpRight className="w-3.5 h-3.5" />
-                </a>
-              </div>
-            </div>
           </div>
         </motion.div>
 
