@@ -260,15 +260,21 @@ export const authService = {
   },
 
   async changeAdminPassword(adminId: string, currentPassword: string, newPassword: string) {
-    const { data: admin } = await supabase
+    // Validate current password by getting admin email and trying login RPC
+    const { data: adminData } = await supabase
       .from('admins')
-      .select('senha')
+      .select('email')
       .eq('id', adminId)
       .single();
 
-    if (!admin || admin.senha.toLowerCase() !== currentPassword.toLowerCase()) {
-      throw new Error('Senha atual incorreta');
-    }
+    if (!adminData) throw new Error('Administrador não encontrado');
+
+    const { error: loginError } = await supabase.rpc('login_admin', {
+      p_email: adminData.email,
+      p_password: currentPassword,
+    });
+
+    if (loginError) throw new Error('Senha atual incorreta');
 
     await supabase.from('admins').update({ senha: newPassword }).eq('id', adminId);
     return { message: 'Senha alterada com sucesso' };
