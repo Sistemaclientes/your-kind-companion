@@ -23,6 +23,7 @@ import { cn } from '../lib/utils';
 import { motion, AnimatePresence } from 'motion/react';
 import { api } from '../lib/api';
 import { useVisualSettings } from '../components/VisualSettingsProvider';
+import { useAuthStore } from '../lib/authStore';
 
 export function SettingsPage() {
   const [isSaving, setIsSaving] = useState(false);
