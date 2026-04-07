@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useSearchParams, useNavigate } from 'react-router-dom';
+import { useSearchParams, useNavigate, useLocation } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuthStore } from '@/lib/authStore';
 import { motion } from 'motion/react';
@@ -22,6 +22,7 @@ type AuthMode = 'login' | 'register';
 export function AdminInvitePage() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const { user, checkSession } = useAuthStore();
   const token = searchParams.get('token') || '';
 
@@ -38,6 +39,20 @@ export function AdminInvitePage() {
   const [authError, setAuthError] = useState('');
   const [authLoading, setAuthLoading] = useState(false);
 
+  // Debug logs
+  useEffect(() => {
+    console.log("[AdminInvite] Token recebido:", token);
+  }, [token]);
+
+  // Fix route duplication if present
+  useEffect(() => {
+    if (location.pathname.includes('/convite-admin/convite-admin')) {
+      console.log("[AdminInvite] URL duplicada detectada, corrigindo...");
+      const cleanPath = location.pathname.replace('/convite-admin/convite-admin', '/convite-admin');
+      navigate(`${cleanPath}${location.search}`, { replace: true });
+    }
+  }, [location.pathname, location.search, navigate]);
+
   // Validate token on mount
   useEffect(() => {
     if (!token) {
@@ -47,11 +62,13 @@ export function AdminInvitePage() {
     }
 
     (async () => {
+      console.log("[AdminInvite] Validando token...");
       const { data, error } = await supabase.rpc('validar_convite_admin', {
         p_token: token,
       });
 
       if (error || !data) {
+        console.error("[AdminInvite] Erro na validação RPC:", error);
         setStatus('invalid');
         setErrorMsg('Erro ao validar convite');
         return;
@@ -60,11 +77,13 @@ export function AdminInvitePage() {
       const result = data as { valid: boolean; error?: string; email?: string; role?: string };
 
       if (!result.valid) {
+        console.log("[AdminInvite] Token inválido:", result.error);
         setStatus('invalid');
         setErrorMsg(result.error || 'Convite inválido');
         return;
       }
 
+      console.log("[AdminInvite] Token válido para:", result.email);
       setInviteEmail(result.email || '');
       setInviteRole(result.role || 'admin');
       setEmail(result.email || '');
@@ -72,21 +91,41 @@ export function AdminInvitePage() {
     })();
   }, [token]);
 
-  // If user is already logged in, try to accept invite automatically
+  // Listen to auth state changes to trigger invite acceptance
   useEffect(() => {
-    if (user && status === 'valid') {
-      acceptInvite();
-    }
-  }, [user, status]);
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log("[AdminInvite] Evento Auth:", event, "Usuário:", session?.user?.id);
+      
+      if (session?.user && status === 'valid') {
+        console.log("[AdminInvite] Usuário autenticado e convite válido. Aceitando...");
+        acceptInvite();
+      }
+    });
+
+    // Check if already logged in
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user && status === 'valid') {
+        console.log("[AdminInvite] Sessão já existente e convite válido. Aceitando...");
+        acceptInvite();
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [status, token]);
 
   const acceptInvite = async () => {
+    // Evitar chamadas múltiplas
+    if (status === 'accepting' || status === 'success') return;
+
     setStatus('accepting');
     try {
+      console.log("[AdminInvite] Chamando RPC aceitar_convite_admin...");
       const { data, error } = await supabase.rpc('aceitar_convite_admin', {
         p_token: token,
       });
 
       if (error) {
+        console.error("[AdminInvite] Erro ao aceitar:", error);
         setStatus('valid');
         setAuthError(error.message);
         return;
@@ -95,15 +134,18 @@ export function AdminInvitePage() {
       const result = data as { success: boolean; role?: string };
 
       if (result?.success) {
+        console.log("[AdminInvite] Convite aceito com sucesso!");
         setStatus('success');
         // Refresh session to pick up admin role
-        checkSession();
+        await checkSession();
         setTimeout(() => navigate('/admin/dashboard', { replace: true }), 2000);
       } else {
+        console.log("[AdminInvite] Falha ao aceitar convite.");
         setStatus('valid');
         setAuthError('Erro ao aceitar convite');
       }
     } catch (err: any) {
+      console.error("[AdminInvite] Erro inesperado:", err);
       setStatus('valid');
       setAuthError(err.message || 'Erro inesperado');
     }
@@ -138,10 +180,9 @@ export function AdminInvitePage() {
           return;
         }
       }
-
-      // Directly accept invite after successful auth (don't rely on useEffect)
+      
+      // onAuthStateChange will trigger acceptInvite()
       setAuthLoading(false);
-      await acceptInvite();
     } catch (err: any) {
       setAuthError(err.message || 'Erro na autenticação');
       setAuthLoading(false);

@@ -6,19 +6,21 @@ export const adminService = {
     return admins || [];
   },
 
-  async create(data: { email: string }) {
-    const { data: newAdmin, error } = await supabase
-      .from('admins')
-      .insert({
-        id: crypto.randomUUID(),
-        email: data.email,
-        role: 'admin',
-      })
-      .select('id, email, role')
-      .single();
+  async create(data: { email: string; role?: string }) {
+    // Usar convite admin ao invés de inserção direta para novo fluxo
+    const { data: invite, error } = await supabase.rpc('gerar_convite_admin', {
+      p_email: data.email,
+      p_role: data.role || 'admin'
+    });
 
     if (error) throw new Error(error.message);
-    return newAdmin;
+    
+    const token = (invite as any).token;
+    const origin = window.location.origin;
+    // Garantir que não há duplicidade na construção da URL
+    const inviteUrl = `${origin}/convite-admin?token=${token}`;
+
+    return { ...invite as any, inviteUrl };
   },
 
   async remove(id: string) {

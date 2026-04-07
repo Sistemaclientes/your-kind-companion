@@ -97,7 +97,19 @@ export function SettingsPage() {
     e.preventDefault();
     setIsCreatingAdmin(true);
     try {
-      await api.post('/admins', newAdmin);
+      // O novo fluxo retorna um convite com a URL
+      const result = await api.post('/admins', newAdmin);
+      
+      if (result.inviteUrl) {
+        navigator.clipboard.writeText(result.inviteUrl);
+        toast.success(`Convite gerado para ${newAdmin.email}! Link copiado para a área de transferência.`, {
+          description: "O usuário deve acessar este link para ativar a conta.",
+          duration: 10000,
+        });
+      } else {
+        toast.success('Administrador criado com sucesso!');
+      }
+
       setNewAdmin({ nome: '', email: '', senha: '' });
       fetchAdmins();
       setShowSuccess(true);
