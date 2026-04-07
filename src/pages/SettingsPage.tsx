@@ -95,21 +95,14 @@ export function SettingsPage() {
 
   const handleCreateAdmin = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!newAdmin.email.trim() || !newAdmin.senha || newAdmin.senha.length < 6) {
+      toast.error('Preencha todos os campos. Senha deve ter no mínimo 6 caracteres.');
+      return;
+    }
     setIsCreatingAdmin(true);
     try {
-      // O novo fluxo retorna um convite com a URL
       const result = await api.post('/admins', newAdmin);
-      
-      if (result.inviteUrl) {
-        navigator.clipboard.writeText(result.inviteUrl);
-        toast.success(`Convite gerado para ${newAdmin.email}! Link copiado para a área de transferência.`, {
-          description: "O usuário deve acessar este link para ativar a conta.",
-          duration: 10000,
-        });
-      } else {
-        toast.success('Administrador criado com sucesso!');
-      }
-
+      toast.success(`Administrador ${result.nome || newAdmin.email} criado com sucesso!`);
       setNewAdmin({ nome: '', email: '', senha: '' });
       fetchAdmins();
       setShowSuccess(true);
