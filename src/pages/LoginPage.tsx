@@ -143,7 +143,7 @@ export function LoginPage() {
                 <header className="mb-8 text-center">
                   <img src={theme === 'dark' ? chapeuWhite : chapeuDark} alt="Logo" className="w-16 h-16 mx-auto mb-4 object-contain" />
                   <h1 className="text-2xl font-headline font-bold text-on-surface tracking-tight">Bem-vindo de volta</h1>
-                  <p className="text-on-surface-variant text-sm mt-1 font-medium">Insira suas credenciais para acessar o painel.</p>
+                  
                 </header>
                 <form className="space-y-6" onSubmit={handleLogin}>
                   {error && (
