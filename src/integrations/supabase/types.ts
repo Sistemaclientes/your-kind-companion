@@ -47,10 +47,12 @@ export type Database = {
       alunos: {
         Row: {
           avatar_url: string | null
+          biografia: string | null
           confirmation_token: string | null
           confirmed_at: string | null
           cpf: string | null
           created_at: string | null
+          data_nascimento: string | null
           email: string | null
           id: string
           nome: string | null
@@ -62,10 +64,12 @@ export type Database = {
         }
         Insert: {
           avatar_url?: string | null
+          biografia?: string | null
           confirmation_token?: string | null
           confirmed_at?: string | null
           cpf?: string | null
           created_at?: string | null
+          data_nascimento?: string | null
           email?: string | null
           id: string
           nome?: string | null
@@ -77,10 +81,12 @@ export type Database = {
         }
         Update: {
           avatar_url?: string | null
+          biografia?: string | null
           confirmation_token?: string | null
           confirmed_at?: string | null
           cpf?: string | null
           created_at?: string | null
+          data_nascimento?: string | null
           email?: string | null
           id?: string
           nome?: string | null
@@ -133,6 +139,8 @@ export type Database = {
           id: string
           logo_url: string | null
           nome_empresa: string | null
+          primary_color: string | null
+          success_color: string | null
           updated_at: string | null
           valor: Json
         }
@@ -143,6 +151,8 @@ export type Database = {
           id?: string
           logo_url?: string | null
           nome_empresa?: string | null
+          primary_color?: string | null
+          success_color?: string | null
           updated_at?: string | null
           valor?: Json
         }
@@ -153,6 +163,8 @@ export type Database = {
           id?: string
           logo_url?: string | null
           nome_empresa?: string | null
+          primary_color?: string | null
+          success_color?: string | null
           updated_at?: string | null
           valor?: Json
         }
