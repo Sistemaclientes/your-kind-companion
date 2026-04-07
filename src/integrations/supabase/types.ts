@@ -20,6 +20,7 @@ export type Database = {
           created_at: string | null
           email: string | null
           id: string
+          is_active: boolean | null
           is_master: boolean | null
           nome: string | null
           reset_token: string | null
@@ -32,6 +33,7 @@ export type Database = {
           created_at?: string | null
           email?: string | null
           id: string
+          is_active?: boolean | null
           is_master?: boolean | null
           nome?: string | null
           reset_token?: string | null
@@ -44,6 +46,7 @@ export type Database = {
           created_at?: string | null
           email?: string | null
           id?: string
+          is_active?: boolean | null
           is_master?: boolean | null
           nome?: string | null
           reset_token?: string | null
@@ -146,6 +149,9 @@ export type Database = {
           cor_primaria: string | null
           created_at: string | null
           exibir_resultado_imediatamente: boolean | null
+          fb_api_token: string | null
+          fb_pixel_id: string | null
+          google_tag_id: string | null
           id: string
           liberar_revisao: boolean | null
           logo_url: string | null
@@ -163,6 +169,9 @@ export type Database = {
           cor_primaria?: string | null
           created_at?: string | null
           exibir_resultado_imediatamente?: boolean | null
+          fb_api_token?: string | null
+          fb_pixel_id?: string | null
+          google_tag_id?: string | null
           id?: string
           liberar_revisao?: boolean | null
           logo_url?: string | null
@@ -180,6 +189,9 @@ export type Database = {
           cor_primaria?: string | null
           created_at?: string | null
           exibir_resultado_imediatamente?: boolean | null
+          fb_api_token?: string | null
+          fb_pixel_id?: string | null
+          google_tag_id?: string | null
           id?: string
           liberar_revisao?: boolean | null
           logo_url?: string | null
