@@ -191,7 +191,7 @@ export function SettingsPage() {
     { id: 'visual', label: 'Visual', icon: Palette },
     { id: 'seguranca', label: 'Segurança', icon: Lock },
     { id: 'marketing', label: 'Marketing', icon: BarChart3 },
-    ...(currentUser?.is_master ? [{ id: 'admins', label: 'Admins', icon: Shield }] : []),
+    { id: 'admins', label: 'Admins', icon: Shield },
   ];
 
   return (
@@ -562,7 +562,7 @@ export function SettingsPage() {
             )}
 
             {/* ADMINS */}
-            {activeSection === 'admins' && currentUser?.is_master && (
+            {activeSection === 'admins' && (
               <motion.div
                 key="admins"
                 initial={{ opacity: 0, y: 10 }}
