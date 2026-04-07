@@ -58,6 +58,7 @@ export type Database = {
           reset_token_expires_at: string | null
           status: string | null
           telefone: string | null
+          updated_at: string | null
         }
         Insert: {
           avatar_url?: string | null
@@ -72,6 +73,7 @@ export type Database = {
           reset_token_expires_at?: string | null
           status?: string | null
           telefone?: string | null
+          updated_at?: string | null
         }
         Update: {
           avatar_url?: string | null
@@ -86,6 +88,7 @@ export type Database = {
           reset_token_expires_at?: string | null
           status?: string | null
           telefone?: string | null
+          updated_at?: string | null
         }
         Relationships: []
       }
@@ -195,6 +198,7 @@ export type Database = {
           pontos: number | null
           prova_id: string | null
           tipo: string | null
+          updated_at: string | null
         }
         Insert: {
           explicacao?: string | null
@@ -205,6 +209,7 @@ export type Database = {
           pontos?: number | null
           prova_id?: string | null
           tipo?: string | null
+          updated_at?: string | null
         }
         Update: {
           explicacao?: string | null
@@ -215,6 +220,7 @@ export type Database = {
           pontos?: number | null
           prova_id?: string | null
           tipo?: string | null
+          updated_at?: string | null
         }
         Relationships: [
           {
@@ -244,6 +250,7 @@ export type Database = {
           subtitulo: string | null
           tentativas_permitidas: number | null
           titulo: string | null
+          updated_at: string | null
         }
         Insert: {
           bloquear_navegacao?: boolean | null
@@ -262,6 +269,7 @@ export type Database = {
           subtitulo?: string | null
           tentativas_permitidas?: number | null
           titulo?: string | null
+          updated_at?: string | null
         }
         Update: {
           bloquear_navegacao?: boolean | null
@@ -280,6 +288,7 @@ export type Database = {
           subtitulo?: string | null
           tentativas_permitidas?: number | null
           titulo?: string | null
+          updated_at?: string | null
         }
         Relationships: [
           {
@@ -305,6 +314,7 @@ export type Database = {
           ordem: number | null
           pergunta_id: string | null
           texto: string | null
+          updated_at: string | null
         }
         Insert: {
           correta?: boolean | null
@@ -312,6 +322,7 @@ export type Database = {
           ordem?: number | null
           pergunta_id?: string | null
           texto?: string | null
+          updated_at?: string | null
         }
         Update: {
           correta?: boolean | null
@@ -319,6 +330,7 @@ export type Database = {
           ordem?: number | null
           pergunta_id?: string | null
           texto?: string | null
+          updated_at?: string | null
         }
         Relationships: [
           {
@@ -335,30 +347,36 @@ export type Database = {
           acertos: number | null
           aluno_id: string | null
           created_at: string | null
+          duracao_total: number | null
           id: string
           pontuacao: number | null
           prova_id: string | null
           respostas: Json | null
+          status: string | null
           total: number | null
         }
         Insert: {
           acertos?: number | null
           aluno_id?: string | null
           created_at?: string | null
+          duracao_total?: number | null
           id?: string
           pontuacao?: number | null
           prova_id?: string | null
           respostas?: Json | null
+          status?: string | null
           total?: number | null
         }
         Update: {
           acertos?: number | null
           aluno_id?: string | null
           created_at?: string | null
+          duracao_total?: number | null
           id?: string
           pontuacao?: number | null
           prova_id?: string | null
           respostas?: Json | null
+          status?: string | null
           total?: number | null
         }
         Relationships: [
