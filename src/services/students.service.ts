@@ -1,95 +1,53 @@
 import { supabase } from './supabase';
 
 export const studentsService = {
-  async getResults(email: string) {
-    const { data: aluno } = await supabase
-      .from('alunos')
-      .select('id')
-      .eq('email', email.toLowerCase())
-      .single();
-
-    if (!aluno) return [];
-
+  async getResults(userId: string) {
     const { data: results, error } = await supabase
       .from('resultados')
-      .select('*, provas(titulo, slug)')
-      .eq('aluno_id', aluno.id)
-      .order('data', { ascending: false });
+      .select('*, provas(titulo)')
+      .eq('aluno_id', userId)
+      .order('created_at', { ascending: false });
 
     if (error) throw new Error(error.message);
-    return (results || []).map((r) => ({
+    return (results || []).map((r: any) => ({
       ...r,
-      prova_titulo: (r as any).provas?.titulo,
-      prova_slug: (r as any).provas?.slug,
+      prova_titulo: r.provas?.titulo,
     }));
   },
 
-  async getResultBySlug(slug: string) {
+  async getResultById(id: string) {
     const { data: result, error } = await supabase
       .from('resultados')
-      .select('*, provas(*, perguntas(*, alternativas(*)))')
-      .eq('slug', slug)
+      .select('*, provas(*, perguntas(*, respostas(*)))')
+      .eq('id', id)
       .single();
 
     if (error || !result) throw new Error('Resultado não encontrado');
 
-    const correctAlts: Record<string, string> = {};
-    if ((result as any).provas?.perguntas) {
-      (result as any).provas.perguntas.forEach((q: any) => {
-        const correct = q.alternativas?.find((a: any) => a.is_correta);
-        if (correct) correctAlts[q.id] = correct.id;
-      });
-    }
-
     return {
       ...result,
       prova_titulo: (result as any).provas?.titulo,
-      prova_slug: (result as any).provas?.slug,
-      exam: { ...(result as any).provas, correctAlts },
+      exam: (result as any).provas,
     };
   },
 
-  async updateStatus(email: string, status: string) {
+  async updateStatus(userId: string, status: string) {
     const { error } = await supabase
       .from('alunos')
       .update({ status })
-      .eq('email', email);
+      .eq('id', userId);
 
     if (error) throw new Error(error.message);
     return { message: 'Status atualizado com sucesso' };
   },
 
-  async deleteStudent(email: string) {
-    const { data, error } = await supabase.rpc('delete_aluno_cascade', {
-      p_email: email.toLowerCase(),
-    });
+  async deleteStudent(userId: string) {
+    const { error } = await supabase
+      .from('alunos')
+      .delete()
+      .eq('id', userId);
 
     if (error) throw new Error('Erro ao excluir aluno: ' + error.message);
-    
-    const result = data as { success: boolean; message: string };
-    if (!result.success) {
-      throw new Error(result.message);
-    }
-    
-    return { message: result.message };
-  },
-
-  async updateStudent(email: string, data: { nome?: string; cpf?: string; telefone?: string; status?: string }) {
-    const { error } = await supabase
-      .from('alunos')
-      .update(data)
-      .eq('email', email.toLowerCase());
-
-    if (error) throw new Error(error.message);
-    return { message: 'Aluno atualizado com sucesso' };
-  },
-
-  async logoutAll() {
-    const { error } = await supabase
-      .from('alunos')
-      .update({ must_reconfirm: true });
-
-    if (error) throw new Error(error.message);
-    return { message: 'Todos os alunos foram deslogados' };
+    return { message: 'Aluno excluído com sucesso' };
   },
 };

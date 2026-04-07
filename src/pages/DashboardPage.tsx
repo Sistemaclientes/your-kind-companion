@@ -21,6 +21,7 @@ import {
   Tooltip as RechartsTooltip
 } from 'recharts';
 import { api } from '../lib/api';
+import { useAuthStore } from '../lib/authStore';
 import { motion } from 'motion/react';
 
 const stagger = {
