@@ -386,3 +386,5 @@ export function StudentsPage() {
     </>
   );
 }
+
+export default StudentsPage;

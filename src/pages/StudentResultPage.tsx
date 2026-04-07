@@ -331,3 +331,5 @@ export function StudentResultPage() {
     </div>
   );
 }
+
+export default StudentResultPage;

@@ -395,3 +395,5 @@ export function StudentDetailsPage() {
     </>
   );
 }
+
+export default StudentDetailsPage;
