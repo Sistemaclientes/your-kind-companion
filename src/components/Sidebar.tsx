@@ -24,8 +24,8 @@ interface SidebarProps {
 export function Sidebar({ isOpen, onClose }: SidebarProps) {
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
-
-  const { logout } = useAuthStore();
+  const { settings } = useVisualSettings();
+  const { user, logout } = useAuthStore();
 
   const handleLogout = () => {
     logout();
@@ -45,21 +45,14 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
       "lg:translate-x-0",
       isOpen ? "translate-x-0" : "-translate-x-full"
     )}>
-      {/* Logo & Time */}
+      {/* Logo */}
       <div className="px-3 py-5 mb-3 flex flex-col items-start gap-3">
         <img 
           src={settings.logo_url || (theme === 'dark' ? logoWhite : logoDark)} 
           alt="Logo" 
           className="w-12 h-12 rounded-xl object-cover ring-2 ring-outline shadow-md" 
+          onClick={() => navigate('/admin/dashboard')}
         />
-        <div className="flex flex-col">
-          <p className="text-sm font-semibold text-on-surface tabular-nums">
-            Hora: {currentTime.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
-          </p>
-          <p className="text-sm text-on-surface-variant font-medium tabular-nums">
-            Data: {currentTime.toLocaleDateString('pt-BR')}
-          </p>
-        </div>
       </div>
 
       {/* Navigation */}
