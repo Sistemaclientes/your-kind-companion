@@ -1,298 +1,127 @@
 import React from 'react';
 import { toast } from 'sonner';
-import { 
-  User, 
-  Mail, 
-  Play, 
-  ShieldCheck, 
-  Clock, 
-  FileText,
-  AlertCircle,
-  ChevronRight,
-  ChevronDown
-} from 'lucide-react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { cn } from '../lib/utils';
+import { Play, ShieldCheck, Clock, FileText, AlertCircle, ChevronRight, ChevronDown } from 'lucide-react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { api } from '../lib/api';
+import { useAuthStore } from '../lib/authStore';
 
 export function StudentStartPage() {
   const navigate = useNavigate();
-  const { slug } = useParams();
+  const [searchParams] = useSearchParams();
+  const { user } = useAuthStore();
+  const examIdFromUrl = searchParams.get('examId');
   const [exams, setExams] = React.useState<any[]>([]);
   const [selectedExamId, setSelectedExamId] = React.useState<string>('');
-  const [formData, setFormData] = React.useState({ nome: '', email: '', telefone: '' });
   const [error, setError] = React.useState<string | null>(null);
   const [loading, setLoading] = React.useState(true);
 
-  // Require login to access exam (allow admins to preview)
   React.useEffect(() => {
-    const adminToken = localStorage.getItem('saas_token');
-    const adminUser = localStorage.getItem('saas_user');
-    const info = localStorage.getItem('student_info');
-
-    // If admin is logged in, allow preview with admin info
-    if (adminToken && adminUser) {
-      try {
-        const parsed = JSON.parse(adminUser);
-        setFormData({ nome: parsed.nome || 'Admin', email: parsed.email || '', telefone: '' });
-      } catch {}
+    if (!user) {
+      navigate('/student/login?redirect=' + encodeURIComponent(window.location.pathname + window.location.search), { replace: true });
       return;
     }
-
-    if (!info) {
-      const returnUrl = slug ? `/prova/${slug}` : '/student/start';
-      navigate(`/aluno/login?redirect=${encodeURIComponent(returnUrl)}`, { replace: true });
-      return;
-    }
-    const parsed = JSON.parse(info);
-    setFormData({ nome: parsed.nome || '', email: parsed.email || '', telefone: parsed.telefone || '' });
-  }, [slug, navigate]);
+  }, [user, navigate]);
 
   React.useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
-      setError(null);
       try {
-        if (slug) {
-          const exam = await api.get(`/provas/slug/${slug}`);
-          if (!exam || !exam.id) {
-            setError('Prova não encontrada. Verifique o link e tente novamente.');
-            return;
-          }
+        if (examIdFromUrl) {
+          const exam = await api.get(`/provas/${examIdFromUrl}`);
           setExams([exam]);
-          setSelectedExamId(exam.id.toString());
+          setSelectedExamId(exam.id);
         } else {
           const data = await api.get('/provas');
           setExams(data);
-          if (data.length > 0) setSelectedExamId(data[0].id.toString());
+          if (data.length > 0) setSelectedExamId(data[0].id);
         }
-      } catch (err: any) {
-        console.error('[StudentStartPage] Error fetching exam:', err);
-        setError(slug ? 'Prova não encontrada. Verifique o link e tente novamente.' : 'Erro ao carregar provas.');
+      } catch {
+        setError('Erro ao carregar provas.');
       } finally {
         setLoading(false);
       }
     };
-    fetchData();
-  }, [slug]);
+    if (user) fetchData();
+  }, [examIdFromUrl, user]);
 
   const handleStart = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedExamId) {
-      toast.error('Por favor, selecione uma prova.');
-      return;
-    }
-    // Register student for login
-    const registeredStudents = JSON.parse(localStorage.getItem('registered_students') || '[]');
-    const existing = registeredStudents.find((s: any) => s.email === formData.email);
-    if (!existing) {
-      registeredStudents.push({ nome: formData.nome, email: formData.email, telefone: formData.telefone, password: '' });
-      localStorage.setItem('registered_students', JSON.stringify(registeredStudents));
-    }
-    localStorage.setItem('student_info', JSON.stringify({ ...formData, examId: selectedExamId }));
+    if (!selectedExamId) { toast.error('Selecione uma prova.'); return; }
+    // Store examId in sessionStorage for the exam page
+    sessionStorage.setItem('current_exam_id', selectedExamId);
     navigate('/student/exam');
   };
 
-  const selectedExam = exams.find(e => e.id.toString() === selectedExamId);
+  const selectedExam = exams.find(e => e.id === selectedExamId);
 
   if (error) {
     return (
-      <div className="min-h-[100dvh] bg-surface flex items-center justify-center p-6 font-sans text-on-surface antialiased">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-center space-y-6 max-w-md"
-        >
-          <div className="w-16 h-16 rounded-2xl bg-error/10 flex items-center justify-center mx-auto">
-            <AlertCircle className="w-8 h-8 text-error" />
-          </div>
-          <h1 className="text-2xl font-black text-on-surface font-headline">Prova não encontrada</h1>
+      <div className="min-h-[100dvh] bg-surface flex items-center justify-center p-6">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center space-y-6 max-w-md">
+          <div className="w-16 h-16 rounded-2xl bg-error/10 flex items-center justify-center mx-auto"><AlertCircle className="w-8 h-8 text-error" /></div>
+          <h1 className="text-2xl font-black text-on-surface font-headline">Erro</h1>
           <p className="text-on-surface-variant font-medium">{error}</p>
-          <button
-            onClick={() => navigate('/')}
-            className="btn-primary px-8 py-3 rounded-xl font-bold text-sm"
-          >
-            Voltar ao início
-          </button>
+          <button onClick={() => navigate('/student/dashboard')} className="btn-primary px-8 py-3 rounded-xl font-bold text-sm">Voltar</button>
         </motion.div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-[100dvh] bg-surface flex items-center justify-center p-4 sm:p-6 lg:p-8 relative overflow-hidden font-sans text-on-surface antialiased">
-      {/* Background Effects */}
+    <div className="min-h-[100dvh] bg-surface flex items-center justify-center p-4 sm:p-6 relative overflow-hidden">
       <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-[10%] -left-[10%] w-[40%] h-[40%] rounded-full bg-primary/10 blur-[120px]" />
         <div className="absolute top-[20%] -right-[5%] w-[30%] h-[50%] rounded-full bg-secondary/10 blur-[100px]" />
-        <div className="absolute -bottom-[10%] left-[20%] w-[50%] h-[30%] rounded-full bg-primary/20 blur-[120px]" />
-        <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'radial-gradient(#0F8B8D 0.5px, transparent 0.5px)', backgroundSize: '24px 24px' }} />
       </div>
 
-      <div className="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-10 lg:gap-16 items-center relative z-10">
-        {/* Left Column - Info */}
-        <motion.div 
-          initial={{ opacity: 0, x: -30 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.6 }}
-          className="space-y-6 sm:space-y-8 lg:space-y-10 order-2 lg:order-1"
-        >
-          <div className="inline-flex items-center gap-2 px-3 py-2 bg-primary/10 text-primary rounded-xl text-[9px] sm:text-[10px] font-bold uppercase tracking-widest border border-primary/20 shadow-sm">
-            <ShieldCheck className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-            Ambiente Seguro de Avaliação
+      <div className="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-16 items-center relative z-10">
+        <motion.div initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} className="space-y-6 order-2 lg:order-1">
+          <div className="inline-flex items-center gap-2 px-3 py-2 bg-primary/10 text-primary rounded-xl text-[10px] font-bold uppercase tracking-widest border border-primary/20">
+            <ShieldCheck className="w-4 h-4" /> Ambiente Seguro
           </div>
-          
-          <div className="space-y-3 sm:space-y-4">
-            <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-black text-on-surface font-headline leading-tight tracking-tight">
-              {selectedExam ? selectedExam.titulo : 'Carregando...'}
-            </h1>
-            <p className="text-sm sm:text-base md:text-lg text-on-surface-variant leading-relaxed font-medium max-w-xl">
-              {selectedExam ? selectedExam.descricao : 'Bem-vindo à sua avaliação profissional. Prepare-se para demonstrar seus conhecimentos técnicos.'}
-            </p>
-          </div>
-
-          {/* Stats Cards */}
-          <div className="grid grid-cols-2 gap-3 sm:gap-4 max-w-sm">
-            <div className="card-saas !p-3 sm:!p-5 flex items-center gap-3 group">
-              <div className="w-9 h-9 sm:w-12 sm:h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary group-hover:scale-110 transition-transform shadow-sm border border-primary/10 shrink-0">
-                <FileText className="w-4 h-4 sm:w-6 sm:h-6" />
-              </div>
-              <div className="min-w-0">
-                <p className="text-xl sm:text-2xl font-black text-on-surface font-headline tracking-tighter">
-                  {selectedExam ? selectedExam.qCount : '0'}
-                </p>
-                <p className="text-[8px] sm:text-[10px] text-on-surface-variant font-bold uppercase tracking-widest">Questões</p>
-              </div>
+          <h1 className="text-2xl md:text-4xl font-black text-on-surface font-headline leading-tight">{selectedExam?.titulo || 'Carregando...'}</h1>
+          <p className="text-on-surface-variant font-medium">{selectedExam?.descricao || ''}</p>
+          <div className="grid grid-cols-2 gap-4 max-w-sm">
+            <div className="card-saas !p-5 flex items-center gap-3">
+              <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary"><FileText className="w-6 h-6" /></div>
+              <div><p className="text-2xl font-black text-on-surface font-headline">{selectedExam?.perguntas?.length || 0}</p><p className="text-[10px] text-on-surface-variant font-bold uppercase tracking-widest">Questões</p></div>
             </div>
-            <div className="card-saas !p-3 sm:!p-5 flex items-center gap-3 group">
-              <div className="w-9 h-9 sm:w-12 sm:h-12 rounded-xl bg-secondary/10 flex items-center justify-center text-secondary group-hover:scale-110 transition-transform shadow-sm border border-secondary/10 shrink-0">
-                <Clock className="w-4 h-4 sm:w-6 sm:h-6" />
-              </div>
-              <div className="min-w-0">
-                <p className="text-xl sm:text-2xl font-black text-on-surface font-headline tracking-tighter">60</p>
-                <p className="text-[8px] sm:text-[10px] text-on-surface-variant font-bold uppercase tracking-widest">Minutos</p>
-              </div>
+            <div className="card-saas !p-5 flex items-center gap-3">
+              <div className="w-12 h-12 rounded-xl bg-secondary/10 flex items-center justify-center text-secondary"><Clock className="w-6 h-6" /></div>
+              <div><p className="text-2xl font-black text-on-surface font-headline">60</p><p className="text-[10px] text-on-surface-variant font-bold uppercase tracking-widest">Minutos</p></div>
             </div>
-          </div>
-
-          {/* Instructions - Hidden on mobile, shown on lg+ */}
-          <div className="hidden lg:block p-5 sm:p-7 bg-surface-container-high rounded-2xl text-on-surface shadow-xl shadow-primary/5 border border-outline relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-3xl -translate-y-16 translate-x-16" />
-            <h4 className="font-bold text-base mb-4 flex items-center gap-3 font-headline">
-              <AlertCircle className="w-5 h-5 text-primary" />
-              Instruções de Segurança
-            </h4>
-            <ul className="space-y-3 text-sm font-medium text-on-surface-variant">
-              <li className="flex items-start gap-3">
-                <div className="w-1.5 h-1.5 rounded-full bg-primary mt-1.5 shrink-0 shadow-[0_0_8px_rgba(15,139,141,0.8)]" />
-                <span>Mantenha o foco na aba da prova. Saídas frequentes podem invalidar seu teste.</span>
-              </li>
-              <li className="flex items-start gap-3">
-                <div className="w-1.5 h-1.5 rounded-full bg-primary mt-1.5 shrink-0 shadow-[0_0_8px_rgba(15,139,141,0.8)]" />
-                <span>O tempo é contínuo. Mesmo se desconectar, o cronômetro continuará rodando.</span>
-              </li>
-              <li className="flex items-start gap-3">
-                <div className="w-1.5 h-1.5 rounded-full bg-primary mt-1.5 shrink-0 shadow-[0_0_8px_rgba(15,139,141,0.8)]" />
-                <span>Ao finalizar, certifique-se de clicar no botão "Enviar" para registrar sua nota.</span>
-              </li>
-            </ul>
           </div>
         </motion.div>
 
-        {/* Right Column - Form */}
-        <motion.div 
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="bg-surface-container p-5 sm:p-8 md:p-10 rounded-2xl sm:rounded-3xl shadow-2xl shadow-primary/5 border border-outline relative order-1 lg:order-2"
-        >
-          <div className="absolute -top-6 -right-6 w-20 h-20 bg-primary/5 rounded-full blur-2xl" />
-          
-          <header className="mb-6 sm:mb-8">
-            <h3 className="text-xl sm:text-2xl font-black text-on-surface font-headline tracking-tight mb-1">Olá, {formData.nome}!</h3>
-            <p className="text-sm text-on-surface-variant font-medium">Você está pronto para iniciar a avaliação.</p>
+        <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} className="bg-surface-container p-5 sm:p-10 rounded-3xl shadow-2xl border border-outline order-1 lg:order-2">
+          <header className="mb-8">
+            <h3 className="text-2xl font-black text-on-surface font-headline">Olá, {user?.nome}!</h3>
+            <p className="text-sm text-on-surface-variant font-medium">Pronto para iniciar a avaliação.</p>
           </header>
-          
-          <form className="space-y-5 sm:space-y-6" onSubmit={handleStart}>
-            {/* Exam Select */}
-            <div className="space-y-2">
-              <label className="block text-[10px] font-bold text-on-surface-variant uppercase tracking-[0.15em] ml-1">Selecionar Prova</label>
-              <div className="relative group">
-                <FileText className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-on-surface-variant/40 group-focus-within:text-primary transition-colors" />
-                <select 
-                  className="w-full pl-11 sm:pl-12 pr-10 py-3 sm:py-3.5 bg-surface-container-low border border-outline rounded-xl text-on-surface text-sm sm:text-base font-semibold focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all outline-none appearance-none cursor-pointer"
-                  value={selectedExamId}
-                  onChange={(e) => setSelectedExamId(e.target.value)}
-                  required
-                >
-                  {exams.length === 0 ? (
-                    <option value="">Carregando provas...</option>
-                  ) : (
-                    exams.map(exam => (
-                      <option key={exam.id} value={exam.id}>{exam.titulo}</option>
-                    ))
-                  )}
-                </select>
-                <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-on-surface-variant/40 pointer-events-none" />
-              </div>
-            </div>
 
-            {/* Logged-in user info */}
-            <div className="p-4 bg-surface-container-low rounded-xl border border-outline space-y-2">
-              <div className="flex items-center gap-3 text-sm text-on-surface font-semibold">
-                <User className="w-4 h-4 text-primary" />
-                {formData.nome}
+          <form className="space-y-6" onSubmit={handleStart}>
+            {!examIdFromUrl && (
+              <div className="space-y-2">
+                <label className="block text-[10px] font-bold text-on-surface-variant uppercase tracking-[0.15em] ml-1">Selecionar Prova</label>
+                <div className="relative">
+                  <FileText className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-on-surface-variant/40" />
+                  <select className="w-full pl-12 pr-10 py-3.5 bg-surface-container-low border border-outline rounded-xl text-on-surface font-semibold focus:border-primary outline-none appearance-none cursor-pointer" value={selectedExamId} onChange={(e) => setSelectedExamId(e.target.value)} required>
+                    {exams.map(exam => <option key={exam.id} value={exam.id}>{exam.titulo}</option>)}
+                  </select>
+                  <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-on-surface-variant/40 pointer-events-none" />
+                </div>
               </div>
-              <div className="flex items-center gap-3 text-sm text-on-surface-variant font-medium">
-                <Mail className="w-4 h-4 text-on-surface-variant/50" />
-                {formData.email}
-              </div>
-            </div>
+            )}
 
-            {/* Mobile Instructions - Collapsible */}
-            <details className="lg:hidden bg-surface-container-high rounded-xl border border-outline overflow-hidden">
-              <summary className="p-4 flex items-center gap-2 cursor-pointer text-sm font-bold text-on-surface font-headline select-none">
-                <AlertCircle className="w-4 h-4 text-primary shrink-0" />
-                Instruções de Segurança
-                <ChevronRight className="w-4 h-4 text-on-surface-variant ml-auto transition-transform [details[open]>&]:rotate-90" />
-              </summary>
-              <ul className="px-4 pb-4 space-y-2.5 text-xs font-medium text-on-surface-variant">
-                <li className="flex items-start gap-2.5">
-                  <div className="w-1.5 h-1.5 rounded-full bg-primary mt-1 shrink-0" />
-                  <span>Mantenha o foco na aba da prova. Saídas frequentes podem invalidar seu teste.</span>
-                </li>
-                <li className="flex items-start gap-2.5">
-                  <div className="w-1.5 h-1.5 rounded-full bg-primary mt-1 shrink-0" />
-                  <span>O tempo é contínuo. Mesmo se desconectar, o cronômetro continuará.</span>
-                </li>
-                <li className="flex items-start gap-2.5">
-                  <div className="w-1.5 h-1.5 rounded-full bg-primary mt-1 shrink-0" />
-                  <span>Ao finalizar, clique em "Enviar" para registrar sua nota.</span>
-                </li>
-              </ul>
-            </details>
-
-            <div className="pt-2 sm:pt-4">
-              <button 
-                className="w-full btn-primary py-3.5 sm:py-4 rounded-xl sm:rounded-2xl font-black text-sm sm:text-lg shadow-xl shadow-primary/20 flex items-center justify-center gap-3 group"
-                type="submit"
-              >
-                <Play className="w-5 h-5 fill-current group-hover:scale-110 transition-transform" />
-                <span>Iniciar Avaliação</span>
-                <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-1 transition-transform" />
-              </button>
-            </div>
+            <button className="w-full btn-primary py-4 rounded-2xl font-black text-lg flex items-center justify-center gap-3 group" type="submit">
+              <Play className="w-5 h-5 fill-current" /> Iniciar Avaliação <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+            </button>
           </form>
-
-          <footer className="mt-6 sm:mt-8 text-center">
-            <p className="text-[9px] sm:text-[10px] text-on-surface-variant font-bold uppercase tracking-widest leading-relaxed">
-              Ao iniciar, você concorda com nossos{' '}
-              <a className="text-primary hover:underline underline-offset-4" href="#">Termos de Uso</a> e <a className="text-primary hover:underline underline-offset-4" href="#">Privacidade</a>.
-            </p>
-          </footer>
         </motion.div>
       </div>
     </div>
   );
 }
+
+export default StudentStartPage;

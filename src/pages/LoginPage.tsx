@@ -1,7 +1,7 @@
 import React from 'react';
-import { Mail, Lock, Eye, EyeOff, LogIn, AlertCircle, Loader2, GraduationCap, ArrowLeft, KeyRound, CheckCircle2 } from 'lucide-react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
-import { api } from '../lib/api';
+import { Mail, Lock, Eye, EyeOff, LogIn, AlertCircle, Loader2, ArrowLeft, KeyRound, CheckCircle2 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { authService } from '../services/auth.service';
 import { useAuthStore } from '../lib/authStore';
 import { useTheme } from '../lib/ThemeContext';
 import { motion, AnimatePresence } from 'motion/react';
@@ -12,19 +12,14 @@ type View = 'login' | 'forgot' | 'reset';
 
 export function LoginPage() {
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
   const { user, loginAdmin } = useAuthStore();
   const { theme } = useTheme();
-  const [view, setView] = React.useState<View>(() => {
-    if (searchParams.get('token') && searchParams.get('email')) return 'reset';
-    return 'login';
-  });
-  const [email, setEmail] = React.useState(() => localStorage.getItem('admin_remembered_email') || '');
-  const [password, setPassword] = React.useState(() => localStorage.getItem('admin_remembered_pw') || '');
+  const [view, setView] = React.useState<View>('login');
+  const [email, setEmail] = React.useState('');
+  const [password, setPassword] = React.useState('');
   const [error, setError] = React.useState('');
   const [isLoading, setIsLoading] = React.useState(false);
   const [showPassword, setShowPassword] = React.useState(false);
-  const [remember, setRemember] = React.useState(() => !!localStorage.getItem('admin_remembered_email'));
 
   // Forgot password state
   const [forgotEmail, setForgotEmail] = React.useState('');
@@ -37,6 +32,14 @@ export function LoginPage() {
   const [resetError, setResetError] = React.useState('');
   const [resetSuccess, setResetSuccess] = React.useState(false);
   const [showNewPassword, setShowNewPassword] = React.useState(false);
+
+  // Check if this is a password reset callback
+  React.useEffect(() => {
+    const hash = window.location.hash;
+    if (hash.includes('type=recovery')) {
+      setView('reset');
+    }
+  }, []);
 
   React.useEffect(() => {
     if (user) {
@@ -55,15 +58,8 @@ export function LoginPage() {
     setError('');
     
     try {
-      const data = await api.login({ email: email.trim(), password });
-      if (remember) {
-        localStorage.setItem('admin_remembered_email', email.trim());
-        localStorage.setItem('admin_remembered_pw', password);
-      } else {
-        localStorage.removeItem('admin_remembered_email');
-        localStorage.removeItem('admin_remembered_pw');
-      }
-      loginAdmin(data.token, data.user);
+      const { user: authUser, admin } = await authService.loginAdmin(email, password);
+      loginAdmin(authUser, admin);
       navigate('/admin/dashboard');
     } catch (err: any) {
       setError(err.message || 'Erro ao fazer login');
@@ -81,7 +77,7 @@ export function LoginPage() {
     setIsLoading(true);
     setForgotError('');
     try {
-      await api.post('/admin/forgot-password', { email: forgotEmail.trim() });
+      await authService.forgotPassword(forgotEmail);
       setForgotSuccess(true);
     } catch (err: any) {
       setForgotError(err.message || 'Erro ao processar solicitação');
@@ -89,13 +85,6 @@ export function LoginPage() {
       setIsLoading(false);
     }
   };
-
-  // Check if URL has reset params on mount
-  React.useEffect(() => {
-    if (searchParams.get('reset') === 'true' && searchParams.get('token') && searchParams.get('email')) {
-      setView('reset');
-    }
-  }, [searchParams]);
 
   const handleResetSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -114,24 +103,13 @@ export function LoginPage() {
     setIsLoading(true);
     setResetError('');
     try {
-      const emailParam = searchParams.get('email') || forgotEmail.trim();
-      const tokenParam = searchParams.get('token');
-      
-      await api.post('/admin/reset-password', { 
-        email: emailParam, 
-        token: tokenParam,
-        new_password: newPassword 
-      });
+      await authService.updatePassword(newPassword);
       setResetSuccess(true);
       setTimeout(() => {
         setView('login');
-        setEmail(forgotEmail.trim());
-        setPassword('');
         setResetSuccess(false);
         setNewPassword('');
         setConfirmPassword('');
-        setForgotEmail('');
-        setForgotSuccess(false);
       }, 2000);
     } catch (err: any) {
       setResetError(err.message || 'Erro ao redefinir senha');
@@ -153,9 +131,8 @@ export function LoginPage() {
     <div className="min-h-screen bg-surface font-sans text-on-surface antialiased flex items-center justify-center p-6 relative overflow-hidden">
       <div className="fixed inset-0 z-[-1] overflow-hidden pointer-events-none">
         <div className="absolute -top-[10%] -left-[10%] w-[40%] h-[40%] rounded-full bg-primary/10 blur-[120px]"></div>
-        <div className="absolute top-[20%] -right-[5%] w-[30%] h-[50%] rounded-full bg-secondary/10 blur-[100px]"></div>
+        <div className="absolute top-[20%] -right-[5%] w-[30%] h-[30%] rounded-full bg-secondary/10 blur-[100px]"></div>
         <div className="absolute -bottom-[10%] left-[20%] w-[50%] h-[30%] rounded-full bg-primary/20 blur-[120px]"></div>
-        <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'radial-gradient(#0F8B8D 0.5px, transparent 0.5px)', backgroundSize: '24px 24px' }}></div>
       </div>
 
       <div className="w-full max-w-[440px] flex flex-col gap-8">
@@ -170,13 +147,13 @@ export function LoginPage() {
                 </header>
                 <form className="space-y-6" onSubmit={handleLogin}>
                   {error && (
-                    <div className="bg-error/10 border border-error/20 p-4 rounded-xl flex items-center gap-3 text-error text-sm font-medium animate-in fade-in slide-in-from-top-2" role="alert">
+                    <div className="bg-error/10 border border-error/20 p-4 rounded-xl flex items-center gap-3 text-error text-sm font-medium" role="alert">
                       <AlertCircle className="w-5 h-5 shrink-0" />
                       <p>{error}</p>
                     </div>
                   )}
                   <div className="space-y-2">
-                    <label htmlFor="email" className="block font-sans text-[10px] font-bold uppercase tracking-widest text-on-surface-variant ml-1">E-mail Corporativo</label>
+                    <label htmlFor="email" className="block font-sans text-[10px] font-bold uppercase tracking-widest text-on-surface-variant ml-1">E-mail</label>
                     <div className="relative group">
                       <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-on-surface-variant group-focus-within:text-primary transition-colors">
                         <Mail className="w-5 h-5" />
@@ -196,11 +173,7 @@ export function LoginPage() {
                       </button>
                     </div>
                   </div>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <input id="remember" type="checkbox" checked={remember} onChange={(e) => setRemember(e.target.checked)} className="w-4 h-4 rounded border-outline text-primary focus:ring-primary/20 accent-primary cursor-pointer" />
-                      <label htmlFor="remember" className="text-xs text-on-surface-variant font-medium cursor-pointer select-none">Lembrar senha</label>
-                    </div>
+                  <div className="flex items-center justify-end">
                     <button type="button" onClick={goToForgot} className="text-xs text-primary font-bold hover:underline transition-all">
                       Esqueci a senha
                     </button>
@@ -224,19 +197,16 @@ export function LoginPage() {
                     <KeyRound className="w-6 h-6 text-primary" />
                   </div>
                   <h1 className="text-2xl font-headline font-bold text-on-surface tracking-tight">Esqueceu a senha?</h1>
-                  <p className="text-on-surface-variant text-sm mt-1 font-medium">Informe seu e-mail para verificar sua conta e redefinir a senha.</p>
+                  <p className="text-on-surface-variant text-sm mt-1 font-medium">Informe seu e-mail para receber o link de redefinição.</p>
                 </header>
-
                 {forgotSuccess ? (
                   <div className="text-center space-y-4">
                     <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center mx-auto">
                       <Mail className="w-7 h-7 text-primary" />
                     </div>
                     <p className="text-on-surface font-bold">Solicitação enviada!</p>
-                    <p className="text-on-surface-variant text-sm">Se o e-mail estiver cadastrado, você receberá um link para redefinir sua senha. Verifique sua caixa de entrada e spam.</p>
-                    <button onClick={() => setView('login')} className="w-full btn-primary py-3.5 text-sm mt-4">
-                      Voltar ao Login
-                    </button>
+                    <p className="text-on-surface-variant text-sm">Se o e-mail estiver cadastrado, você receberá um link para redefinir sua senha.</p>
+                    <button onClick={() => setView('login')} className="w-full btn-primary py-3.5 text-sm mt-4">Voltar ao Login</button>
                   </div>
                 ) : (
                   <form className="space-y-6" onSubmit={handleForgotSubmit}>
@@ -256,7 +226,7 @@ export function LoginPage() {
                       </div>
                     </div>
                     <button className="w-full btn-primary py-4 text-sm disabled:opacity-50" type="submit" disabled={isLoading}>
-                      {isLoading ? <Loader2 className="w-4 h-4 animate-spin mx-auto" /> : 'Verificar conta'}
+                      {isLoading ? <Loader2 className="w-4 h-4 animate-spin mx-auto" /> : 'Enviar Link'}
                     </button>
                   </form>
                 )}
@@ -265,9 +235,6 @@ export function LoginPage() {
 
             {view === 'reset' && (
               <motion.div key="reset" initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }} transition={{ duration: 0.2 }}>
-                <button type="button" onClick={() => setView('forgot')} className="flex items-center gap-2 text-xs text-on-surface-variant font-bold hover:text-primary transition-colors mb-6">
-                  <ArrowLeft className="w-4 h-4" /> Voltar
-                </button>
                 <header className="mb-8">
                   <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center mb-4">
                     <Lock className="w-6 h-6 text-primary" />
@@ -275,7 +242,6 @@ export function LoginPage() {
                   <h1 className="text-2xl font-headline font-bold text-on-surface tracking-tight">Nova senha</h1>
                   <p className="text-on-surface-variant text-sm mt-1 font-medium">Defina uma nova senha para sua conta.</p>
                 </header>
-
                 {resetSuccess ? (
                   <div className="text-center space-y-4">
                     <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center mx-auto">
@@ -322,17 +288,9 @@ export function LoginPage() {
             )}
           </AnimatePresence>
         </div>
-
-
-        <footer className="flex flex-col items-center gap-6">
-          <div className="flex gap-8 text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">
-            <a className="hover:text-primary transition-colors" href="#">Termos</a>
-            <a className="hover:text-primary transition-colors" href="#">Privacidade</a>
-            <a className="hover:text-primary transition-colors" href="#">Suporte</a>
-          </div>
-        </footer>
       </div>
-      <div className="fixed bottom-0 left-0 w-full h-1 bg-gradient-to-r from-primary via-[#06B6D4] to-primary-container opacity-40"></div>
     </div>
   );
 }
+
+export default LoginPage;
