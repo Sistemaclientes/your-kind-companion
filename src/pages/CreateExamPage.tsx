@@ -61,12 +61,22 @@ export function CreateExamPage() {
       const data = await api.get('/categorias');
       const categoriesArray = Array.isArray(data) ? data : [];
       setCategories(categoriesArray);
-      if (categoriesArray.length > 0 && !categoryId) {
-        setCategoryId(categoriesArray[0].id);
-        setCategory(categoriesArray[0].nome);
+      
+      // Update selected category if it's not set or not in the new list
+      if (categoriesArray.length > 0) {
+        if (!categoryId) {
+          setCategoryId(categoriesArray[0].id);
+          setCategory(categoriesArray[0].nome);
+        } else {
+          const currentCat = categoriesArray.find(c => c.id === categoryId);
+          if (currentCat) {
+            setCategory(currentCat.nome);
+          }
+        }
       }
     } catch (err) {
       console.error('Error fetching categories:', err);
+      setCategories([]); // Ensure it's an array on error
     }
   }, [categoryId]);
 
