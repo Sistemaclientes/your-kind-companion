@@ -173,11 +173,6 @@ export function LoginPage() {
                       </button>
                     </div>
                   </div>
-                  <div className="flex items-center justify-end">
-                    <button type="button" onClick={goToForgot} className="text-xs text-primary font-bold hover:underline transition-all">
-                      Esqueci a senha
-                    </button>
-                  </div>
                   <div className="pt-2">
                     <button className="w-full btn-primary py-4 px-4 text-sm tracking-wide disabled:opacity-50 disabled:cursor-not-allowed" type="submit" disabled={isLoading}>
                       {isLoading ? (<><Loader2 className="w-4 h-4 animate-spin" /><span>Autenticando...</span></>) : (<><span>Entrar no Sistema</span><LogIn className="w-4 h-4" /></>)}
