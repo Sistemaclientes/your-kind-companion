@@ -137,7 +137,6 @@ Deno.serve(async (req: Request) => {
         const errBody = await updateRes.text();
         return jsonResponse({ error: `Erro ao atualizar usuário: ${errBody}` }, 400);
       }
-      }
     } else {
       const { data: createdUserData, error: createUserError } = await adminClient.auth.admin.createUser({
         email,
