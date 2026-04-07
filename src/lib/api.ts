@@ -6,6 +6,7 @@ import { examsService } from '@/services/exams.service';
 import { dashboardService } from '@/services/dashboard.service';
 import { studentsService } from '@/services/students.service';
 import { adminService } from '@/services/admin.service';
+import { categoriesService } from '@/services/categories.service';
 import { supabase } from '@/integrations/supabase/client';
 
 async function handleRoute(method: string, endpoint: string, data?: any): Promise<any> {
