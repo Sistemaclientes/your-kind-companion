@@ -25,98 +25,102 @@ const AuthContext = createContext<AuthState | null>(null);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const initializationRef = React.useRef(false);
 
   const resolveUser = useCallback(async (authUser: User) => {
-    // Check admin
-    const { data: admin } = await supabase
-      .from('admins')
-      .select('id, email, role')
-      .eq('id', authUser.id)
-      .single();
+    try {
+      // Check admin
+      const { data: admin, error: adminError } = await supabase
+        .from('admins')
+        .select('id, email, role')
+        .eq('id', authUser.id)
+        .maybeSingle();
 
-    if (admin) {
-      setUser({
-        id: admin.id,
-        nome: admin.email?.split('@')[0] || 'Admin',
-        email: admin.email || authUser.email || '',
-        role: 'admin',
-      });
-      return;
+      if (admin) {
+        setUser({
+          id: admin.id,
+          nome: admin.email?.split('@')[0] || 'Admin',
+          email: admin.email || authUser.email || '',
+          role: 'admin',
+        });
+        return;
+      }
+
+      // Check student
+      const { data: aluno, error: alunoError } = await supabase
+        .from('alunos')
+        .select('id, nome, avatar_url, status')
+        .eq('id', authUser.id)
+        .maybeSingle();
+
+      if (aluno) {
+        setUser({
+          id: aluno.id,
+          nome: aluno.nome || 'Aluno',
+          email: authUser.email || '',
+          role: 'aluno',
+        });
+        return;
+      }
+
+      // User exists in auth but not in any table
+      console.warn('User found in Auth but not in admins/alunos tables');
+      setUser(null);
+    } catch (error) {
+      console.error('Error resolving user profile:', error);
+      setUser(null);
     }
-
-    // Check student
-    const { data: aluno } = await supabase
-      .from('alunos')
-      .select('id, nome, avatar_url, status')
-      .eq('id', authUser.id)
-      .single();
-
-    if (aluno) {
-      setUser({
-        id: aluno.id,
-        nome: aluno.nome || 'Aluno',
-        email: authUser.email || '',
-        role: 'aluno',
-      });
-      return;
-    }
-
-    // User exists in auth but not in any table
-    setUser(null);
   }, []);
 
   const checkSession = useCallback(async () => {
-    setIsLoading(true);
     try {
-      const { data: { session } } = await supabase.auth.getSession();
+      const { data: { session }, error } = await supabase.auth.getSession();
+      if (error) throw error;
+      
       if (session?.user) {
         await resolveUser(session.user);
       } else {
         setUser(null);
       }
-    } catch {
+    } catch (error) {
+      console.error('Session check failed:', error);
       setUser(null);
     } finally {
       setIsLoading(false);
     }
   }, [resolveUser]);
 
-  const loginAdmin = useCallback((authUser: User, admin: any) => {
-    setUser({
-      id: admin.id,
-      nome: admin.email?.split('@')[0] || 'Admin',
-      email: admin.email || authUser.email || '',
-      role: 'admin',
-    });
-  }, []);
-
-  const loginStudent = useCallback((authUser: User, aluno: any) => {
-    setUser({
-      id: aluno.id,
-      nome: aluno.nome || 'Aluno',
-      email: authUser.email || '',
-      role: 'aluno',
-    });
-  }, []);
-
-  const logout = useCallback(async () => {
-    await supabase.auth.signOut();
-    setUser(null);
-  }, []);
-
   useEffect(() => {
+    if (initializationRef.current) return;
+    initializationRef.current = true;
+
+    // Safety timeout: if loading takes more than 10s, force stop
+    const timeout = setTimeout(() => {
+      if (isLoading) {
+        console.warn('Auth initialization timed out, forcing loading to false');
+        setIsLoading(false);
+      }
+    }, 10000);
+
     checkSession();
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (event === 'SIGNED_OUT') {
         setUser(null);
+        setIsLoading(false);
       } else if (session?.user && (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED')) {
         await resolveUser(session.user);
+        setIsLoading(false);
+      } else if (event === 'INITIAL_SESSION') {
+        setIsLoading(false);
       }
     });
 
-    return () => subscription.unsubscribe();
-  }, [checkSession, resolveUser]);
+    return () => {
+      clearTimeout(timeout);
+      subscription.unsubscribe();
+    };
+  }, [checkSession, resolveUser, isLoading]);
 
   const value = React.useMemo(() => ({
     user,
