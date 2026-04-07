@@ -102,7 +102,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const loginStudent = useCallback((authUser: User, aluno: any) => {
     setUser({
       id: aluno.id,
-      nome: nome || 'Aluno',
+      nome: aluno.nome || 'Aluno',
       email: authUser.email || '',
       role: 'aluno',
     });
