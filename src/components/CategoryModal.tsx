@@ -45,9 +45,11 @@ export function CategoryModal({ isOpen, onClose, onCategoryChange }: CategoryMod
     setIsLoading(true);
     try {
       const data = await api.get('/categorias');
-      setCategories(data);
+      const categoriesArray = Array.isArray(data) ? data : [];
+      setCategories(categoriesArray);
     } catch (err: any) {
       toast.error('Erro ao carregar categorias: ' + err.message);
+      setCategories([]); // Ensure it's an array on error
     } finally {
       setIsLoading(false);
     }
@@ -188,7 +190,7 @@ export function CategoryModal({ isOpen, onClose, onCategoryChange }: CategoryMod
                   </div>
                 ) : (
                   <div className="grid gap-2">
-                    {categories.map((category) => (
+                    {Array.isArray(categories) && categories.map((category) => (
                       <div 
                         key={category.id}
                         className={cn(
