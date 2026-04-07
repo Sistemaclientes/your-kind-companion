@@ -955,3 +955,5 @@ export function CreateExamPage() {
     </div>
   );
 }
+
+export default CreateExamPage;

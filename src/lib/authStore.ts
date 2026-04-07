@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
+import React, { createContext, useContext, useState, useCallback, useEffect, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import type { User } from '@supabase/supabase-js';
 
@@ -14,7 +14,7 @@ export interface AuthUser {
 interface AuthState {
   user: AuthUser | null;
   isLoading: boolean;
-  checkSession: () => void;
+  checkSession: () => Promise<void>;
   loginAdmin: (authUser: User, admin: any) => void;
   loginStudent: (authUser: User, aluno: any) => void;
   logout: () => void;
@@ -25,9 +25,13 @@ const AuthContext = createContext<AuthState | null>(null);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const initializationRef = React.useRef(false);
+  const resolvingRef = useRef(false);
+  const initializationRef = useRef(false);
 
   const resolveUser = useCallback(async (authUser: User) => {
+    if (resolvingRef.current) return;
+    resolvingRef.current = true;
+    
     try {
       // Check admin
       const { data: admin } = await supabase
@@ -63,12 +67,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return;
       }
 
-      // User exists in auth but not in any table
       console.warn('User found in Auth but not in admins/alunos tables');
       setUser(null);
     } catch (error) {
       console.error('Error resolving user profile:', error);
       setUser(null);
+    } finally {
+      resolvingRef.current = false;
+      setIsLoading(false);
     }
   }, []);
 
@@ -81,11 +87,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         await resolveUser(session.user);
       } else {
         setUser(null);
+        setIsLoading(false);
       }
     } catch (error) {
       console.error('Session check failed:', error);
       setUser(null);
-    } finally {
       setIsLoading(false);
     }
   }, [resolveUser]);
@@ -97,6 +103,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       email: admin.email || authUser.email || '',
       role: 'admin',
     });
+    setIsLoading(false);
   }, []);
 
   const loginStudent = useCallback((authUser: User, aluno: any) => {
@@ -106,11 +113,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       email: authUser.email || '',
       role: 'aluno',
     });
+    setIsLoading(false);
   }, []);
 
   const logout = useCallback(async () => {
+    setIsLoading(true);
     await supabase.auth.signOut();
     setUser(null);
+    setIsLoading(false);
   }, []);
 
   useEffect(() => {
@@ -122,19 +132,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setIsLoading(false);
     }, 10000);
 
-    checkSession();
-
+    // Instead of checkSession AND onAuthStateChange immediately,
+    // we set up the listener first.
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log(`[AuthStore] Auth event: ${event}`);
+      
       if (event === 'SIGNED_OUT') {
         setUser(null);
         setIsLoading(false);
-      } else if (session?.user && (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED')) {
+      } else if (session?.user) {
         await resolveUser(session.user);
-        setIsLoading(false);
-      } else if (event === 'INITIAL_SESSION') {
+      } else if (event === 'INITIAL_SESSION' && !session) {
         setIsLoading(false);
       }
     });
+
+    // Check session once manually just in case INITIAL_SESSION event doesn't fire as expected
+    // but with a small delay or check if it's already loading
+    checkSession();
 
     return () => {
       clearTimeout(timeoutId);

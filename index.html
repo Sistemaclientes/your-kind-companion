@@ -10,6 +10,30 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+      // Force page reload on chunk load errors
+      window.addEventListener('error', (e) => {
+        if (e.message && (
+          e.message.includes('Failed to fetch dynamically imported module') ||
+          e.message.includes('Importing a module script failed') ||
+          e.message.includes('Loading chunk') ||
+          e.message.includes('Script error.')
+        )) {
+          if (!window.location.hash.includes('reloaded')) {
+            console.warn('Chunk loading error detected. Reloading page...');
+            window.location.hash = 'reloaded';
+            window.location.reload();
+          }
+        }
+      }, true);
+      
+      // Clear reloaded hash after some time
+      if (window.location.hash.includes('reloaded')) {
+        setTimeout(() => {
+          window.history.replaceState(null, '', window.location.pathname + window.location.search);
+        }, 3000);
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>

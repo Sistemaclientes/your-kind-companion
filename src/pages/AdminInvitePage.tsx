@@ -91,27 +91,13 @@ export function AdminInvitePage() {
     })();
   }, [token]);
 
-  // Listen to auth state changes to trigger invite acceptance
+  // Watch user state change to accept invite
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log("[AdminInvite] Evento Auth:", event, "Usuário:", session?.user?.id);
-      
-      if (session?.user && status === 'valid') {
-        console.log("[AdminInvite] Usuário autenticado e convite válido. Aceitando...");
-        acceptInvite();
-      }
-    });
-
-    // Check if already logged in
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session?.user && status === 'valid') {
-        console.log("[AdminInvite] Sessão já existente e convite válido. Aceitando...");
-        acceptInvite();
-      }
-    });
-
-    return () => subscription.unsubscribe();
-  }, [status, token]);
+    if (user && status === 'valid') {
+      console.log("[AdminInvite] Usuário autenticado pelo store e convite válido. Aceitando...");
+      acceptInvite();
+    }
+  }, [user, status, token]);
 
   const acceptInvite = async () => {
     // Evitar chamadas múltiplas

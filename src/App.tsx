@@ -15,25 +15,25 @@ import { AuthProvider, useAuthStore } from './lib/authStore';
 import { VisualSettingsProvider } from './components/VisualSettingsProvider';
 
 // Lazy load pages
-const LoginPage = lazy(() => import('./pages/LoginPage').then(m => ({ default: m.LoginPage })));
-const DashboardPage = lazy(() => import('./pages/DashboardPage').then(m => ({ default: m.DashboardPage })));
-const ExamsPage = lazy(() => import('./pages/ExamsPage').then(m => ({ default: m.ExamsPage })));
-const StudentsPage = lazy(() => import('./pages/StudentsPage').then(m => ({ default: m.StudentsPage })));
-const StudentDetailsPage = lazy(() => import('./pages/StudentDetailsPage').then(m => ({ default: m.StudentDetailsPage })));
-const SettingsPage = lazy(() => import('./pages/SettingsPage').then(m => ({ default: m.SettingsPage })));
-const CreateExamPage = lazy(() => import('./pages/CreateExamPage').then(m => ({ default: m.CreateExamPage })));
-const StudentStartPage = lazy(() => import('./pages/StudentStartPage').then(m => ({ default: m.StudentStartPage })));
-const StudentExamPage = lazy(() => import('./pages/StudentExamPage').then(m => ({ default: m.StudentExamPage })));
-const StudentResultPage = lazy(() => import('./pages/StudentResultPage').then(m => ({ default: m.StudentResultPage })));
-const StudentDashboardPage = lazy(() => import('./pages/StudentDashboardPage').then(m => ({ default: m.StudentDashboardPage })));
-const StudentResultDetailPage = lazy(() => import('./pages/StudentResultDetailPage').then(m => ({ default: m.StudentResultDetailPage })));
-const StudentExamsListPage = lazy(() => import('./pages/StudentExamsListPage').then(m => ({ default: m.StudentExamsListPage })));
-const StudentResultsListPage = lazy(() => import('./pages/StudentResultsListPage').then(m => ({ default: m.StudentResultsListPage })));
-const StudentLoginPage = lazy(() => import('./pages/StudentLoginPage').then(m => ({ default: m.StudentLoginPage })));
-const StudentProfilePage = lazy(() => import('./pages/StudentProfilePage').then(m => ({ default: m.StudentProfilePage })));
-const NotFoundPage = lazy(() => import('./pages/NotFoundPage').then(m => ({ default: m.NotFoundPage })));
-const ConfirmEmailPage = lazy(() => import('./pages/ConfirmEmailPage').then(m => ({ default: m.ConfirmEmailPage })));
-const AdminInvitePage = lazy(() => import('./pages/AdminInvitePage').then(m => ({ default: m.AdminInvitePage })));
+const LoginPage = lazy(() => import('./pages/LoginPage'));
+const DashboardPage = lazy(() => import('./pages/DashboardPage'));
+const ExamsPage = lazy(() => import('./pages/ExamsPage'));
+const StudentsPage = lazy(() => import('./pages/StudentsPage'));
+const StudentDetailsPage = lazy(() => import('./pages/StudentDetailsPage'));
+const SettingsPage = lazy(() => import('./pages/SettingsPage'));
+const CreateExamPage = lazy(() => import('./pages/CreateExamPage'));
+const StudentStartPage = lazy(() => import('./pages/StudentStartPage'));
+const StudentExamPage = lazy(() => import('./pages/StudentExamPage'));
+const StudentResultPage = lazy(() => import('./pages/StudentResultPage'));
+const StudentDashboardPage = lazy(() => import('./pages/StudentDashboardPage'));
+const StudentResultDetailPage = lazy(() => import('./pages/StudentResultDetailPage'));
+const StudentExamsListPage = lazy(() => import('./pages/StudentExamsListPage'));
+const StudentResultsListPage = lazy(() => import('./pages/StudentResultsListPage'));
+const StudentLoginPage = lazy(() => import('./pages/StudentLoginPage'));
+const StudentProfilePage = lazy(() => import('./pages/StudentProfilePage'));
+const NotFoundPage = lazy(() => import('./pages/NotFoundPage'));
+const ConfirmEmailPage = lazy(() => import('./pages/ConfirmEmailPage'));
+const AdminInvitePage = lazy(() => import('./pages/AdminInvitePage'));
 
 
 function PageLoader() {

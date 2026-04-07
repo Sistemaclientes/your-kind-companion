@@ -4,13 +4,13 @@ import { createClient } from '@supabase/supabase-js';
 const SUPABASE_URL = "https://yjextyeeggmddqwinhgm.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlqZXh0eWVlZ2dtZGRxd2luaGdtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU1MzY4NzMsImV4cCI6MjA5MTExMjg3M30.clszVk8SXZo33lO5Y5RZIFeT6eL464aziK_HGEG9Rjw";
 
-// Import the supabase client like this:
-// import { supabase } from "@/integrations/supabase/client";
-
+// Singleton instance with specific options for better stability
 export const supabase = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
   auth: {
     storage: localStorage,
     persistSession: true,
     autoRefreshToken: true,
+    detectSessionInUrl: true,
+    flowType: 'pkce', // PKCE is more secure and stable
   }
 });

@@ -502,3 +502,5 @@ export function ExamsPage() {
     </>
   );
 }
+
+export default ExamsPage;

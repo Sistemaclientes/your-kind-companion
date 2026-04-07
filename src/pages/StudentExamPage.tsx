@@ -497,3 +497,5 @@ export function StudentExamPage() {
     </div>
   );
 }
+
+export default StudentExamPage;
