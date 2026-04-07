@@ -190,7 +190,7 @@ export function CategoryModal({ isOpen, onClose, onCategoryChange }: CategoryMod
                   </div>
                 ) : (
                   <div className="grid gap-2">
-                    {categories.map((category) => (
+                    {Array.isArray(categories) && categories.map((category) => (
                       <div 
                         key={category.id}
                         className={cn(
