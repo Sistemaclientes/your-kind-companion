@@ -59,10 +59,11 @@ export function CreateExamPage() {
   const fetchCategories = useCallback(async () => {
     try {
       const data = await api.get('/categorias');
-      setCategories(data);
-      if (data.length > 0 && !categoryId) {
-        setCategoryId(data[0].id);
-        setCategory(data[0].nome);
+      const categoriesArray = Array.isArray(data) ? data : [];
+      setCategories(categoriesArray);
+      if (categoriesArray.length > 0 && !categoryId) {
+        setCategoryId(categoriesArray[0].id);
+        setCategory(categoriesArray[0].nome);
       }
     } catch (err) {
       console.error('Error fetching categories:', err);
