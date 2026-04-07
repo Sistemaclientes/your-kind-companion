@@ -179,6 +179,20 @@ export function LoginPage() {
                       </button>
                     </div>
                   </div>
+                  <div className="flex items-center justify-between">
+                    <label className="flex items-center gap-2 cursor-pointer group">
+                      <input
+                        type="checkbox"
+                        checked={rememberMe}
+                        onChange={(e) => setRememberMe(e.target.checked)}
+                        className="rounded text-primary focus:ring-primary/20 border-outline bg-surface-container w-4 h-4 cursor-pointer"
+                      />
+                      <span className="text-xs font-semibold text-on-surface-variant group-hover:text-on-surface transition-colors">Lembrar e-mail</span>
+                    </label>
+                    <button type="button" onClick={goToForgot} className="text-xs font-bold text-primary hover:text-primary/80 transition-colors">
+                      Esqueceu a senha?
+                    </button>
+                  </div>
                   <div className="pt-2">
                     <button className="w-full btn-primary py-4 px-4 text-sm tracking-wide disabled:opacity-50 disabled:cursor-not-allowed" type="submit" disabled={isLoading}>
                       {isLoading ? (<><Loader2 className="w-4 h-4 animate-spin" /><span>Autenticando...</span></>) : (<><span>Entrar no Sistema</span><LogIn className="w-4 h-4" /></>)}
