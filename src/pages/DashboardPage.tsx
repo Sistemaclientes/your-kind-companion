@@ -292,12 +292,6 @@ export function DashboardPage() {
                 <h4 className="text-xl font-bold text-on-surface tracking-tight">Status dos Alunos</h4>
                 <p className="text-sm text-on-surface-variant font-medium mt-0.5">Engajamento individual em tempo real</p>
               </div>
-              <button 
-                className="btn-secondary py-2.5 px-5 text-xs"
-                onClick={() => navigate('/admin/students')}
-              >
-                Ver Todos
-              </button>
             </div>
             
             <div className="overflow-hidden -mx-4 px-4 group/marquee">
