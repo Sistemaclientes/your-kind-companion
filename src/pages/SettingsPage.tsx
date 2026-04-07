@@ -144,7 +144,20 @@ export function SettingsPage() {
     }
     setIsChangingPassword(true);
     try {
-      await api.put('/admins/change-password', { current_password: passwordData.current, new_password: passwordData.new });
+      // First verify current password by re-authenticating
+      const { supabase } = await import('@/integrations/supabase/client');
+      const { data: { user: authUser } } = await supabase.auth.getUser();
+      if (!authUser?.email) throw new Error('Usuário não encontrado');
+
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email: authUser.email,
+        password: passwordData.current,
+      });
+      if (signInError) throw new Error('Senha atual incorreta');
+
+      const { error: updateError } = await supabase.auth.updateUser({ password: passwordData.new });
+      if (updateError) throw new Error(updateError.message);
+
       setPasswordMsg({ type: 'success', text: 'Senha alterada com sucesso!' });
       setPasswordData({ current: '', new: '', confirm: '' });
     } catch (err: any) {
