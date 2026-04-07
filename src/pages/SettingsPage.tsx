@@ -125,6 +125,19 @@ export function SettingsPage() {
     }
   };
 
+  const handleSendResetLink = async (email: string) => {
+    try {
+      const { supabase } = await import('@/integrations/supabase/client');
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/redefinir-senha`,
+      });
+      if (error) throw error;
+      toast.success(`Link de redefinição enviado para ${email}`);
+    } catch (err: any) {
+      toast.error(err.message || 'Erro ao enviar link de redefinição');
+    }
+  };
+
   const handleChangePassword = async (e: React.FormEvent) => {
     e.preventDefault();
     setPasswordMsg(null);
