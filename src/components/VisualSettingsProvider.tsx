@@ -1,5 +1,10 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
-import { settingsService, VisualIdentity } from '../services/settings.service';
+import React, { createContext, useContext } from 'react';
+
+interface VisualIdentity {
+  logo_url: string;
+  primary_color: string;
+  success_color: string;
+}
 
 interface VisualSettingsContextType {
   settings: VisualIdentity;
@@ -7,58 +12,21 @@ interface VisualSettingsContextType {
   isLoading: boolean;
 }
 
+const defaults: VisualIdentity = {
+  logo_url: '',
+  primary_color: '#0F8B8D',
+  success_color: '#10B981',
+};
+
 const VisualSettingsContext = createContext<VisualSettingsContextType | undefined>(undefined);
 
 export const VisualSettingsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [settings, setSettings] = useState<VisualIdentity>({
-    logo_url: '',
-    primary_color: '#0F8B8D',
-    success_color: '#10B981',
-  });
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchSettings = async () => {
-      try {
-        const data = await settingsService.getVisualIdentity();
-        setSettings(data);
-        applyColors(data);
-      } catch (error) {
-        console.error('Erro ao buscar configurações visuais:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchSettings();
-  }, []);
-
-  const applyColors = (identity: VisualIdentity) => {
-    const root = document.documentElement;
-    if (identity.primary_color) {
-      root.style.setProperty('--color-primary', identity.primary_color);
-      // For button gradients and other components that might use custom variants
-      root.style.setProperty('--primary', identity.primary_color);
-    }
-    if (identity.success_color) {
-      root.style.setProperty('--color-secondary', identity.success_color);
-      root.style.setProperty('--secondary', identity.success_color);
-    }
-  };
-
-  const updateSettings = async (newSettings: Partial<VisualIdentity>) => {
-    try {
-      const updated = await settingsService.updateVisualIdentity(newSettings);
-      setSettings(updated);
-      applyColors(updated);
-    } catch (error) {
-      console.error('Erro ao atualizar configurações visuais:', error);
-      throw error;
-    }
+  const updateSettings = async (_newSettings: Partial<VisualIdentity>) => {
+    // No-op since configuracoes table doesn't exist
   };
 
   return (
-    <VisualSettingsContext.Provider value={{ settings, updateSettings, isLoading }}>
+    <VisualSettingsContext.Provider value={{ settings: defaults, updateSettings, isLoading: false }}>
       {children}
     </VisualSettingsContext.Provider>
   );

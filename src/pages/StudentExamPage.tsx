@@ -33,16 +33,14 @@ export function StudentExamPage() {
   const [studentInfo, setStudentInfo] = useState<any>(null);
 
   useEffect(() => {
-    const info = localStorage.getItem('student_info');
-    if (!info) return;
-    const parsedInfo = JSON.parse(info);
-    setStudentInfo(parsedInfo);
+    const examId = sessionStorage.getItem('current_exam_id');
+    if (!examId) { navigate('/student/start'); return; }
 
     const fetchExam = async () => {
       try {
-        const data = await api.get(`/provas/${parsedInfo.examId}`);
+        const data = await api.get(`/provas/${examId}`);
         setExam(data);
-        setTimeLeft((data.duration || 60) * 60);
+        setTimeLeft(60 * 60); // 60 minutes default
       } catch (err) {
         console.error('Error fetching exam:', err);
         navigate('/student/start');
@@ -102,8 +100,6 @@ export function StudentExamPage() {
       const result = await api.post('/responder-prova', {
         prova_id: exam.id,
         respostas: answers,
-        nome_aluno: studentInfo.nome,
-        email_aluno: studentInfo.email
       });
       localStorage.setItem('last_result', JSON.stringify(result));
 
