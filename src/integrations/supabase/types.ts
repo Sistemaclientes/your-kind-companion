@@ -227,6 +227,8 @@ export type Database = {
           mostrar_resultado: boolean | null
           permitir_revisao: boolean | null
           slug: string | null
+          status: string | null
+          subtitulo: string | null
           titulo: string | null
         }
         Insert: {
@@ -241,6 +243,8 @@ export type Database = {
           mostrar_resultado?: boolean | null
           permitir_revisao?: boolean | null
           slug?: string | null
+          status?: string | null
+          subtitulo?: string | null
           titulo?: string | null
         }
         Update: {
@@ -255,6 +259,8 @@ export type Database = {
           mostrar_resultado?: boolean | null
           permitir_revisao?: boolean | null
           slug?: string | null
+          status?: string | null
+          subtitulo?: string | null
           titulo?: string | null
         }
         Relationships: [
