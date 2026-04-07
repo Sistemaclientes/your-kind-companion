@@ -60,6 +60,11 @@ export function LoginPage() {
     
     try {
       const { user: authUser, admin } = await authService.loginAdmin(email, password);
+      if (rememberMe) {
+        localStorage.setItem('admin_remember_email', email.trim().toLowerCase());
+      } else {
+        localStorage.removeItem('admin_remember_email');
+      }
       loginAdmin(authUser, admin);
       navigate('/admin/dashboard');
     } catch (err: any) {
