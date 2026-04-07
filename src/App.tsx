@@ -74,7 +74,7 @@ export default function App() {
                     <LoginPage />
                   </PublicRoute>
                 } />
-                <Route path="/student/login" element={
+                <Route path="/painel-do-aluno" element={
                   <PublicRoute redirectTo="/student/dashboard">
                     <StudentLoginPage />
                   </PublicRoute>
@@ -84,7 +84,8 @@ export default function App() {
                 <Route path="/redefinir-senha" element={<LoginPage />} />
 
                 {/* Legacy redirects */}
-                <Route path="/aluno/login" element={<Navigate to="/student/login" replace />} />
+                <Route path="/student/login" element={<Navigate to="/painel-do-aluno" replace />} />
+                <Route path="/aluno/login" element={<Navigate to="/painel-do-aluno" replace />} />
                 <Route path="/aluno/*" element={<Navigate to="/student/dashboard" replace />} />
 
                 {/* Admin routes */}

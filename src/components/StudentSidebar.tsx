@@ -48,7 +48,7 @@ export function StudentSidebar({ isOpen, onClose }: StudentSidebarProps) {
 
   const handleLogout = () => {
     logout();
-    navigate('/student/login');
+    navigate('/painel-do-aluno');
   };
 
   const navItems = [

@@ -23,7 +23,7 @@ export function ConfirmEmailPage() {
         <h1 className="text-2xl font-black text-on-surface">E-mail Confirmado!</h1>
         <p className="text-on-surface-variant font-medium">Sua conta foi verificada com sucesso. Você já pode fazer login.</p>
         <button 
-          onClick={() => navigate('/student/login')}
+          onClick={() => navigate('/painel-do-aluno')}
           className="btn-primary w-full py-3.5 rounded-xl font-bold"
         >
           Ir para Login

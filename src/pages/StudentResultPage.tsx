@@ -91,7 +91,7 @@ export function StudentResultPage() {
         {/* Header Actions */}
         <div className="w-full flex justify-start mb-6 sm:mb-8">
           <button 
-            onClick={() => navigate('/aluno/dashboard')}
+            onClick={() => navigate('/student/dashboard')}
             className="flex items-center gap-2 text-on-surface-variant hover:text-primary transition-colors font-bold text-xs uppercase tracking-widest"
           >
             <ChevronLeft className="w-4 h-4" />

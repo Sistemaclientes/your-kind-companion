@@ -18,7 +18,7 @@ export function StudentStartPage() {
 
   React.useEffect(() => {
     if (!user) {
-      navigate('/student/login?redirect=' + encodeURIComponent(window.location.pathname + window.location.search), { replace: true });
+      navigate('/painel-do-aluno?redirect=' + encodeURIComponent(window.location.pathname + window.location.search), { replace: true });
       return;
     }
   }, [user, navigate]);
