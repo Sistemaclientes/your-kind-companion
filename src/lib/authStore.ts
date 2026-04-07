@@ -25,55 +25,40 @@ const AuthContext = createContext<AuthState | null>(null);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const resolvingRef = useRef(false);
-  const initializationRef = useRef(false);
+  const initRef = useRef(false);
+  // Track if login was done explicitly (skip onAuthStateChange resolution)
+  const explicitLoginRef = useRef(false);
 
   const resolveUser = useCallback(async (authUser: User) => {
-    if (resolvingRef.current) return;
-    resolvingRef.current = true;
-    
     try {
-      // Check admin
-      const { data: admin } = await supabase
-        .from('admins')
-        .select('id, email, role')
-        .eq('id', authUser.id)
-        .maybeSingle();
+      // Run both queries in parallel to cut latency in half
+      const [adminResult, alunoResult] = await Promise.all([
+        supabase.from('admins').select('id, email, role').eq('id', authUser.id).maybeSingle(),
+        supabase.from('alunos').select('id, nome, avatar_url, status').eq('id', authUser.id).maybeSingle(),
+      ]);
 
-      if (admin) {
+      if (adminResult.data) {
         setUser({
-          id: admin.id,
-          nome: admin.email?.split('@')[0] || 'Admin',
-          email: admin.email || authUser.email || '',
+          id: adminResult.data.id,
+          nome: adminResult.data.email?.split('@')[0] || 'Admin',
+          email: adminResult.data.email || authUser.email || '',
           role: 'admin',
         });
-        return;
-      }
-
-      // Check student
-      const { data: aluno } = await supabase
-        .from('alunos')
-        .select('id, nome, avatar_url, status')
-        .eq('id', authUser.id)
-        .maybeSingle();
-
-      if (aluno) {
+      } else if (alunoResult.data) {
         setUser({
-          id: aluno.id,
-          nome: aluno.nome || 'Aluno',
+          id: alunoResult.data.id,
+          nome: alunoResult.data.nome || 'Aluno',
           email: authUser.email || '',
           role: 'aluno',
         });
-        return;
+      } else {
+        console.warn('User found in Auth but not in admins/alunos tables');
+        setUser(null);
       }
-
-      console.warn('User found in Auth but not in admins/alunos tables');
-      setUser(null);
     } catch (error) {
       console.error('Error resolving user profile:', error);
       setUser(null);
     } finally {
-      resolvingRef.current = false;
       setIsLoading(false);
     }
   }, []);
@@ -82,21 +67,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       const { data: { session }, error } = await supabase.auth.getSession();
       if (error) throw error;
-      
       if (session?.user) {
         await resolveUser(session.user);
       } else {
         setUser(null);
         setIsLoading(false);
       }
-    } catch (error) {
-      console.error('Session check failed:', error);
+    } catch {
       setUser(null);
       setIsLoading(false);
     }
   }, [resolveUser]);
 
   const loginAdmin = useCallback((authUser: User, admin: any) => {
+    explicitLoginRef.current = true;
     setUser({
       id: admin.id,
       nome: admin.email?.split('@')[0] || 'Admin',
@@ -107,6 +91,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const loginStudent = useCallback((authUser: User, aluno: any) => {
+    explicitLoginRef.current = true;
     setUser({
       id: aluno.id,
       nome: aluno.nome || 'Aluno',
@@ -117,45 +102,48 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const logout = useCallback(async () => {
-    setIsLoading(true);
-    await supabase.auth.signOut();
+    explicitLoginRef.current = false;
     setUser(null);
     setIsLoading(false);
+    await supabase.auth.signOut();
   }, []);
 
   useEffect(() => {
-    if (initializationRef.current) return;
-    initializationRef.current = true;
+    if (initRef.current) return;
+    initRef.current = true;
 
-    // Safety timeout: if loading takes more than 10s, force stop
-    const timeoutId = setTimeout(() => {
-      setIsLoading(false);
-    }, 10000);
+    // Safety timeout
+    const timeoutId = setTimeout(() => setIsLoading(false), 8000);
 
-    // Instead of checkSession AND onAuthStateChange immediately,
-    // we set up the listener first.
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log(`[AuthStore] Auth event: ${event}`);
-      
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      // If login was handled explicitly by loginAdmin/loginStudent, skip re-resolution
+      if (explicitLoginRef.current && event === 'SIGNED_IN') {
+        explicitLoginRef.current = false;
+        return;
+      }
+
       if (event === 'SIGNED_OUT') {
         setUser(null);
         setIsLoading(false);
-      } else if (session?.user) {
-        await resolveUser(session.user);
-      } else if (event === 'INITIAL_SESSION' && !session) {
-        setIsLoading(false);
+      } else if (event === 'INITIAL_SESSION') {
+        // Handle initial session - this replaces the separate checkSession call
+        if (session?.user) {
+          resolveUser(session.user);
+        } else {
+          setIsLoading(false);
+        }
+      } else if (event === 'TOKEN_REFRESHED' && session?.user && !user) {
+        // Only resolve on token refresh if we don't have a user yet
+        resolveUser(session.user);
       }
     });
-
-    // Check session once manually just in case INITIAL_SESSION event doesn't fire as expected
-    // but with a small delay or check if it's already loading
-    checkSession();
 
     return () => {
       clearTimeout(timeoutId);
       subscription.unsubscribe();
     };
-  }, [checkSession, resolveUser]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const value = React.useMemo(() => ({
     user,
