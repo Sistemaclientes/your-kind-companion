@@ -30,7 +30,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const resolveUser = useCallback(async (authUser: User) => {
     try {
       // Check admin
-      const { data: admin, error: adminError } = await supabase
+      const { data: admin } = await supabase
         .from('admins')
         .select('id, email, role')
         .eq('id', authUser.id)
@@ -47,7 +47,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
 
       // Check student
-      const { data: aluno, error: alunoError } = await supabase
+      const { data: aluno } = await supabase
         .from('alunos')
         .select('id, nome, avatar_url, status')
         .eq('id', authUser.id)
@@ -90,16 +90,36 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, [resolveUser]);
 
+  const loginAdmin = useCallback((authUser: User, admin: any) => {
+    setUser({
+      id: admin.id,
+      nome: admin.email?.split('@')[0] || 'Admin',
+      email: admin.email || authUser.email || '',
+      role: 'admin',
+    });
+  }, []);
+
+  const loginStudent = useCallback((authUser: User, aluno: any) => {
+    setUser({
+      id: aluno.id,
+      nome: nome || 'Aluno',
+      email: authUser.email || '',
+      role: 'aluno',
+    });
+  }, []);
+
+  const logout = useCallback(async () => {
+    await supabase.auth.signOut();
+    setUser(null);
+  }, []);
+
   useEffect(() => {
     if (initializationRef.current) return;
     initializationRef.current = true;
 
     // Safety timeout: if loading takes more than 10s, force stop
-    const timeout = setTimeout(() => {
-      if (isLoading) {
-        console.warn('Auth initialization timed out, forcing loading to false');
-        setIsLoading(false);
-      }
+    const timeoutId = setTimeout(() => {
+      setIsLoading(false);
     }, 10000);
 
     checkSession();
@@ -117,10 +137,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     });
 
     return () => {
-      clearTimeout(timeout);
+      clearTimeout(timeoutId);
       subscription.unsubscribe();
     };
-  }, [checkSession, resolveUser, isLoading]);
+  }, [checkSession, resolveUser]);
 
   const value = React.useMemo(() => ({
     user,
