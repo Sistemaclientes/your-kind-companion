@@ -19,43 +19,73 @@ export type Database = {
           created_at: string | null
           email: string | null
           id: string
+          reset_token: string | null
+          reset_token_expires_at: string | null
           role: string | null
+          updated_at: string | null
         }
         Insert: {
           created_at?: string | null
           email?: string | null
           id: string
+          reset_token?: string | null
+          reset_token_expires_at?: string | null
           role?: string | null
+          updated_at?: string | null
         }
         Update: {
           created_at?: string | null
           email?: string | null
           id?: string
+          reset_token?: string | null
+          reset_token_expires_at?: string | null
           role?: string | null
+          updated_at?: string | null
         }
         Relationships: []
       }
       alunos: {
         Row: {
           avatar_url: string | null
+          confirmation_token: string | null
+          confirmed_at: string | null
+          cpf: string | null
           created_at: string | null
+          email: string | null
           id: string
           nome: string | null
+          reset_token: string | null
+          reset_token_expires_at: string | null
           status: string | null
+          telefone: string | null
         }
         Insert: {
           avatar_url?: string | null
+          confirmation_token?: string | null
+          confirmed_at?: string | null
+          cpf?: string | null
           created_at?: string | null
+          email?: string | null
           id: string
           nome?: string | null
+          reset_token?: string | null
+          reset_token_expires_at?: string | null
           status?: string | null
+          telefone?: string | null
         }
         Update: {
           avatar_url?: string | null
+          confirmation_token?: string | null
+          confirmed_at?: string | null
+          cpf?: string | null
           created_at?: string | null
+          email?: string | null
           id?: string
           nome?: string | null
+          reset_token?: string | null
+          reset_token_expires_at?: string | null
           status?: string | null
+          telefone?: string | null
         }
         Relationships: []
       }
@@ -210,10 +240,12 @@ export type Database = {
     }
     Functions: {
       aceitar_convite_admin: { Args: { p_token: string }; Returns: Json }
+      check_is_admin: { Args: never; Returns: boolean }
       gerar_convite_admin: {
         Args: { p_email: string; p_role?: string }
         Returns: Json
       }
+      get_my_role: { Args: never; Returns: string }
       validar_convite_admin: { Args: { p_token: string }; Returns: Json }
     }
     Enums: {
