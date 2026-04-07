@@ -89,6 +89,63 @@ export type Database = {
         }
         Relationships: []
       }
+      categorias: {
+        Row: {
+          cor: string | null
+          created_at: string | null
+          descricao: string | null
+          icon: string | null
+          id: string
+          nome: string
+          slug: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          cor?: string | null
+          created_at?: string | null
+          descricao?: string | null
+          icon?: string | null
+          id?: string
+          nome: string
+          slug?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          cor?: string | null
+          created_at?: string | null
+          descricao?: string | null
+          icon?: string | null
+          id?: string
+          nome?: string
+          slug?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      configuracoes: {
+        Row: {
+          chave: string
+          created_at: string | null
+          id: string
+          updated_at: string | null
+          valor: Json
+        }
+        Insert: {
+          chave: string
+          created_at?: string | null
+          id?: string
+          updated_at?: string | null
+          valor?: Json
+        }
+        Update: {
+          chave?: string
+          created_at?: string | null
+          id?: string
+          updated_at?: string | null
+          valor?: Json
+        }
+        Relationships: []
+      }
       convites_admin: {
         Row: {
           created_at: string
@@ -147,24 +204,48 @@ export type Database = {
       }
       provas: {
         Row: {
+          categoria_id: string | null
           created_at: string | null
+          created_by: string | null
           descricao: string | null
           id: string
+          slug: string | null
           titulo: string | null
         }
         Insert: {
+          categoria_id?: string | null
           created_at?: string | null
+          created_by?: string | null
           descricao?: string | null
           id?: string
+          slug?: string | null
           titulo?: string | null
         }
         Update: {
+          categoria_id?: string | null
           created_at?: string | null
+          created_by?: string | null
           descricao?: string | null
           id?: string
+          slug?: string | null
           titulo?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "provas_categoria_id_fkey"
+            columns: ["categoria_id"]
+            isOneToOne: false
+            referencedRelation: "categorias"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "provas_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "admins"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       respostas: {
         Row: {
@@ -197,25 +278,34 @@ export type Database = {
       }
       resultados: {
         Row: {
+          acertos: number | null
           aluno_id: string | null
           created_at: string | null
           id: string
           pontuacao: number | null
           prova_id: string | null
+          respostas: Json | null
+          total: number | null
         }
         Insert: {
+          acertos?: number | null
           aluno_id?: string | null
           created_at?: string | null
           id?: string
           pontuacao?: number | null
           prova_id?: string | null
+          respostas?: Json | null
+          total?: number | null
         }
         Update: {
+          acertos?: number | null
           aluno_id?: string | null
           created_at?: string | null
           id?: string
           pontuacao?: number | null
           prova_id?: string | null
+          respostas?: Json | null
+          total?: number | null
         }
         Relationships: [
           {
