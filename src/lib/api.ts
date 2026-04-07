@@ -12,6 +12,8 @@ import { supabase } from '@/integrations/supabase/client';
 async function handleRoute(method: string, endpoint: string, data?: any): Promise<any> {
   // EXAMS
   if (method === 'GET' && endpoint === '/provas') return examsService.getAll();
+  const provaSlugMatch = endpoint.match(/^\/provas\/slug\/(.+)$/);
+  if (method === 'GET' && provaSlugMatch) return examsService.getById(provaSlugMatch[1]);
   const provaIdMatch = endpoint.match(/^\/provas\/([a-f0-9-]+)$/);
   if (method === 'GET' && provaIdMatch) return examsService.getById(provaIdMatch[1]);
   if (method === 'POST' && endpoint === '/provas') return examsService.create(data);
@@ -21,6 +23,12 @@ async function handleRoute(method: string, endpoint: string, data?: any): Promis
   if (method === 'DELETE' && provaDeleteMatch) return examsService.remove(provaDeleteMatch[1]);
   if (method === 'DELETE' && endpoint === '/provas') return examsService.removeAll();
   if (method === 'POST' && endpoint === '/responder-prova') return examsService.submitAnswers(data);
+
+  // CATEGORIES
+  if (method === 'GET' && endpoint === '/categorias') return categoriesService.getAll();
+  if (method === 'POST' && endpoint === '/categorias') return categoriesService.create(data);
+  const catDeleteMatch = endpoint.match(/^\/categorias\/([a-f0-9-]+)$/);
+  if (method === 'DELETE' && catDeleteMatch) return categoriesService.remove(catDeleteMatch[1]);
 
   // DASHBOARD
   if (method === 'GET' && endpoint === '/dashboard/stats') return dashboardService.getStats();
@@ -43,7 +51,7 @@ async function handleRoute(method: string, endpoint: string, data?: any): Promis
   const adminDeleteMatch = endpoint.match(/^\/admins\/([a-f0-9-]+)$/);
   if (method === 'DELETE' && adminDeleteMatch) return adminService.remove(adminDeleteMatch[1]);
 
-  return {};
+  return [];
 }
 
 export const api = {
