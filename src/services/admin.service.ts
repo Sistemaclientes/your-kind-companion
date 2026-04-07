@@ -7,18 +7,36 @@ export const adminService = {
   },
 
   async create(data: { nome: string; email: string; senha: string }) {
-    const { data: sessionData } = await supabase.auth.getSession();
-    const token = sessionData.session?.access_token;
-    if (!token) throw new Error('Sessão expirada. Faça login novamente.');
+    const normalizedEmail = data.email.trim().toLowerCase();
 
-    const res = await supabase.functions.invoke('create-admin', {
-      body: { nome: data.nome, email: data.email, senha: data.senha },
+    const { data: existingAdmin, error: existingAdminError } = await supabase
+      .from('admins')
+      .select('id')
+      .eq('email', normalizedEmail)
+      .maybeSingle();
+
+    if (existingAdminError) throw new Error(existingAdminError.message);
+    if (existingAdmin) throw new Error('Este email já está cadastrado como administrador');
+
+    const { data: sessionData } = await supabase.auth.getSession();
+    if (!sessionData.session?.access_token) {
+      throw new Error('Sessão expirada. Faça login novamente.');
+    }
+
+    const { data: responseData, error } = await supabase.functions.invoke('create-admin', {
+      body: { nome: data.nome.trim(), email: normalizedEmail, senha: data.senha },
     });
 
-    if (res.error) throw new Error(res.error.message || 'Erro ao criar administrador');
-    if (res.data?.error) throw new Error(res.data.error);
+    const functionMessage =
+      responseData && typeof responseData === 'object' && 'error' in responseData
+        ? String(responseData.error)
+        : null;
 
-    return res.data;
+    if (error || functionMessage) {
+      throw new Error(functionMessage || error?.message || 'Erro ao criar administrador');
+    }
+
+    return responseData;
   },
 
   async remove(id: string) {
