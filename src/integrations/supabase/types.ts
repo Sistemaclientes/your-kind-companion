@@ -59,6 +59,36 @@ export type Database = {
         }
         Relationships: []
       }
+      convites_admin: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          email: string
+          id: string
+          role: string
+          token: string
+          usado: boolean
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          email: string
+          id?: string
+          role?: string
+          token?: string
+          usado?: boolean
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          email?: string
+          id?: string
+          role?: string
+          token?: string
+          usado?: boolean
+        }
+        Relationships: []
+      }
       perguntas: {
         Row: {
           id: string
@@ -179,7 +209,12 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      aceitar_convite_admin: { Args: { p_token: string }; Returns: Json }
+      gerar_convite_admin: {
+        Args: { p_email: string; p_role?: string }
+        Returns: Json
+      }
+      validar_convite_admin: { Args: { p_token: string }; Returns: Json }
     }
     Enums: {
       [_ in never]: never
