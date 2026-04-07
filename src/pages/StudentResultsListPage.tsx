@@ -47,7 +47,7 @@ export function StudentResultsListPage() {
           ) : (
             results.map((result) => {
               const isApproved = result.pontuacao >= 70;
-              const dateStr = result.data ? new Date(result.data).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' }) : '—';
+              const dateStr = result.created_at ? new Date(result.created_at).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' }) : '—';
               return (
                 <motion.div
                   key={result.id}
@@ -75,7 +75,7 @@ export function StudentResultsListPage() {
                       </div>
                     </div>
                     <button
-                      onClick={() => navigate(`/student/resultado/${result.slug}`)}
+                      onClick={() => navigate(`/student/resultado/${result.id}`)}
                       className="flex items-center gap-1.5 px-4 py-2 rounded-xl border border-outline text-on-surface-variant font-bold text-[10px] uppercase tracking-widest hover:bg-surface-container-high hover:text-primary transition-all shrink-0"
                     >
                       <Eye className="w-3.5 h-3.5" />

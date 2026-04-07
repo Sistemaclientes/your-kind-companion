@@ -21,6 +21,7 @@ import {
   Tooltip as RechartsTooltip
 } from 'recharts';
 import { api } from '../lib/api';
+import { useAuthStore } from '../lib/authStore';
 import { motion } from 'motion/react';
 
 const stagger = {
@@ -35,7 +36,7 @@ const fadeUp = {
 
 export function DashboardPage() {
   const navigate = useNavigate();
-  const user = api.getUser();
+  const { user } = useAuthStore();
   const [stats, setStats] = React.useState<any>(null);
   const [loading, setLoading] = React.useState(true);
 

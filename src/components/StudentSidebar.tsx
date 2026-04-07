@@ -26,37 +26,25 @@ export function StudentSidebar({ isOpen, onClose }: StudentSidebarProps) {
   const navigate = useNavigate();
   const [currentTime, setCurrentTime] = React.useState(new Date());
   const { settings } = useVisualSettings();
-
-  const [studentInfo, setStudentInfo] = React.useState<any>(() => {
-    try {
-      return JSON.parse(localStorage.getItem('student_info') || 'null');
-    } catch { return null; }
-  });
+  const { user, logout } = useAuthStore();
 
   const [avatar, setAvatar] = React.useState<string | null>(null);
 
-  // Listen for profile updates
   React.useEffect(() => {
+    if (user?.id) {
+      setAvatar(localStorage.getItem(`student_avatar_${user.id}`));
+    }
     const handleUpdate = () => {
-      try {
-        const info = JSON.parse(localStorage.getItem('student_info') || 'null');
-        setStudentInfo(info);
-        if (info?.email) {
-          setAvatar(localStorage.getItem(`student_avatar_${info.email}`));
-        }
-      } catch {}
+      if (user?.id) setAvatar(localStorage.getItem(`student_avatar_${user.id}`));
     };
-    handleUpdate();
     window.addEventListener('student-profile-updated', handleUpdate);
     return () => window.removeEventListener('student-profile-updated', handleUpdate);
-  }, []);
+  }, [user]);
 
   React.useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 1000);
     return () => clearInterval(timer);
   }, []);
-
-  const { logout } = useAuthStore();
 
   const handleLogout = () => {
     logout();
@@ -146,12 +134,12 @@ export function StudentSidebar({ isOpen, onClose }: StudentSidebarProps) {
               <img src={avatar} alt="Avatar" className="w-9 h-9 rounded-xl object-cover" />
             ) : (
               <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary to-primary-container flex items-center justify-center text-on-primary text-xs font-bold shadow-lg shadow-primary/20">
-                {studentInfo?.nome?.charAt(0)?.toUpperCase() || 'A'}
+                {user?.nome?.charAt(0)?.toUpperCase() || 'A'}
               </div>
             )}
             <div className="overflow-hidden flex-1">
-              <p className="text-sm font-semibold truncate text-on-surface">{studentInfo?.nome || 'Aluno'}</p>
-              <p className="text-[10px] text-on-surface-variant font-medium truncate">{studentInfo?.email || ''}</p>
+              <p className="text-sm font-semibold truncate text-on-surface">{user?.nome || 'Aluno'}</p>
+              <p className="text-[10px] text-on-surface-variant font-medium truncate">{user?.email || ''}</p>
             </div>
           </div>
         </div>

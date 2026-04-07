@@ -5,6 +5,7 @@ import { BookOpen, ChevronRight, Award, Play } from 'lucide-react';
 import { api } from '../lib/api';
 import { cn } from '../lib/utils';
 import { TopBar } from '../components/TopBar';
+import { useAuthStore } from '../lib/authStore';
 
 function Skeleton({ className }: { className?: string }) {
   return <div className={cn("skeleton", className)} />;
@@ -12,14 +13,13 @@ function Skeleton({ className }: { className?: string }) {
 
 export function StudentExamsListPage() {
   const navigate = useNavigate();
+  const { user } = useAuthStore();
   const [exams, setExams] = React.useState<any[]>([]);
   const [results, setResults] = React.useState<any[]>([]);
   const [loading, setLoading] = React.useState(true);
 
   React.useEffect(() => {
-    const info = localStorage.getItem('student_info');
-    if (!info) return;
-
+    if (!user) return;
     const fetchData = async () => {
       try {
         const [allExams, allResults] = await Promise.all([
@@ -35,7 +35,7 @@ export function StudentExamsListPage() {
       }
     };
     fetchData();
-  }, []);
+  }, [user]);
 
   const approvedExamIds = new Set(results.filter(r => r.pontuacao >= 70).map(r => r.prova_id));
   const availableExams = exams.filter((exam: any) => !approvedExamIds.has(exam.id));
@@ -61,10 +61,7 @@ export function StudentExamsListPage() {
                 key={exam.id}
                 whileHover={{ scale: 1.01 }}
                 className="card-saas !p-5 flex items-center gap-4 cursor-pointer"
-                onClick={() => {
-                  if (!exam.slug) return;
-                  navigate(`/prova/${exam.slug}`);
-                }}
+                onClick={() => navigate(`/student/start?examId=${exam.id}`)}
               >
                 <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary shrink-0">
                   <BookOpen className="w-6 h-6" />

@@ -6,8 +6,8 @@ export const dashboardService = {
     const { count: totalAlunos } = await supabase.from('alunos').select('*', { count: 'exact', head: true });
     const { data: resultados } = await supabase
       .from('resultados')
-      .select('*, alunos(nome, email), provas(titulo, slug)')
-      .order('data', { ascending: false });
+      .select('*, alunos(nome), provas(titulo)')
+      .order('created_at', { ascending: false });
 
     const results = resultados || [];
     const avg = results.length > 0
@@ -24,9 +24,8 @@ export const dashboardService = {
       recentResults: results.slice(0, 5).map((r: any) => ({
         prova_id: r.prova_id,
         prova_titulo: r.provas?.titulo || 'Prova',
-        prova_slug: r.provas?.slug,
         nome_aluno: r.alunos?.nome || 'Aluno',
-        data: r.data,
+        data: r.created_at,
       })),
     };
   },
@@ -46,37 +45,29 @@ export const dashboardService = {
       const totalScore = myResults.reduce((s: number, r: any) => s + (r.pontuacao || 0), 0);
       return {
         id: a.id,
-        email: a.email,
-        nome: a.nome,
-        telefone: a.telefone || '',
-        slug: a.slug,
-        status: a.status || (myResults.length > 0 ? 'Ativo' : 'Cadastrado'),
+        nome: a.nome || 'Aluno',
+        status: a.status || 'ativo',
         provas_contagem: myResults.length,
         media_pontuacao: myResults.length > 0 ? totalScore / myResults.length : 0,
-        ultimo_acesso: myResults.length > 0
-          ? myResults.reduce((max: string, r: any) => (r.data > max ? r.data : max), myResults[0].data)
-          : a.created_at,
-        primeiro_acesso: myResults.length > 0
-          ? myResults.reduce((min: string, r: any) => (r.data < min ? r.data : min), myResults[0].data)
-          : a.created_at,
+        ultimo_acesso: a.created_at,
       };
     });
   },
 
-  async getStudentDetails(email: string) {
+  async getStudentDetails(id: string) {
     const { data: aluno } = await supabase
       .from('alunos')
       .select('*')
-      .eq('email', email)
+      .eq('id', id)
       .single();
 
     if (!aluno) throw new Error('Aluno não encontrado');
 
     const { data: resultados } = await supabase
       .from('resultados')
-      .select('*, provas(titulo, descricao, slug, perguntas(id, enunciado, alternativas(id, texto, is_correta)))')
+      .select('*, provas(titulo, descricao, perguntas(id, pergunta, respostas(id, texto, correta)))')
       .eq('aluno_id', aluno.id)
-      .order('data', { ascending: false });
+      .order('created_at', { ascending: false });
 
     const myResults = resultados || [];
     const media = myResults.length > 0
@@ -84,35 +75,20 @@ export const dashboardService = {
       : 0;
 
     const student = {
-      email: aluno.email,
-      nome: aluno.nome,
-      telefone: aluno.telefone || '',
+      id: aluno.id,
+      nome: aluno.nome || 'Aluno',
+      status: aluno.status || 'ativo',
       provas_contagem: myResults.length,
       media_pontuacao: Math.round(media),
-      primeiro_acesso: myResults.length > 0 ? myResults[myResults.length - 1].data : aluno.created_at,
-      ultimo_acesso: myResults.length > 0 ? myResults[0].data : aluno.created_at,
     };
 
     const detailedResults = myResults.map((r: any) => ({
-      id: r.prova_id,
+      id: r.id,
       prova_id: r.prova_id,
       prova_titulo: r.provas?.titulo || 'Prova',
       prova_descricao: r.provas?.descricao || '',
       pontuacao: r.pontuacao,
-      acertos: r.acertos,
-      total: r.total,
-      data: r.data,
-      perguntas: (r.provas?.perguntas || []).map((q: any) => ({
-        id: q.id,
-        enunciado: q.enunciado,
-        resposta_aluno_id: r.respostas?.[q.id],
-        correto: q.alternativas?.find((a: any) => a.is_correta)?.id === r.respostas?.[q.id],
-        alternativas: (q.alternativas || []).map((a: any) => ({
-          id: a.id,
-          texto: a.texto,
-          is_correta: a.is_correta,
-        })),
-      })),
+      data: r.created_at,
     }));
 
     return { student, results: detailedResults };
