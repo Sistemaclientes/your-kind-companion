@@ -1,5 +1,6 @@
 import React from 'react';
 import { Search, Bell } from 'lucide-react';
+import { useAuthStore } from '../lib/authStore';
 
 interface TopBarProps {
   title: string;
@@ -7,32 +8,20 @@ interface TopBarProps {
 }
 
 export function TopBar({ title, subtitle }: TopBarProps) {
+  const { user } = useAuthStore();
   const [avatar, setAvatar] = React.useState<string | null>(null);
-  const [initials, setInitials] = React.useState('A');
+  const initials = user?.nome?.charAt(0)?.toUpperCase() || 'A';
 
   React.useEffect(() => {
     const loadAvatar = () => {
-      try {
-        const info = JSON.parse(localStorage.getItem('student_info') || 'null');
-        const adminUser = JSON.parse(localStorage.getItem('saas_user') || 'null');
-        
-        if (info?.email) {
-          setAvatar(localStorage.getItem(`student_avatar_${info.email}`));
-          setInitials(info.nome?.charAt(0)?.toUpperCase() || 'A');
-        } else if (adminUser?.email) {
-          setAvatar(localStorage.getItem(`admin_avatar_${adminUser.email}`));
-          setInitials(adminUser.nome?.charAt(0)?.toUpperCase() || 'A');
-        }
-      } catch {}
+      if (user?.id) {
+        setAvatar(localStorage.getItem(`student_avatar_${user.id}`) || localStorage.getItem(`admin_avatar_${user.id}`));
+      }
     };
     loadAvatar();
     window.addEventListener('student-profile-updated', loadAvatar);
-    window.addEventListener('logo-updated', loadAvatar);
-    return () => {
-      window.removeEventListener('student-profile-updated', loadAvatar);
-      window.removeEventListener('logo-updated', loadAvatar);
-    };
-  }, []);
+    return () => window.removeEventListener('student-profile-updated', loadAvatar);
+  }, [user]);
 
   return (
     <header className="fixed top-0 right-0 w-full lg:w-[calc(100%-16rem)] z-40 bg-surface/70 backdrop-blur-xl flex items-center justify-between px-4 sm:px-8 py-3.5 border-b border-outline">

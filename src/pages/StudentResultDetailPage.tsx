@@ -29,7 +29,7 @@ export function StudentResultDetailPage() {
     const loadData = async () => {
       try {
         if (!slug) return;
-        const data = await api.get(`/resultados/slug/${slug}`);
+        const data = await api.get(`/resultados/${slug}`);
         setResult(data);
         setExam(data.exam);
       } catch (err) {

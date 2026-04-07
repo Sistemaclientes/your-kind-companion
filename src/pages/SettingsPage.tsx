@@ -74,16 +74,14 @@ export function SettingsPage() {
     }
   };
 
+  const { user } = useAuthStore();
+
   useEffect(() => {
-    const userJson = localStorage.getItem('saas_user');
-    if (userJson) {
-      const user = JSON.parse(userJson);
+    if (user) {
       setCurrentUser(user);
-      if (user.is_master) {
-        fetchAdmins();
-      }
+      fetchAdmins();
     }
-  }, []);
+  }, [user]);
 
   const fetchAdmins = async () => {
     try {

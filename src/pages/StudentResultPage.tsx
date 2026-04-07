@@ -34,13 +34,10 @@ export function StudentResultPage() {
     const loadData = async () => {
       try {
         const lastRes = localStorage.getItem('last_result');
-        const info = localStorage.getItem('student_info');
-        if (info) setStudentInfo(JSON.parse(info));
-
         if (lastRes) {
           const parsedRes = JSON.parse(lastRes);
-          if (parsedRes.slug) {
-            const fullResult = await api.get(`/resultados/slug/${parsedRes.slug}`);
+          if (parsedRes.resultId) {
+            const fullResult = await api.get(`/resultados/${parsedRes.resultId}`);
             setResult(fullResult);
             setExam(fullResult.exam);
           } else {
