@@ -33,6 +33,7 @@ const StudentLoginPage = lazy(() => import('./pages/StudentLoginPage').then(m =>
 const StudentProfilePage = lazy(() => import('./pages/StudentProfilePage').then(m => ({ default: m.StudentProfilePage })));
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage').then(m => ({ default: m.NotFoundPage })));
 const ConfirmEmailPage = lazy(() => import('./pages/ConfirmEmailPage').then(m => ({ default: m.ConfirmEmailPage })));
+const AdminInvitePage = lazy(() => import('./pages/AdminInvitePage').then(m => ({ default: m.AdminInvitePage })));
 
 
 function PageLoader() {
