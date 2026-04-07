@@ -393,6 +393,61 @@ export type Database = {
           },
         ]
       }
+      respostas_aluno: {
+        Row: {
+          created_at: string | null
+          id: string
+          is_correta: boolean | null
+          pergunta_id: string | null
+          resposta_id: string | null
+          resultado_id: string | null
+          texto_resposta: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          is_correta?: boolean | null
+          pergunta_id?: string | null
+          resposta_id?: string | null
+          resultado_id?: string | null
+          texto_resposta?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          is_correta?: boolean | null
+          pergunta_id?: string | null
+          resposta_id?: string | null
+          resultado_id?: string | null
+          texto_resposta?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "respostas_aluno_pergunta_id_fkey"
+            columns: ["pergunta_id"]
+            isOneToOne: false
+            referencedRelation: "perguntas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "respostas_aluno_resposta_id_fkey"
+            columns: ["resposta_id"]
+            isOneToOne: false
+            referencedRelation: "respostas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "respostas_aluno_resultado_id_fkey"
+            columns: ["resultado_id"]
+            isOneToOne: false
+            referencedRelation: "resultados"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       resultados: {
         Row: {
           acertos: number | null
