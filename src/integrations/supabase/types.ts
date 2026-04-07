@@ -136,9 +136,14 @@ export type Database = {
           chave: string
           cor_primaria: string | null
           created_at: string | null
+          exibir_resultado_imediatamente: boolean | null
           id: string
+          liberar_revisao: boolean | null
           logo_url: string | null
+          mensagem_resultado: string | null
           nome_empresa: string | null
+          nota_minima: number | null
+          permitir_refazer: boolean | null
           primary_color: string | null
           success_color: string | null
           updated_at: string | null
@@ -148,9 +153,14 @@ export type Database = {
           chave: string
           cor_primaria?: string | null
           created_at?: string | null
+          exibir_resultado_imediatamente?: boolean | null
           id?: string
+          liberar_revisao?: boolean | null
           logo_url?: string | null
+          mensagem_resultado?: string | null
           nome_empresa?: string | null
+          nota_minima?: number | null
+          permitir_refazer?: boolean | null
           primary_color?: string | null
           success_color?: string | null
           updated_at?: string | null
@@ -160,9 +170,14 @@ export type Database = {
           chave?: string
           cor_primaria?: string | null
           created_at?: string | null
+          exibir_resultado_imediatamente?: boolean | null
           id?: string
+          liberar_revisao?: boolean | null
           logo_url?: string | null
+          mensagem_resultado?: string | null
           nome_empresa?: string | null
+          nota_minima?: number | null
+          permitir_refazer?: boolean | null
           primary_color?: string | null
           success_color?: string | null
           updated_at?: string | null
