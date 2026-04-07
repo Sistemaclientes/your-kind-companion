@@ -72,6 +72,7 @@ export type Database = {
           reset_token_expires_at: string | null
           status: string | null
           telefone: string | null
+          turma_id: string | null
           updated_at: string | null
         }
         Insert: {
@@ -89,6 +90,7 @@ export type Database = {
           reset_token_expires_at?: string | null
           status?: string | null
           telefone?: string | null
+          turma_id?: string | null
           updated_at?: string | null
         }
         Update: {
@@ -106,9 +108,18 @@ export type Database = {
           reset_token_expires_at?: string | null
           status?: string | null
           telefone?: string | null
+          turma_id?: string | null
           updated_at?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "alunos_turma_id_fkey"
+            columns: ["turma_id"]
+            isOneToOne: false
+            referencedRelation: "turmas"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       categorias: {
         Row: {
@@ -534,6 +545,30 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      turmas: {
+        Row: {
+          created_at: string
+          descricao: string | null
+          id: string
+          nome: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          descricao?: string | null
+          id?: string
+          nome: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          descricao?: string | null
+          id?: string
+          nome?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
     }
     Views: {
