@@ -161,7 +161,11 @@ export type Database = {
           nota_minima: number | null
           permitir_refazer: boolean | null
           primary_color: string | null
+          privacidade_url: string | null
           success_color: string | null
+          suporte_email: string | null
+          suporte_whatsapp: string | null
+          termos_uso_url: string | null
           updated_at: string | null
           valor: Json
         }
@@ -182,7 +186,11 @@ export type Database = {
           nota_minima?: number | null
           permitir_refazer?: boolean | null
           primary_color?: string | null
+          privacidade_url?: string | null
           success_color?: string | null
+          suporte_email?: string | null
+          suporte_whatsapp?: string | null
+          termos_uso_url?: string | null
           updated_at?: string | null
           valor?: Json
         }
@@ -203,7 +211,11 @@ export type Database = {
           nota_minima?: number | null
           permitir_refazer?: boolean | null
           primary_color?: string | null
+          privacidade_url?: string | null
           success_color?: string | null
+          suporte_email?: string | null
+          suporte_whatsapp?: string | null
+          termos_uso_url?: string | null
           updated_at?: string | null
           valor?: Json
         }
@@ -395,32 +407,41 @@ export type Database = {
       }
       respostas_aluno: {
         Row: {
+          comentario_professor: string | null
           created_at: string | null
           id: string
           is_correta: boolean | null
           pergunta_id: string | null
+          pontuacao_atribuida: number | null
           resposta_id: string | null
           resultado_id: string | null
+          status: string | null
           texto_resposta: string | null
           updated_at: string | null
         }
         Insert: {
+          comentario_professor?: string | null
           created_at?: string | null
           id?: string
           is_correta?: boolean | null
           pergunta_id?: string | null
+          pontuacao_atribuida?: number | null
           resposta_id?: string | null
           resultado_id?: string | null
+          status?: string | null
           texto_resposta?: string | null
           updated_at?: string | null
         }
         Update: {
+          comentario_professor?: string | null
           created_at?: string | null
           id?: string
           is_correta?: boolean | null
           pergunta_id?: string | null
+          pontuacao_atribuida?: number | null
           resposta_id?: string | null
           resultado_id?: string | null
+          status?: string | null
           texto_resposta?: string | null
           updated_at?: string | null
         }
