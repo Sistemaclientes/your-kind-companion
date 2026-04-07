@@ -46,8 +46,7 @@ export function CreateExamPage() {
   const [settings, setSettings] = useState({
     random: true,
     results: true,
-    review: true,
-    lock: false
+    review: true
   });
   const [isSaving, setIsSaving] = useState(false);
   const [isPublishing, setIsPublishing] = useState(false);
@@ -138,7 +137,6 @@ export function CreateExamPage() {
         embaralhar_questoes: settings.random,
         mostrar_resultado: settings.results,
         permitir_revisao: settings.review,
-        bloquear_navegacao: settings.lock,
         perguntas: questions.map(q => ({
           enunciado: q.text,
           tipo: q.type,
@@ -479,8 +477,7 @@ export function CreateExamPage() {
                       {[
                         { id: 'random', label: 'Aleatorizar Questões', desc: 'As questões aparecerão em ordem diferente para cada aluno.' },
                         { id: 'results', label: 'Mostrar Resultado Imediato', desc: 'O aluno verá sua nota logo após finalizar a prova.' },
-                        { id: 'review', label: 'Permitir Revisão', desc: 'O aluno poderá revisar suas respostas antes de enviar.' },
-                        { id: 'lock', label: 'Bloquear Navegação', desc: 'Impede o aluno de sair da aba da prova durante a execução.' }
+                        { id: 'review', label: 'Permitir Revisão', desc: 'O aluno poderá revisar suas respostas antes de enviar.' }
                       ].map(setting => (
                         <label key={setting.id} className="flex items-start gap-4 p-5 rounded-2xl border border-outline hover:border-primary/20 hover:bg-primary/5 transition-all cursor-pointer group">
                           <div className="relative flex items-center h-5 mt-1">

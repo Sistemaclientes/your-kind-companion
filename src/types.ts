@@ -35,6 +35,5 @@ export interface Exam {
     random: boolean;
     results: boolean;
     review: boolean;
-    lock: boolean;
   };
 }
