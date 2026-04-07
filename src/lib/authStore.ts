@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
+import { supabase } from '@/integrations/supabase/client';
 
 export type UserRole = 'admin' | 'aluno';
 
@@ -26,13 +27,30 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  const checkSession = useCallback(() => {
+  const checkSession = useCallback(async () => {
     // Check admin session
     const adminToken = localStorage.getItem('saas_token');
     const adminUser = localStorage.getItem('saas_user');
     if (adminToken && adminUser) {
       try {
         const parsed = JSON.parse(adminUser);
+
+        // Validate email_confirmed from DB
+        const { data: adminRecord } = await supabase
+          .from('admins')
+          .select('email_confirmed')
+          .eq('id', parsed.id)
+          .single();
+
+        if (adminRecord && adminRecord.email_confirmed === false) {
+          // Email not confirmed — clear session
+          localStorage.removeItem('saas_token');
+          localStorage.removeItem('saas_user');
+          setUser(null);
+          setIsLoading(false);
+          return;
+        }
+
         setUser({
           id: parsed.id,
           nome: parsed.nome,
@@ -42,7 +60,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         });
         setIsLoading(false);
         return;
-      } catch {}
+      } catch {
+        localStorage.removeItem('saas_token');
+        localStorage.removeItem('saas_user');
+      }
     }
 
     // Check student session
@@ -50,6 +71,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (studentInfo) {
       try {
         const parsed = JSON.parse(studentInfo);
+
+        // Validate email_confirmed from DB
+        const { data: studentRecord } = await supabase
+          .from('alunos')
+          .select('email_confirmed')
+          .eq('email', parsed.email)
+          .single();
+
+        if (!studentRecord || studentRecord.email_confirmed !== true) {
+          // Email not confirmed — clear session
+          localStorage.removeItem('student_info');
+          setUser(null);
+          setIsLoading(false);
+          return;
+        }
+
         setUser({
           id: parsed.email,
           nome: parsed.nome,
@@ -59,7 +96,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         });
         setIsLoading(false);
         return;
-      } catch {}
+      } catch {
+        localStorage.removeItem('student_info');
+      }
     }
 
     setUser(null);

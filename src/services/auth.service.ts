@@ -17,15 +17,27 @@ export interface StudentUser {
 
 export const authService = {
   async loginAdmin(email: string, password: string): Promise<{ user: AdminUser }> {
-    const { data: admin, error } = await supabase
+    // Use the secure RPC function that validates password with bcrypt
+    const { data, error } = await supabase.rpc('login_admin', {
+      p_email: email.trim().toLowerCase(),
+      p_password: password,
+    });
+
+    if (error || !data || (Array.isArray(data) && data.length === 0)) {
+      throw new Error('Email ou senha inválidos');
+    }
+
+    const admin = Array.isArray(data) ? data[0] : data;
+
+    // Check email_confirmed on the admins table
+    const { data: adminRecord } = await supabase
       .from('admins')
-      .select('id, nome, email, senha, is_master')
-      .eq('email', email.trim().toLowerCase())
+      .select('email_confirmed')
+      .eq('id', admin.id)
       .single();
 
-    if (error || !admin) throw new Error('Email ou senha inválidos');
-    if (admin.senha.toLowerCase() !== password.toLowerCase()) {
-      throw new Error('Email ou senha inválidos');
+    if (adminRecord && adminRecord.email_confirmed === false) {
+      throw new Error('Confirme seu e-mail antes de acessar o sistema.');
     }
 
     return {
@@ -248,15 +260,21 @@ export const authService = {
   },
 
   async changeAdminPassword(adminId: string, currentPassword: string, newPassword: string) {
-    const { data: admin } = await supabase
+    // Validate current password by getting admin email and trying login RPC
+    const { data: adminData } = await supabase
       .from('admins')
-      .select('senha')
+      .select('email')
       .eq('id', adminId)
       .single();
 
-    if (!admin || admin.senha.toLowerCase() !== currentPassword.toLowerCase()) {
-      throw new Error('Senha atual incorreta');
-    }
+    if (!adminData) throw new Error('Administrador não encontrado');
+
+    const { error: loginError } = await supabase.rpc('login_admin', {
+      p_email: adminData.email,
+      p_password: currentPassword,
+    });
+
+    if (loginError) throw new Error('Senha atual incorreta');
 
     await supabase.from('admins').update({ senha: newPassword }).eq('id', adminId);
     return { message: 'Senha alterada com sucesso' };
