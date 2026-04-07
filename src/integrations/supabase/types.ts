@@ -568,27 +568,47 @@ export type Database = {
       }
       turmas: {
         Row: {
+          codigo_acesso: string | null
           created_at: string
           descricao: string | null
           id: string
           nome: string
+          professor_id: string | null
+          slug: string | null
+          total_alunos: number | null
           updated_at: string
         }
         Insert: {
+          codigo_acesso?: string | null
           created_at?: string
           descricao?: string | null
           id?: string
           nome: string
+          professor_id?: string | null
+          slug?: string | null
+          total_alunos?: number | null
           updated_at?: string
         }
         Update: {
+          codigo_acesso?: string | null
           created_at?: string
           descricao?: string | null
           id?: string
           nome?: string
+          professor_id?: string | null
+          slug?: string | null
+          total_alunos?: number | null
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "turmas_professor_id_fkey"
+            columns: ["professor_id"]
+            isOneToOne: false
+            referencedRelation: "admins"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
