@@ -13,7 +13,6 @@ import { cn } from '../lib/utils';
 import { useAuthStore } from '../lib/authStore';
 import { useVisualSettings } from './VisualSettingsProvider';
 import { useTheme } from '../lib/ThemeContext';
-import { api } from '../lib/api';
 import logoWhite from '../assets/livro_logo_white.png';
 import logoDark from '../assets/livro_logo_dark.png';
 
@@ -27,7 +26,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
   const navigate = useNavigate();
   const [currentTime, setCurrentTime] = React.useState(new Date());
   const { settings } = useVisualSettings();
-  const user = api.getUser();
+  const { user } = useAuthStore();
 
   React.useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 1000);

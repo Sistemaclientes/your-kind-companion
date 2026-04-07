@@ -35,7 +35,7 @@ const fadeUp = {
 
 export function DashboardPage() {
   const navigate = useNavigate();
-  const user = api.getUser();
+  const { user } = useAuthStore();
   const [stats, setStats] = React.useState<any>(null);
   const [loading, setLoading] = React.useState(true);
 
