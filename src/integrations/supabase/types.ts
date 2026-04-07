@@ -178,19 +178,31 @@ export type Database = {
       }
       perguntas: {
         Row: {
+          explicacao: string | null
           id: string
+          imagem_url: string | null
           pergunta: string | null
+          pontos: number | null
           prova_id: string | null
+          tipo: string | null
         }
         Insert: {
+          explicacao?: string | null
           id?: string
+          imagem_url?: string | null
           pergunta?: string | null
+          pontos?: number | null
           prova_id?: string | null
+          tipo?: string | null
         }
         Update: {
+          explicacao?: string | null
           id?: string
+          imagem_url?: string | null
           pergunta?: string | null
+          pontos?: number | null
           prova_id?: string | null
+          tipo?: string | null
         }
         Relationships: [
           {
@@ -204,29 +216,44 @@ export type Database = {
       }
       provas: {
         Row: {
+          bloquear_navegacao: boolean | null
           categoria_id: string | null
           created_at: string | null
           created_by: string | null
           descricao: string | null
+          duracao: number | null
+          embaralhar_questoes: boolean | null
           id: string
+          mostrar_resultado: boolean | null
+          permitir_revisao: boolean | null
           slug: string | null
           titulo: string | null
         }
         Insert: {
+          bloquear_navegacao?: boolean | null
           categoria_id?: string | null
           created_at?: string | null
           created_by?: string | null
           descricao?: string | null
+          duracao?: number | null
+          embaralhar_questoes?: boolean | null
           id?: string
+          mostrar_resultado?: boolean | null
+          permitir_revisao?: boolean | null
           slug?: string | null
           titulo?: string | null
         }
         Update: {
+          bloquear_navegacao?: boolean | null
           categoria_id?: string | null
           created_at?: string | null
           created_by?: string | null
           descricao?: string | null
+          duracao?: number | null
+          embaralhar_questoes?: boolean | null
           id?: string
+          mostrar_resultado?: boolean | null
+          permitir_revisao?: boolean | null
           slug?: string | null
           titulo?: string | null
         }
