@@ -80,6 +80,7 @@ export default function App() {
                   </PublicRoute>
                 } />
                 <Route path="/confirmar-email" element={<ConfirmEmailPage />} />
+                <Route path="/convite-admin" element={<AdminInvitePage />} />
                 <Route path="/redefinir-senha" element={<LoginPage />} />
 
                 {/* Legacy redirects */}
