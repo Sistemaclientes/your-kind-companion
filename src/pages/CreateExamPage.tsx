@@ -446,7 +446,7 @@ export function CreateExamPage() {
                           }}
                           className="input-saas w-full h-14 text-lg font-semibold appearance-none cursor-pointer pr-12"
                         >
-                          {categories.map((cat) => (
+                          {(categories || []).map((cat) => (
                             <option key={cat.id} value={cat.id}>
                               {cat.nome}
                             </option>
