@@ -149,6 +149,7 @@ export type Database = {
           cor_primaria: string | null
           created_at: string | null
           exibir_resultado_imediatamente: boolean | null
+          favicon_url: string | null
           fb_api_token: string | null
           fb_pixel_id: string | null
           google_tag_id: string | null
@@ -169,6 +170,7 @@ export type Database = {
           cor_primaria?: string | null
           created_at?: string | null
           exibir_resultado_imediatamente?: boolean | null
+          favicon_url?: string | null
           fb_api_token?: string | null
           fb_pixel_id?: string | null
           google_tag_id?: string | null
@@ -189,6 +191,7 @@ export type Database = {
           cor_primaria?: string | null
           created_at?: string | null
           exibir_resultado_imediatamente?: boolean | null
+          favicon_url?: string | null
           fb_api_token?: string | null
           fb_pixel_id?: string | null
           google_tag_id?: string | null
@@ -394,37 +397,49 @@ export type Database = {
         Row: {
           acertos: number | null
           aluno_id: string | null
+          concluido_em: string | null
           created_at: string | null
           duracao_total: number | null
           id: string
+          iniciado_em: string | null
+          nota_corte_alvo: number | null
           pontuacao: number | null
           prova_id: string | null
           respostas: Json | null
           status: string | null
+          tentativa_numero: number | null
           total: number | null
         }
         Insert: {
           acertos?: number | null
           aluno_id?: string | null
+          concluido_em?: string | null
           created_at?: string | null
           duracao_total?: number | null
           id?: string
+          iniciado_em?: string | null
+          nota_corte_alvo?: number | null
           pontuacao?: number | null
           prova_id?: string | null
           respostas?: Json | null
           status?: string | null
+          tentativa_numero?: number | null
           total?: number | null
         }
         Update: {
           acertos?: number | null
           aluno_id?: string | null
+          concluido_em?: string | null
           created_at?: string | null
           duracao_total?: number | null
           id?: string
+          iniciado_em?: string | null
+          nota_corte_alvo?: number | null
           pontuacao?: number | null
           prova_id?: string | null
           respostas?: Json | null
           status?: string | null
+          tentativa_numero?: number | null
           total?: number | null
         }
         Relationships: [
@@ -456,6 +471,7 @@ export type Database = {
         Returns: Json
       }
       get_my_role: { Args: never; Returns: string }
+      slugify: { Args: { v_text: string }; Returns: string }
       validar_convite_admin: { Args: { p_token: string }; Returns: Json }
     }
     Enums: {
