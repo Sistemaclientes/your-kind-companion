@@ -15,11 +15,12 @@ export function LoginPage() {
   const { user, loginAdmin } = useAuthStore();
   const { theme } = useTheme();
   const [view, setView] = React.useState<View>('login');
-  const [email, setEmail] = React.useState('');
+  const [email, setEmail] = React.useState(() => localStorage.getItem('admin_remember_email') || '');
   const [password, setPassword] = React.useState('');
   const [error, setError] = React.useState('');
   const [isLoading, setIsLoading] = React.useState(false);
   const [showPassword, setShowPassword] = React.useState(false);
+  const [rememberMe, setRememberMe] = React.useState(() => !!localStorage.getItem('admin_remember_email'));
 
   // Forgot password state
   const [forgotEmail, setForgotEmail] = React.useState('');
@@ -59,6 +60,11 @@ export function LoginPage() {
     
     try {
       const { user: authUser, admin } = await authService.loginAdmin(email, password);
+      if (rememberMe) {
+        localStorage.setItem('admin_remember_email', email.trim().toLowerCase());
+      } else {
+        localStorage.removeItem('admin_remember_email');
+      }
       loginAdmin(authUser, admin);
       navigate('/admin/dashboard');
     } catch (err: any) {
@@ -172,6 +178,20 @@ export function LoginPage() {
                         {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                       </button>
                     </div>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <label className="flex items-center gap-2 cursor-pointer group">
+                      <input
+                        type="checkbox"
+                        checked={rememberMe}
+                        onChange={(e) => setRememberMe(e.target.checked)}
+                        className="rounded text-primary focus:ring-primary/20 border-outline bg-surface-container w-4 h-4 cursor-pointer"
+                      />
+                      <span className="text-xs font-semibold text-on-surface-variant group-hover:text-on-surface transition-colors">Lembrar e-mail</span>
+                    </label>
+                    <button type="button" onClick={goToForgot} className="text-xs font-bold text-primary hover:text-primary/80 transition-colors">
+                      Esqueceu a senha?
+                    </button>
                   </div>
                   <div className="pt-2">
                     <button className="w-full btn-primary py-4 px-4 text-sm tracking-wide disabled:opacity-50 disabled:cursor-not-allowed" type="submit" disabled={isLoading}>
