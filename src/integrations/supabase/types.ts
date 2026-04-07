@@ -125,22 +125,31 @@ export type Database = {
       configuracoes: {
         Row: {
           chave: string
+          cor_primaria: string | null
           created_at: string | null
           id: string
+          logo_url: string | null
+          nome_empresa: string | null
           updated_at: string | null
           valor: Json
         }
         Insert: {
           chave: string
+          cor_primaria?: string | null
           created_at?: string | null
           id?: string
+          logo_url?: string | null
+          nome_empresa?: string | null
           updated_at?: string | null
           valor?: Json
         }
         Update: {
           chave?: string
+          cor_primaria?: string | null
           created_at?: string | null
           id?: string
+          logo_url?: string | null
+          nome_empresa?: string | null
           updated_at?: string | null
           valor?: Json
         }
@@ -181,6 +190,7 @@ export type Database = {
           explicacao: string | null
           id: string
           imagem_url: string | null
+          ordem: number | null
           pergunta: string | null
           pontos: number | null
           prova_id: string | null
@@ -190,6 +200,7 @@ export type Database = {
           explicacao?: string | null
           id?: string
           imagem_url?: string | null
+          ordem?: number | null
           pergunta?: string | null
           pontos?: number | null
           prova_id?: string | null
@@ -199,6 +210,7 @@ export type Database = {
           explicacao?: string | null
           id?: string
           imagem_url?: string | null
+          ordem?: number | null
           pergunta?: string | null
           pontos?: number | null
           prova_id?: string | null
@@ -225,10 +237,12 @@ export type Database = {
           embaralhar_questoes: boolean | null
           id: string
           mostrar_resultado: boolean | null
+          nota_corte: number | null
           permitir_revisao: boolean | null
           slug: string | null
           status: string | null
           subtitulo: string | null
+          tentativas_permitidas: number | null
           titulo: string | null
         }
         Insert: {
@@ -241,10 +255,12 @@ export type Database = {
           embaralhar_questoes?: boolean | null
           id?: string
           mostrar_resultado?: boolean | null
+          nota_corte?: number | null
           permitir_revisao?: boolean | null
           slug?: string | null
           status?: string | null
           subtitulo?: string | null
+          tentativas_permitidas?: number | null
           titulo?: string | null
         }
         Update: {
@@ -257,10 +273,12 @@ export type Database = {
           embaralhar_questoes?: boolean | null
           id?: string
           mostrar_resultado?: boolean | null
+          nota_corte?: number | null
           permitir_revisao?: boolean | null
           slug?: string | null
           status?: string | null
           subtitulo?: string | null
+          tentativas_permitidas?: number | null
           titulo?: string | null
         }
         Relationships: [
@@ -284,18 +302,21 @@ export type Database = {
         Row: {
           correta: boolean | null
           id: string
+          ordem: number | null
           pergunta_id: string | null
           texto: string | null
         }
         Insert: {
           correta?: boolean | null
           id?: string
+          ordem?: number | null
           pergunta_id?: string | null
           texto?: string | null
         }
         Update: {
           correta?: boolean | null
           id?: string
+          ordem?: number | null
           pergunta_id?: string | null
           texto?: string | null
         }
