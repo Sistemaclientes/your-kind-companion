@@ -17,7 +17,8 @@ import {
   Trash2,
   Mail,
   Lock,
-  AlertCircle
+  AlertCircle,
+  KeyRound
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { motion, AnimatePresence } from 'motion/react';
