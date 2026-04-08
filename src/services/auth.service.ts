@@ -46,21 +46,32 @@ export const authService = {
   },
 
   async registerStudent(data: { nome: string; email: string; password: string }) {
+    const normalizedEmail = data.email.trim().toLowerCase();
     const { data: authData, error } = await supabase.auth.signUp({
-      email: data.email.trim().toLowerCase(),
+      email: normalizedEmail,
       password: data.password,
     });
 
-    if (error) throw new Error(error.message);
+    if (error) {
+      console.error('[Auth] SignUp error:', error);
+      if (error.message.includes('already registered')) {
+        throw new Error('Este e-mail já está cadastrado. Tente fazer login.');
+      }
+      throw new Error(error.message);
+    }
     if (!authData.user) throw new Error('Erro ao criar conta.');
 
-    // Create student record
+    // Create student record with email
     const { error: insertError } = await supabase.from('alunos').insert({
       id: authData.user.id,
       nome: data.nome.trim(),
+      email: normalizedEmail,
     });
 
-    if (insertError) throw new Error(insertError.message);
+    if (insertError) {
+      console.error('[Auth] Insert aluno error:', insertError);
+      throw new Error('Conta criada, mas houve erro ao salvar perfil. Tente fazer login.');
+    }
 
     return { message: 'Cadastro realizado! Verifique seu e-mail para confirmar.' };
   },
@@ -70,11 +81,18 @@ export const authService = {
   },
 
   async forgotPassword(email: string) {
+    // Use current pathname so the reset link returns to the correct login page
+    const currentPath = window.location.pathname;
+    const redirectTo = `${window.location.origin}${currentPath}`;
+    console.log('[Auth] Sending reset email, redirectTo:', redirectTo);
     const { error } = await supabase.auth.resetPasswordForEmail(
       email.trim().toLowerCase(),
-      { redirectTo: `${window.location.origin}/redefinir-senha` }
+      { redirectTo }
     );
-    if (error) throw new Error('Erro ao processar solicitação.');
+    if (error) {
+      console.error('[Auth] Reset password error:', error);
+      throw new Error('Erro ao processar solicitação. Verifique o e-mail informado.');
+    }
     return { message: 'Link de redefinição enviado para seu e-mail.' };
   },
 

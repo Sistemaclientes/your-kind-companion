@@ -126,9 +126,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setUser(null);
         setIsLoading(false);
       } else if (event === 'INITIAL_SESSION') {
-        // Handle initial session - this replaces the separate checkSession call
         if (session?.user) {
-          resolveUser(session.user);
+          resolveUser(session.user).catch((err) => {
+            console.error('[Auth] Failed to resolve initial session:', err);
+            supabase.auth.signOut().catch(() => {});
+            setUser(null);
+            setIsLoading(false);
+          });
         } else {
           setIsLoading(false);
         }

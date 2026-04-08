@@ -63,20 +63,28 @@ export function StudentLoginPage() {
     }
   }, [user, navigate, redirectUrl]);
 
+  const [isLoading, setIsLoading] = React.useState(false);
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isLoading) return;
     setError('');
+    setIsLoading(true);
     try {
       const { user: authUser, aluno } = await authService.loginStudent(email, password);
       loginStudent(authUser, aluno);
       navigate(redirectUrl, { replace: true });
     } catch (err: any) {
+      console.error('[StudentLogin] Login error:', err);
       setError(err.message || 'Email ou senha inválidos.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isLoading) return;
     setRegError('');
     if (regPassword !== regConfirmPassword) {
       setRegError('As senhas não coincidem.');
@@ -86,13 +94,17 @@ export function StudentLoginPage() {
       setRegError('A senha deve ter pelo menos 6 caracteres.');
       return;
     }
+    setIsLoading(true);
     try {
       await authService.registerStudent({ nome: regName, email: regEmail, password: regPassword });
       setRegSuccess(true);
       setRegisteredEmail(regEmail);
       setRegName(''); setRegEmail(''); setRegPassword(''); setRegConfirmPassword('');
     } catch (err: any) {
+      console.error('[StudentLogin] Register error:', err);
       setRegError(err.message || 'Erro ao cadastrar.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -256,7 +268,7 @@ export function StudentLoginPage() {
                 <button type="button" onClick={() => setShowForgotPassword(true)} className="text-xs font-bold text-primary hover:underline">Esqueci a senha</button>
               </div>
               {error && <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-sm text-error font-semibold bg-error/10 border border-error/20 rounded-xl px-4 py-3">{error}</motion.p>}
-              <button type="submit" className="w-full btn-primary py-3.5 rounded-xl font-black text-base flex items-center justify-center gap-2"><LogIn className="w-5 h-5" /> Entrar</button>
+              <button type="submit" className="w-full btn-primary py-3.5 rounded-xl font-black text-base flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed" disabled={isLoading}>{isLoading ? 'Entrando...' : <><LogIn className="w-5 h-5" /> Entrar</>}</button>
             </motion.form>
           ) : (
             <motion.form key="register" initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }} onSubmit={handleRegister} className="space-y-4">
@@ -292,7 +304,7 @@ export function StudentLoginPage() {
                     <div className="relative group"><Lock className={iconClass} /><input className={inputClass} placeholder="Repita a senha" type="password" value={regConfirmPassword} onChange={(e) => setRegConfirmPassword(e.target.value)} required /></div>
                   </div>
                   {regError && <p className="text-xs text-error font-bold bg-error/10 border border-error/20 rounded-xl px-4 py-3">{regError}</p>}
-                  <button type="submit" className="w-full btn-primary py-3.5 rounded-xl font-black text-base flex items-center justify-center gap-2 mt-2"><UserPlus className="w-5 h-5" /> Criar Conta</button>
+                  <button type="submit" className="w-full btn-primary py-3.5 rounded-xl font-black text-base flex items-center justify-center gap-2 mt-2 disabled:opacity-50 disabled:cursor-not-allowed" disabled={isLoading}>{isLoading ? 'Cadastrando...' : <><UserPlus className="w-5 h-5" /> Criar Conta</>}</button>
                 </>
               )}
             </motion.form>
