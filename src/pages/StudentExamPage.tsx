@@ -72,8 +72,7 @@ export function StudentExamPage() {
     if (attemptId) {
       try {
         await supabase.functions.invoke('exam-manager', {
-          body: { attempt_id: attemptId, reason: 'max_violations' },
-          headers: { 'x-action': 'terminate' },
+          body: { action: 'terminate', attempt_id: attemptId, reason: 'max_violations' },
         });
       } catch {}
     }
@@ -151,9 +150,7 @@ export function StudentExamPage() {
     syncTimerRef.current = setInterval(async () => {
       try {
         const { data } = await supabase.functions.invoke('exam-manager', {
-          body: JSON.stringify({ attempt_id: attemptId }),
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'x-action': 'sync-time' },
+          body: { action: 'sync-time', attempt_id: attemptId },
         });
 
         let parsed = data;
@@ -178,9 +175,7 @@ export function StudentExamPage() {
     const interval = setInterval(async () => {
       try {
         await supabase.functions.invoke('exam-manager', {
-          body: JSON.stringify({ attempt_id: attemptId }),
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'x-action': 'analyze' },
+          body: { action: 'analyze', attempt_id: attemptId },
         });
       } catch {}
     }, 60000);
@@ -233,9 +228,7 @@ export function StudentExamPage() {
       // Mark attempt as completed
       if (attemptId) {
         await supabase.functions.invoke('exam-manager', {
-          body: JSON.stringify({ attempt_id: attemptId }),
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'x-action': 'finish' },
+          body: { action: 'finish', attempt_id: attemptId },
         });
       }
 
