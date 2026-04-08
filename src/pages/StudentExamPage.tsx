@@ -91,9 +91,7 @@ export function StudentExamPage() {
 
         // Start attempt via edge function
         const { data: result, error } = await supabase.functions.invoke('exam-manager', {
-          body: JSON.stringify({ exam_id: examId, device_info: getDeviceInfo() }),
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          body: { action: 'start', exam_id: examId, device_info: getDeviceInfo() },
         });
 
         // Parse the response - invoke may return different formats
