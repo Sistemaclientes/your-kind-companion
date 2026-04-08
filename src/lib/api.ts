@@ -27,8 +27,19 @@ async function handleRoute(method: string, endpoint: string, data?: any): Promis
   // CATEGORIES
   if (method === 'GET' && endpoint === '/categorias') return categoriesService.getAll();
   if (method === 'POST' && endpoint === '/categorias') return categoriesService.create(data);
+  const catUpdateMatch = endpoint.match(/^\/categorias\/([a-f0-9-]+)$/);
+  if (method === 'PUT' && catUpdateMatch) return categoriesService.update(catUpdateMatch[1], data);
   const catDeleteMatch = endpoint.match(/^\/categorias\/([a-f0-9-]+)$/);
   if (method === 'DELETE' && catDeleteMatch) return categoriesService.remove(catDeleteMatch[1]);
+
+  // STUDENT STATUS (admin)
+  const studentStatusMatch = endpoint.match(/^\/admin\/students\/status\/(.+)$/);
+  if (method === 'PATCH' && studentStatusMatch) {
+    const email = decodeURIComponent(studentStatusMatch[1]);
+    const { data: aluno } = await supabase.from('alunos').select('id').eq('email', email).single();
+    if (!aluno) throw new Error('Aluno não encontrado');
+    return studentsService.updateStatus(aluno.id, data.status);
+  }
 
   // DASHBOARD
   if (method === 'GET' && endpoint === '/dashboard/stats') return dashboardService.getStats();

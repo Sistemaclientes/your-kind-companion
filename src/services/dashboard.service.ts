@@ -46,6 +46,9 @@ export const dashboardService = {
       return {
         id: a.id,
         nome: a.nome || 'Aluno',
+        email: a.email || '',
+        cpf: a.cpf || '',
+        telefone: a.telefone || '',
         status: a.status || 'ativo',
         provas_contagem: myResults.length,
         media_pontuacao: myResults.length > 0 ? totalScore / myResults.length : 0,
@@ -55,11 +58,21 @@ export const dashboardService = {
   },
 
   async getStudentDetails(id: string) {
-    const { data: aluno } = await supabase
-      .from('alunos')
-      .select('*')
-      .eq('id', id)
-      .single();
+    // Try to find by ID first, then by email
+    let aluno: any = null;
+    
+    // Check if it's a UUID
+    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
+    
+    if (isUuid) {
+      const { data } = await supabase.from('alunos').select('*').eq('id', id).single();
+      aluno = data;
+    }
+    
+    if (!aluno) {
+      const { data } = await supabase.from('alunos').select('*').eq('email', id).single();
+      aluno = data;
+    }
 
     if (!aluno) throw new Error('Aluno não encontrado');
 
@@ -77,9 +90,14 @@ export const dashboardService = {
     const student = {
       id: aluno.id,
       nome: aluno.nome || 'Aluno',
+      email: aluno.email || '',
+      cpf: aluno.cpf || '',
+      telefone: aluno.telefone || '',
       status: aluno.status || 'ativo',
       provas_contagem: myResults.length,
       media_pontuacao: Math.round(media),
+      primeiro_acesso: aluno.created_at,
+      ultimo_acesso: aluno.updated_at || aluno.created_at,
     };
 
     const detailedResults = myResults.map((r: any) => ({
@@ -88,6 +106,8 @@ export const dashboardService = {
       prova_titulo: r.provas?.titulo || 'Prova',
       prova_descricao: r.provas?.descricao || '',
       pontuacao: r.pontuacao,
+      acertos: r.acertos || 0,
+      total: r.total || 0,
       data: r.created_at,
     }));
 

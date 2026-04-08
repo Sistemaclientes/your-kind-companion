@@ -41,7 +41,25 @@ export const studentsService = {
     return { message: 'Status atualizado com sucesso' };
   },
 
+  async updateStudent(id: string, data: { nome?: string; cpf?: string; telefone?: string }) {
+    const updateData: any = {};
+    if (data.nome !== undefined) updateData.nome = data.nome;
+    if (data.cpf !== undefined) updateData.cpf = data.cpf;
+    if (data.telefone !== undefined) updateData.telefone = data.telefone;
+
+    const { error } = await supabase
+      .from('alunos')
+      .update(updateData)
+      .eq('id', id);
+
+    if (error) throw new Error('Erro ao atualizar aluno: ' + error.message);
+    return { message: 'Aluno atualizado com sucesso' };
+  },
+
   async deleteStudent(userId: string) {
+    // First delete related results
+    await supabase.from('resultados').delete().eq('aluno_id', userId);
+    
     const { error } = await supabase
       .from('alunos')
       .delete()

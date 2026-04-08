@@ -19,6 +19,17 @@ export function LoginPage() {
   const [password, setPassword] = React.useState('');
   const [error, setError] = React.useState('');
   const [isLoading, setIsLoading] = React.useState(false);
+  const [timeoutError, setTimeoutError] = React.useState('');
+
+  // Auth timeout: show error after 10 seconds
+  React.useEffect(() => {
+    if (!isLoading) { setTimeoutError(''); return; }
+    const timer = setTimeout(() => {
+      setTimeoutError('A autenticação está demorando mais que o esperado. Verifique sua conexão e tente novamente.');
+      setIsLoading(false);
+    }, 10000);
+    return () => clearTimeout(timer);
+  }, [isLoading]);
   const [showPassword, setShowPassword] = React.useState(false);
   const [rememberMe, setRememberMe] = React.useState(() => !!localStorage.getItem('admin_remember_email'));
 
@@ -152,10 +163,10 @@ export function LoginPage() {
                   
                 </header>
                 <form className="space-y-6" onSubmit={handleLogin}>
-                  {error && (
+                  {(error || timeoutError) && (
                     <div className="bg-error/10 border border-error/20 p-4 rounded-xl flex items-center gap-3 text-error text-sm font-medium" role="alert">
                       <AlertCircle className="w-5 h-5 shrink-0" />
-                      <p>{error}</p>
+                      <p>{error || timeoutError}</p>
                     </div>
                   )}
                   <div className="space-y-2">
