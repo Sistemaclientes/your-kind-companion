@@ -64,7 +64,7 @@ Deno.serve(async (req: Request) => {
     }
 
     // Build reset URL
-    const loginPath = user_type === "admin" ? "/admin/login" : "/student/login";
+    const loginPath = user_type === "admin" ? "/admin/login" : "/painel-do-aluno";
     const resetUrl = `${origin}${loginPath}?token=${token}&email=${encodeURIComponent(email.trim().toLowerCase())}&reset=true`;
 
     console.log(`Reset link generated for ${email}: ${resetUrl}`);
