@@ -77,11 +77,6 @@ export default function App() {
                 <Route path="/convite-admin" element={<AdminInvitePage />} />
                 <Route path="/redefinir-senha" element={<LoginPage />} />
 
-                {/* Legacy redirects — all point to /painel-do-aluno */}
-                <Route path="/student/login" element={<Navigate to="/painel-do-aluno" replace />} />
-                <Route path="/aluno/login" element={<Navigate to="/painel-do-aluno" replace />} />
-                <Route path="/aluno/*" element={<Navigate to="/painel-do-aluno" replace />} />
-
                 {/* Admin routes */}
                 <Route path="/admin" element={
                   <PrivateRoute role="admin">
