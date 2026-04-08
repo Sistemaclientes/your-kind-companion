@@ -58,7 +58,6 @@ export default function App() {
             richColors 
             toastOptions={{ className: 'font-semibold' }}
           />
-          <AuthGate>
             <RouteTracker />
             <Suspense fallback={<PageLoader />}>
               <Routes>
@@ -133,7 +132,6 @@ export default function App() {
                 <Route path="*" element={<NotFoundPage />} />
               </Routes>
             </Suspense>
-          </AuthGate>
         </VisualSettingsProvider>
       </AuthProvider>
     </Router>
