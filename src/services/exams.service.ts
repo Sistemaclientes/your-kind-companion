@@ -32,6 +32,11 @@ export const examsService = {
       .insert({
         titulo: data.titulo,
         descricao: data.descricao || '',
+        categoria_id: data.categoria_id || null,
+        duracao: data.duracao || null,
+        embaralhar_questoes: data.embaralhar_questoes ?? null,
+        mostrar_resultado: data.mostrar_resultado ?? null,
+        permitir_revisao: data.permitir_revisao ?? null,
       })
       .select()
       .single();
@@ -44,6 +49,10 @@ export const examsService = {
         .insert({
           prova_id: newProva.id,
           pergunta: q.pergunta || q.enunciado,
+          tipo: q.tipo || 'multiple',
+          pontos: q.pontos || 1,
+          explicacao: q.explicacao || null,
+          imagem_url: q.imagem_url || null,
         })
         .select()
         .single();
@@ -68,6 +77,11 @@ export const examsService = {
       .update({
         titulo: data.titulo,
         descricao: data.descricao || '',
+        categoria_id: data.categoria_id || null,
+        duracao: data.duracao || null,
+        embaralhar_questoes: data.embaralhar_questoes ?? null,
+        mostrar_resultado: data.mostrar_resultado ?? null,
+        permitir_revisao: data.permitir_revisao ?? null,
       })
       .eq('id', id);
 
@@ -82,6 +96,10 @@ export const examsService = {
         .insert({
           prova_id: id,
           pergunta: q.pergunta || q.enunciado,
+          tipo: q.tipo || 'multiple',
+          pontos: q.pontos || 1,
+          explicacao: q.explicacao || null,
+          imagem_url: q.imagem_url || null,
         })
         .select()
         .single();
