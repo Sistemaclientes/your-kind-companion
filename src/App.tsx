@@ -47,11 +47,6 @@ function PageLoader() {
   );
 }
 
-function AuthGate({ children }: { children: React.ReactNode }) {
-  const { isLoading } = useAuthStore();
-  if (isLoading) return <PageLoader />;
-  return <>{children}</>;
-}
 
 export default function App() {
   return (
