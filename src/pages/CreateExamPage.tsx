@@ -98,16 +98,19 @@ export function CreateExamPage() {
           setCategoryId(exam.categoria_id || null);
           
           if (exam.perguntas) {
-            const mappedQuestions = exam.perguntas.map((q: any, idx: number) => ({
-              id: q.id || idx + 1,
-              type: q.tipo || 'multiple',
-              text: q.enunciado,
-              imagem_url: q.imagem_url || '',
-              options: q.alternativas.map((a: any) => a.texto),
-              correct: q.alternativas.findIndex((a: any) => a.is_correta),
-              points: q.pontos || 1,
-              explanation: q.explicacao || ''
-            }));
+            const mappedQuestions = exam.perguntas.map((q: any, idx: number) => {
+              const answers = q.respostas || q.alternativas || [];
+              return {
+                id: q.id || idx + 1,
+                type: q.tipo || 'multiple',
+                text: q.pergunta || q.enunciado || '',
+                imagem_url: q.imagem_url || '',
+                options: answers.map((a: any) => a.texto || ''),
+                correct: answers.findIndex((a: any) => a.correta || a.is_correta),
+                points: q.pontos || 1,
+                explanation: q.explicacao || ''
+              };
+            });
             setQuestions(mappedQuestions);
           }
         } catch (err) {
