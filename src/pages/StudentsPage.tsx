@@ -383,6 +383,93 @@ export function StudentsPage() {
           </div>
         )}
       </AnimatePresence>
+
+      {/* Edit Student Modal */}
+      <AnimatePresence>
+        {editingStudent && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="bg-surface-container-high border border-outline rounded-3xl p-8 max-w-md w-full shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center text-primary mb-6 mx-auto">
+                <Pencil className="w-8 h-8" />
+              </div>
+              
+              <h3 className="text-2xl font-bold text-on-surface text-center mb-6">Editar Aluno</h3>
+              
+              <div className="space-y-4">
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest ml-1">Nome</label>
+                  <input
+                    className="w-full px-4 py-3 bg-surface-container-low border border-outline rounded-xl text-on-surface text-sm font-medium placeholder:text-on-surface-variant/30 focus:border-primary focus:ring-1 focus:ring-primary/20 outline-none transition-all"
+                    value={editForm.nome}
+                    onChange={(e) => setEditForm(prev => ({ ...prev, nome: e.target.value }))}
+                    placeholder="Nome completo"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest ml-1">CPF</label>
+                  <input
+                    className="w-full px-4 py-3 bg-surface-container-low border border-outline rounded-xl text-on-surface text-sm font-medium placeholder:text-on-surface-variant/30 focus:border-primary focus:ring-1 focus:ring-primary/20 outline-none transition-all"
+                    value={editForm.cpf}
+                    onChange={(e) => setEditForm(prev => ({ ...prev, cpf: e.target.value }))}
+                    placeholder="000.000.000-00"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest ml-1">Telefone</label>
+                  <input
+                    className="w-full px-4 py-3 bg-surface-container-low border border-outline rounded-xl text-on-surface text-sm font-medium placeholder:text-on-surface-variant/30 focus:border-primary focus:ring-1 focus:ring-primary/20 outline-none transition-all"
+                    value={editForm.telefone}
+                    onChange={(e) => setEditForm(prev => ({ ...prev, telefone: e.target.value }))}
+                    placeholder="(00) 00000-0000"
+                  />
+                </div>
+              </div>
+              
+              <div className="flex flex-col sm:flex-row gap-3 mt-8">
+                <button 
+                  onClick={() => setEditingStudent(null)}
+                  disabled={actionLoading}
+                  className="flex-1 px-6 py-4 rounded-2xl font-bold text-on-surface-variant hover:bg-surface-container-highest transition-all disabled:opacity-50"
+                >
+                  Cancelar
+                </button>
+                <button 
+                  onClick={async () => {
+                    if (!editingStudent) return;
+                    setActionLoading(true);
+                    try {
+                      await studentsService.updateStudent(editingStudent, editForm);
+                      setStudents(prev => prev.map(s => s.id === editingStudent ? { ...s, ...editForm } : s));
+                      setEditingStudent(null);
+                    } catch (err: any) {
+                      alert(err.message || 'Erro ao salvar');
+                    } finally {
+                      setActionLoading(false);
+                    }
+                  }}
+                  disabled={actionLoading}
+                  className="flex-1 px-6 py-4 rounded-2xl bg-primary text-on-primary font-bold hover:bg-primary/90 shadow-lg shadow-primary/20 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+                >
+                  {actionLoading ? (
+                    <div className="w-5 h-5 border-2 border-on-primary/30 border-t-on-primary rounded-full animate-spin" />
+                  ) : (
+                    <>
+                      <Save className="w-4 h-4" />
+                      Salvar
+                    </>
+                  )}
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </>
   );
 }

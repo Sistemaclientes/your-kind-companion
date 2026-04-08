@@ -64,6 +64,17 @@ export function StudentLoginPage() {
   }, [user, navigate, redirectUrl]);
 
   const [isLoading, setIsLoading] = React.useState(false);
+  const [timeoutError, setTimeoutError] = React.useState('');
+
+  // Auth timeout: show error after 10 seconds
+  React.useEffect(() => {
+    if (!isLoading) { setTimeoutError(''); return; }
+    const timer = setTimeout(() => {
+      setTimeoutError('A autenticação está demorando mais que o esperado. Verifique sua conexão e tente novamente.');
+      setIsLoading(false);
+    }, 10000);
+    return () => clearTimeout(timer);
+  }, [isLoading]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -267,7 +278,7 @@ export function StudentLoginPage() {
               <div className="flex items-center justify-end">
                 <button type="button" onClick={() => setShowForgotPassword(true)} className="text-xs font-bold text-primary hover:underline">Esqueci a senha</button>
               </div>
-              {error && <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-sm text-error font-semibold bg-error/10 border border-error/20 rounded-xl px-4 py-3">{error}</motion.p>}
+              {(error || timeoutError) && <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-sm text-error font-semibold bg-error/10 border border-error/20 rounded-xl px-4 py-3">{error || timeoutError}</motion.p>}
               <button type="submit" className="w-full btn-primary py-3.5 rounded-xl font-black text-base flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed" disabled={isLoading}>{isLoading ? 'Entrando...' : <><LogIn className="w-5 h-5" /> Entrar</>}</button>
             </motion.form>
           ) : (
