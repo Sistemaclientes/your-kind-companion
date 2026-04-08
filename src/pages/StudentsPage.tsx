@@ -35,7 +35,7 @@ export function StudentsPage() {
   const [editingStudent, setEditingStudent] = useState<string | null>(null);
   const [editForm, setEditForm] = useState<{ nome: string; cpf: string; telefone: string }>({ nome: '', cpf: '', telefone: '' });
   const [actionLoading, setActionLoading] = useState(false);
-  const [studentToDelete, setStudentToDelete] = useState<{ email: string; nome: string } | null>(null);
+  const [studentToDelete, setStudentToDelete] = useState<{ id: string; email: string; nome: string } | null>(null);
 
   const itemsPerPage = 10;
 
@@ -251,7 +251,7 @@ export function StudentsPage() {
                     <div className="flex items-center gap-2 ml-4" onClick={(e) => e.stopPropagation()}>
                       <button
                         onClick={() => {
-                          setEditingStudent(student.email);
+                          setEditingStudent(student.id);
                           setEditForm({ nome: student.nome, cpf: student.cpf || '', telefone: student.telefone || '' });
                         }}
                         className="p-2 rounded-xl hover:bg-primary/10 text-on-surface-variant/60 hover:text-primary transition-all"
@@ -261,7 +261,7 @@ export function StudentsPage() {
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          setStudentToDelete({ email: student.email, nome: student.nome });
+                          setStudentToDelete({ id: student.id, email: student.email, nome: student.nome });
                         }}
                         className="p-2 rounded-xl hover:bg-red-500/10 text-on-surface-variant/60 hover:text-red-500 transition-all"
                       >
@@ -357,8 +357,8 @@ export function StudentsPage() {
                     if (!studentToDelete) return;
                     setActionLoading(true);
                     try {
-                      await studentsService.deleteStudent(studentToDelete.email);
-                      setStudents(prev => prev.filter(s => s.email !== studentToDelete.email));
+                      await studentsService.deleteStudent(studentToDelete.id);
+                      setStudents(prev => prev.filter(s => s.id !== studentToDelete.id));
                       setStudentToDelete(null);
                     } catch (err: any) {
                       alert(err.message || 'Erro ao excluir');
