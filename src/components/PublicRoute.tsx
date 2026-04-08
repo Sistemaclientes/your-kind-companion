@@ -13,7 +13,8 @@ interface PublicRouteProps {
 export function PublicRoute({ children, redirectTo }: PublicRouteProps) {
   const { user, isLoading } = useAuthStore();
 
-  if (isLoading) return null;
+  // Don't block rendering — let the login page show immediately
+  // PublicRoute only redirects if user is already authenticated
 
   if (user) {
     const target = redirectTo || (user.role === 'admin' ? '/admin/dashboard' : '/student/dashboard');
