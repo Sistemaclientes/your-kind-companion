@@ -262,6 +262,48 @@ export type Database = {
         }
         Relationships: []
       }
+      exam_attempts: {
+        Row: {
+          created_at: string
+          device_info: Json | null
+          exam_id: string
+          expires_at: string
+          id: string
+          ip_address: string | null
+          started_at: string
+          status: string
+          updated_at: string
+          user_id: string
+          violations: number
+        }
+        Insert: {
+          created_at?: string
+          device_info?: Json | null
+          exam_id: string
+          expires_at: string
+          id?: string
+          ip_address?: string | null
+          started_at?: string
+          status?: string
+          updated_at?: string
+          user_id: string
+          violations?: number
+        }
+        Update: {
+          created_at?: string
+          device_info?: Json | null
+          exam_id?: string
+          expires_at?: string
+          id?: string
+          ip_address?: string | null
+          started_at?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+          violations?: number
+        }
+        Relationships: []
+      }
       perguntas: {
         Row: {
           explicacao: string | null
@@ -302,6 +344,44 @@ export type Database = {
             columns: ["prova_id"]
             isOneToOne: false
             referencedRelation: "provas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      proctoring_logs: {
+        Row: {
+          ai_details: Json | null
+          ai_flag: string | null
+          ai_score: number | null
+          attempt_id: string
+          id: string
+          image_url: string | null
+          timestamp: string
+        }
+        Insert: {
+          ai_details?: Json | null
+          ai_flag?: string | null
+          ai_score?: number | null
+          attempt_id: string
+          id?: string
+          image_url?: string | null
+          timestamp?: string
+        }
+        Update: {
+          ai_details?: Json | null
+          ai_flag?: string | null
+          ai_score?: number | null
+          attempt_id?: string
+          id?: string
+          image_url?: string | null
+          timestamp?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "proctoring_logs_attempt_id_fkey"
+            columns: ["attempt_id"]
+            isOneToOne: false
+            referencedRelation: "exam_attempts"
             referencedColumns: ["id"]
           },
         ]
@@ -606,6 +686,38 @@ export type Database = {
             columns: ["professor_id"]
             isOneToOne: false
             referencedRelation: "admins"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      violations_log: {
+        Row: {
+          attempt_id: string
+          id: string
+          metadata: Json | null
+          timestamp: string
+          type: string
+        }
+        Insert: {
+          attempt_id: string
+          id?: string
+          metadata?: Json | null
+          timestamp?: string
+          type: string
+        }
+        Update: {
+          attempt_id?: string
+          id?: string
+          metadata?: Json | null
+          timestamp?: string
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "violations_log_attempt_id_fkey"
+            columns: ["attempt_id"]
+            isOneToOne: false
+            referencedRelation: "exam_attempts"
             referencedColumns: ["id"]
           },
         ]
