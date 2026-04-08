@@ -146,7 +146,8 @@ export function StudentDetailsPage() {
                     onClick={async () => {
                       if (confirm('Deseja confirmar este aluno manualmente?')) {
                         try {
-                          await api.patch(`/admin/students/status/${encodeURIComponent(studentData.email)}`, { status: 'Cadastrado' });
+                          const { studentsService } = await import('../services/students.service');
+                          await studentsService.updateStatus(studentData.id, 'Cadastrado');
                           alert('Aluno confirmado com sucesso!');
                           window.location.reload();
                         } catch (err) {
