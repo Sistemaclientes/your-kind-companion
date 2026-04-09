@@ -254,6 +254,11 @@ export function StudentLoginPage() {
           <img src={theme === 'dark' ? livroWhite : livroDark} alt="Logo" className="w-16 h-16 mx-auto mb-4 object-contain" />
           <h1 className="text-2xl font-black text-on-surface font-headline tracking-tight">Painel do Aluno</h1>
           <p className="text-sm text-on-surface-variant font-medium mt-1">Acesse seus resultados e provas</p>
+          {cursoParam && (
+            <span className="inline-block mt-2 text-[10px] font-black uppercase tracking-widest text-primary bg-primary/10 border border-primary/20 px-3 py-1 rounded-full">
+              Curso: {cursoParam}
+            </span>
+          )}
         </div>
 
         {/* Tabs */}
