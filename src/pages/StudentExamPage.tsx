@@ -323,10 +323,10 @@ export function StudentExamPage() {
           <div className="hidden sm:block h-8 w-px bg-outline" />
           <div className={cn(
             "flex items-center gap-3 px-4 py-2 rounded-2xl border transition-all duration-300",
-            timeLeft < 300 ? "bg-error/10 border-error/20 text-error animate-pulse" : "bg-surface-container-low border-outline text-on-surface"
+            examTimer.isCritical ? "bg-error/10 border-error/20 text-error animate-pulse" : "bg-surface-container-low border-outline text-on-surface"
           )}>
-            <Clock className={cn("w-4 h-4", timeLeft < 300 ? "text-error" : "text-primary")} />
-            <span className="text-lg font-mono font-bold">{formatTime(timeLeft)}</span>
+            <Clock className={cn("w-4 h-4", examTimer.isCritical ? "text-error" : "text-primary")} />
+            <span className="text-lg font-mono font-bold">{examTimer.formatted}</span>
           </div>
         </div>
 
