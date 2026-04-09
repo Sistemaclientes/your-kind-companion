@@ -336,7 +336,7 @@ export function StudentLoginPage() {
         </AnimatePresence>
 
         <p className="mt-8 text-center text-[10px] text-on-surface-variant font-bold uppercase tracking-widest opacity-40">
-          Eduvix © {new Date().getFullYear()} • Todos os direitos reservados
+          Portal Provas © {new Date().getFullYear()} • Todos os direitos reservados
         </p>
       </motion.div>
     </div>
