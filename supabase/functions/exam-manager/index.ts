@@ -33,23 +33,18 @@ serve(async (req) => {
       const { exam_id, device_info } = body;
       if (!exam_id) return jsonResp({ error: "exam_id obrigatório" }, 400);
 
-      // Check existing active attempt
-      const { data: existing } = await supabase
+      // Expire any existing in_progress attempts for this user/exam
+      const { data: existingAttempts } = await supabase
         .from("exam_attempts")
-        .select("*")
+        .select("id")
         .eq("user_id", user.id)
         .eq("exam_id", exam_id)
-        .eq("status", "in_progress")
-        .maybeSingle();
+        .eq("status", "in_progress");
 
-      if (existing) {
-        const expiresAt = new Date(existing.expires_at).getTime();
-        const remaining = Math.max(0, Math.floor((expiresAt - Date.now()) / 1000));
-        if (remaining <= 0) {
-          await supabase.from("exam_attempts").update({ status: "expired" }).eq("id", existing.id);
-          return jsonResp({ error: "Tempo expirado" }, 410);
+      if (existingAttempts && existingAttempts.length > 0) {
+        for (const old of existingAttempts) {
+          await supabase.from("exam_attempts").update({ status: "expired" }).eq("id", old.id);
         }
-        return jsonResp({ attempt: existing, remaining_seconds: remaining });
       }
 
       // Check completed attempts
