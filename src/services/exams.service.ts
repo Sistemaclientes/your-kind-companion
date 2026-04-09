@@ -26,6 +26,21 @@ export const examsService = {
     return prova;
   },
 
+  async getBySlug(slug: string) {
+    // Try slug first, then fall back to id
+    const { data: prova, error } = await supabase
+      .from('provas')
+      .select(`*, perguntas(id, pergunta, respostas(id, texto, correta))`)
+      .eq('slug', slug)
+      .single();
+
+    if (error || !prova) {
+      // Fallback: try as UUID
+      return this.getById(slug);
+    }
+    return prova;
+  },
+
   async create(data: any) {
     const { data: newProva, error } = await supabase
       .from('provas')
