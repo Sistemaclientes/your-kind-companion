@@ -1,6 +1,6 @@
 import React from 'react';
 import { toast } from 'sonner';
-import { Play, ShieldCheck, Clock, FileText, AlertCircle, ChevronRight, User } from 'lucide-react';
+import { Play, ShieldCheck, Clock, FileText, AlertCircle, ChevronRight, User, Ban } from 'lucide-react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { api } from '../lib/api';
@@ -16,6 +16,7 @@ export function StudentStartPage() {
   const [error, setError] = React.useState<string | null>(null);
   const [loading, setLoading] = React.useState(true);
   const [starting, setStarting] = React.useState(false);
+  const [alreadyPassed, setAlreadyPassed] = React.useState(false);
 
   const autoStart = searchParams.get('start') === 'true';
 
@@ -44,17 +45,34 @@ export function StudentStartPage() {
     fetchExam();
   }, [slug, searchParams]);
 
+  // Check if user already passed this exam
+  React.useEffect(() => {
+    if (!user || !exam) return;
+    const checkPassed = async () => {
+      try {
+        const results = await api.get('/resultados');
+        const passed = results.some((r: any) => r.prova_id === exam.id && r.pontuacao >= 70);
+        setAlreadyPassed(passed);
+      } catch {}
+    };
+    checkPassed();
+  }, [user, exam]);
+
   // Auto-start after login redirect
   React.useEffect(() => {
-    if (autoStart && user && exam && !authLoading && !starting) {
+    if (autoStart && user && exam && !authLoading && !starting && !alreadyPassed) {
       handleStart();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [autoStart, user, exam, authLoading]);
+  }, [autoStart, user, exam, authLoading, alreadyPassed]);
 
   const handleStart = () => {
     if (!exam) return;
     if (starting) return;
+    if (alreadyPassed) {
+      toast.error('Você já foi aprovado nesta prova e não pode refazê-la.');
+      return;
+    }
 
     // If not logged in, redirect to login with return URL
     if (!user) {
@@ -64,7 +82,6 @@ export function StudentStartPage() {
     }
 
     setStarting(true);
-    // Store exam id and navigate to exam page
     sessionStorage.setItem('current_exam_id', exam.id);
     navigate('/student/exam');
   };
@@ -124,7 +141,9 @@ export function StudentStartPage() {
             {user ? (
               <>
                 <h3 className="text-2xl font-black text-on-surface font-headline">Olá, {user.nome}!</h3>
-                <p className="text-sm text-on-surface-variant font-medium">Pronto para iniciar a avaliação.</p>
+                <p className="text-sm text-on-surface-variant font-medium">
+                  {alreadyPassed ? 'Você já foi aprovado nesta prova.' : 'Pronto para iniciar a avaliação.'}
+                </p>
               </>
             ) : (
               <>
@@ -135,19 +154,25 @@ export function StudentStartPage() {
           </header>
 
           <div className="space-y-6">
-            <button
-              className="w-full btn-primary py-4 rounded-2xl font-black text-lg flex items-center justify-center gap-3 group disabled:opacity-50"
-              onClick={handleStart}
-              disabled={starting}
-            >
-              {starting ? (
-                'Iniciando...'
-              ) : user ? (
-                <><Play className="w-5 h-5 fill-current" /> Iniciar Avaliação <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" /></>
-              ) : (
-                <><User className="w-5 h-5" /> Entrar e Iniciar <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" /></>
-              )}
-            </button>
+            {alreadyPassed ? (
+              <div className="w-full py-4 rounded-2xl font-black text-lg flex items-center justify-center gap-3 bg-error/10 text-error border border-error/20">
+                <Ban className="w-5 h-5" /> Prova já concluída com aprovação
+              </div>
+            ) : (
+              <button
+                className="w-full btn-primary py-4 rounded-2xl font-black text-lg flex items-center justify-center gap-3 group disabled:opacity-50"
+                onClick={handleStart}
+                disabled={starting}
+              >
+                {starting ? (
+                  'Iniciando...'
+                ) : user ? (
+                  <><Play className="w-5 h-5 fill-current" /> Iniciar Avaliação <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" /></>
+                ) : (
+                  <><User className="w-5 h-5" /> Entrar e Iniciar <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" /></>
+                )}
+              </button>
+            )}
           </div>
         </motion.div>
       </div>

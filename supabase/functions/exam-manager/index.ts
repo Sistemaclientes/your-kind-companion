@@ -47,21 +47,20 @@ serve(async (req) => {
         }
       }
 
-      // Check completed attempts
-      const { data: completed } = await supabase
-        .from("exam_attempts")
-        .select("id")
-        .eq("user_id", user.id)
-        .eq("exam_id", exam_id)
-        .in("status", ["completed", "terminated"]);
+      // Check if user already passed this exam (via resultados table)
+      const { data: passedResults } = await supabase
+        .from("resultados")
+        .select("id, pontuacao")
+        .eq("aluno_id", user.id)
+        .eq("prova_id", exam_id);
+
+      const hasPassed = (passedResults || []).some((r: any) => r.pontuacao >= 70);
+      if (hasPassed) {
+        return jsonResp({ error: "Você já foi aprovado nesta prova e não pode refazê-la" }, 403);
+      }
 
       const { data: exam } = await supabase.from("provas").select("duracao, tentativas_permitidas").eq("id", exam_id).single();
       if (!exam) return jsonResp({ error: "Prova não encontrada" }, 404);
-
-      const maxAttempts = exam.tentativas_permitidas || 1;
-      if (completed && completed.length >= maxAttempts) {
-        return jsonResp({ error: "Limite de tentativas atingido" }, 403);
-      }
 
       const durationMinutes = exam.duracao || 60;
       const expiresAt = new Date(Date.now() + durationMinutes * 60 * 1000).toISOString();
