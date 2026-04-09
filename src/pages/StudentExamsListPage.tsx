@@ -38,7 +38,12 @@ export function StudentExamsListPage() {
   }, [user]);
 
   const approvedExamIds = new Set(results.filter(r => r.pontuacao >= 70).map(r => r.prova_id));
-  const availableExams = exams.filter((exam: any) => !approvedExamIds.has(exam.id));
+  // Filter by user's curso if assigned
+  const userCurso = user?.curso;
+  const cursoFilteredExams = userCurso
+    ? exams.filter((exam: any) => exam.curso?.toLowerCase() === userCurso.toLowerCase())
+    : exams;
+  const availableExams = cursoFilteredExams.filter((exam: any) => !approvedExamIds.has(exam.id));
 
   return (
     <>
