@@ -33,7 +33,7 @@ export const authService = {
     // Check if user is student
     const { data: aluno } = await supabase
       .from('alunos')
-      .select('id, nome, avatar_url, status')
+      .select('id, nome, avatar_url, status, curso')
       .eq('id', data.user.id)
       .single();
 
@@ -45,8 +45,10 @@ export const authService = {
     return { user: data.user, aluno };
   },
 
-  async registerStudent(data: { nome: string; email: string; password: string }) {
+  async registerStudent(data: { nome: string; email: string; password: string; curso?: string }) {
     const normalizedEmail = data.email.trim().toLowerCase();
+    const normalizedCurso = data.curso ? data.curso.trim().toLowerCase() : null;
+    
     const { data: authData, error } = await supabase.auth.signUp({
       email: normalizedEmail,
       password: data.password,
@@ -64,12 +66,15 @@ export const authService = {
     }
     if (!authData.user) throw new Error('Erro ao criar conta.');
 
-    // Create student record with email
-    const { error: insertError } = await supabase.from('alunos').insert({
+    // Create student record with email and curso
+    const insertData: any = {
       id: authData.user.id,
       nome: data.nome.trim(),
       email: normalizedEmail,
-    });
+    };
+    if (normalizedCurso) insertData.curso = normalizedCurso;
+
+    const { error: insertError } = await supabase.from('alunos').insert(insertData);
 
     if (insertError) {
       console.error('[Auth] Insert aluno error:', insertError);
@@ -91,7 +96,7 @@ export const authService = {
     // Fetch the student record for the auth store
     const { data: aluno } = await supabase
       .from('alunos')
-      .select('id, nome, avatar_url, status')
+      .select('id, nome, avatar_url, status, curso')
       .eq('id', authData.user.id)
       .single();
 

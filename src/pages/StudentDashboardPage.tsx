@@ -27,8 +27,13 @@ export function StudentDashboardPage() {
           api.get('/provas')
         ]);
         setResults(resultsData);
+        // Filter exams by user's curso if assigned
+        const userCurso = user.curso;
+        const filteredExams = userCurso 
+          ? examsData.filter((exam: any) => exam.curso?.toLowerCase() === userCurso.toLowerCase())
+          : examsData;
         const approvedExamIds = new Set(resultsData.filter((r: any) => r.pontuacao >= 70).map((r: any) => r.prova_id));
-        setAvailableExams(examsData.filter((exam: any) => !approvedExamIds.has(exam.id)));
+        setAvailableExams(filteredExams.filter((exam: any) => !approvedExamIds.has(exam.id)));
       } catch (err) {
         console.error('Error loading dashboard:', err);
       } finally {

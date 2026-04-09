@@ -9,6 +9,7 @@ export interface AuthUser {
   nome: string;
   email: string;
   role: UserRole;
+  curso?: string | null;
 }
 
 interface AuthState {
@@ -34,7 +35,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       // Run both queries in parallel to cut latency in half
       const [adminResult, alunoResult] = await Promise.all([
         supabase.from('admins').select('id, email, role').eq('id', authUser.id).maybeSingle(),
-        supabase.from('alunos').select('id, nome, avatar_url, status').eq('id', authUser.id).maybeSingle(),
+        supabase.from('alunos').select('id, nome, avatar_url, status, curso').eq('id', authUser.id).maybeSingle(),
       ]);
 
       if (adminResult.data) {
@@ -50,6 +51,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           nome: alunoResult.data.nome || 'Aluno',
           email: authUser.email || '',
           role: 'aluno',
+          curso: alunoResult.data.curso || null,
         });
       } else {
         console.warn('User found in Auth but not in admins/alunos tables');
@@ -97,6 +99,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       nome: aluno.nome || 'Aluno',
       email: authUser.email || '',
       role: 'aluno',
+      curso: aluno.curso || null,
     });
     setIsLoading(false);
   }, []);

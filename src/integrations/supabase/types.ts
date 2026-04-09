@@ -64,6 +64,7 @@ export type Database = {
           confirmed_at: string | null
           cpf: string | null
           created_at: string | null
+          curso: string | null
           data_nascimento: string | null
           email: string | null
           id: string
@@ -82,6 +83,7 @@ export type Database = {
           confirmed_at?: string | null
           cpf?: string | null
           created_at?: string | null
+          curso?: string | null
           data_nascimento?: string | null
           email?: string | null
           id: string
@@ -100,6 +102,7 @@ export type Database = {
           confirmed_at?: string | null
           cpf?: string | null
           created_at?: string | null
+          curso?: string | null
           data_nascimento?: string | null
           email?: string | null
           id?: string
@@ -392,6 +395,7 @@ export type Database = {
           categoria_id: string | null
           created_at: string | null
           created_by: string | null
+          curso: string | null
           descricao: string | null
           duracao: number | null
           embaralhar_questoes: boolean | null
@@ -412,6 +416,7 @@ export type Database = {
           categoria_id?: string | null
           created_at?: string | null
           created_by?: string | null
+          curso?: string | null
           descricao?: string | null
           duracao?: number | null
           embaralhar_questoes?: boolean | null
@@ -432,6 +437,7 @@ export type Database = {
           categoria_id?: string | null
           created_at?: string | null
           created_by?: string | null
+          curso?: string | null
           descricao?: string | null
           duracao?: number | null
           embaralhar_questoes?: boolean | null
