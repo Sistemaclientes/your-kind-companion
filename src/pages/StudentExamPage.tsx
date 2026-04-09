@@ -26,12 +26,24 @@ export function StudentExamPage() {
   const [studentInfo, setStudentInfo] = useState<any>(null);
   const [attemptId, setAttemptId] = useState<string | null>(null);
 
+  // Refs for stable access in callbacks
+  const examRef = useRef<any>(null);
+  const answersRef = useRef<Record<number, number>>({});
+  const attemptIdRef = useRef<string | null>(null);
+  const isSubmittingRef = useRef(false);
+
+  // Keep refs in sync
+  useEffect(() => { examRef.current = exam; }, [exam]);
+  useEffect(() => { answersRef.current = answers; }, [answers]);
+  useEffect(() => { attemptIdRef.current = attemptId; }, [attemptId]);
+  useEffect(() => { isSubmittingRef.current = isSubmitting; }, [isSubmitting]);
+
   // Exam Timer
   const examTimer = useExamTimer({
     attemptId,
     initialSeconds: initialSeconds,
     enabled: !loading && !isSubmitting,
-    onExpired: useCallback(() => { handleAutoFinish(); }, []),
+    onExpired: useCallback(() => { handleAutoFinishStable(); }, []),
   });
 
 
@@ -106,20 +118,56 @@ export function StudentExamPage() {
     if (currentQuestionIdx > 0) setCurrentQuestionIdx(prev => prev - 1);
   };
 
+  // Stable version for timer callback (uses refs to avoid stale closures)
+  const handleAutoFinishStable = useCallback(async () => {
+    const currentExam = examRef.current;
+    const currentAnswers = answersRef.current;
+    const currentAttemptId = attemptIdRef.current;
+    if (!currentExam || isSubmittingRef.current) return;
+    isSubmittingRef.current = true;
+    setIsSubmitting(true);
+    setCountdown(5);
+
+    try {
+      const result = await api.post('/responder-prova', {
+        prova_id: currentExam.id,
+        respostas: currentAnswers,
+      });
+      localStorage.setItem('last_result', JSON.stringify(result));
+      sessionStorage.removeItem('current_exam_id');
+
+      if (currentAttemptId) {
+        await supabase.functions.invoke('exam-manager', {
+          body: { action: 'finish', attempt_id: currentAttemptId },
+        });
+      }
+
+      const timer = setInterval(() => {
+        setCountdown(prev => {
+          if (prev <= 1) { clearInterval(timer); navigate('/student/result'); return 0; }
+          return prev - 1;
+        });
+      }, 1000);
+    } catch (err) {
+      isSubmittingRef.current = false;
+      setIsSubmitting(false);
+      toast.error('Erro ao enviar respostas. Tente novamente.');
+    }
+  }, [navigate]);
+
   const handleAutoFinish = async () => {
     if (!exam || isSubmitting) return;
     setIsSubmitting(true);
     setCountdown(5);
 
     try {
-      // Submit answers
       const result = await api.post('/responder-prova', {
         prova_id: exam.id,
         respostas: answers,
       });
       localStorage.setItem('last_result', JSON.stringify(result));
+      sessionStorage.removeItem('current_exam_id');
 
-      // Mark attempt as completed
       if (attemptId) {
         await supabase.functions.invoke('exam-manager', {
           body: { action: 'finish', attempt_id: attemptId },
