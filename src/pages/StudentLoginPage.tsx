@@ -17,7 +17,8 @@ export function StudentLoginPage() {
   const { user, loginStudent } = useAuthStore();
   const { theme } = useTheme();
   const redirectUrl = searchParams.get('redirect') || '/student/dashboard';
-  const [tab, setTab] = React.useState<Tab>('login');
+  const cursoParam = searchParams.get('curso')?.trim().toLowerCase() || null;
+  const [tab, setTab] = React.useState<Tab>(cursoParam ? 'register' : 'login');
 
   // Login state
   const [email, setEmail] = React.useState('');
@@ -107,7 +108,7 @@ export function StudentLoginPage() {
     }
     setIsLoading(true);
     try {
-      const result = await authService.registerStudent({ nome: regName, email: regEmail, password: regPassword });
+      const result = await authService.registerStudent({ nome: regName, email: regEmail, password: regPassword, curso: cursoParam || undefined });
       if (result.autoLogin && result.user && result.aluno) {
         // Auto-login succeeded — go straight to dashboard
         loginStudent(result.user, result.aluno);
