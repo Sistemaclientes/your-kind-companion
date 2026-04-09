@@ -176,6 +176,9 @@ export const examsService = {
         prova_id: data.prova_id,
         aluno_id: user.id,
         pontuacao,
+        acertos,
+        total,
+        respostas: data.respostas,
       })
       .select()
       .single();
