@@ -13,7 +13,7 @@ async function handleRoute(method: string, endpoint: string, data?: any): Promis
   // EXAMS
   if (method === 'GET' && endpoint === '/provas') return examsService.getAll();
   const provaSlugMatch = endpoint.match(/^\/provas\/slug\/(.+)$/);
-  if (method === 'GET' && provaSlugMatch) return examsService.getById(provaSlugMatch[1]);
+  if (method === 'GET' && provaSlugMatch) return examsService.getBySlug(provaSlugMatch[1]);
   const provaIdMatch = endpoint.match(/^\/provas\/([a-f0-9-]+)$/);
   if (method === 'GET' && provaIdMatch) return examsService.getById(provaIdMatch[1]);
   if (method === 'POST' && endpoint === '/provas') return examsService.create(data);
