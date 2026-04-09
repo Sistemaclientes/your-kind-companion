@@ -31,6 +31,14 @@ export function StudentExamPage() {
   const [showViolationWarning, setShowViolationWarning] = useState(false);
   const [violationMessage, setViolationMessage] = useState('');
 
+  // Exam Timer
+  const examTimer = useExamTimer({
+    attemptId,
+    initialSeconds: initialSeconds,
+    enabled: !loading && !isSubmitting && !terminated,
+    onExpired: useCallback(() => { handleAutoFinish(); }, []),
+  });
+
   // Anti-cheat
   const antiCheat = useAntiCheat({
     enabled: !!attemptId && !isSubmitting && !terminated,
