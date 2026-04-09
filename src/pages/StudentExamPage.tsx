@@ -11,12 +11,13 @@ import { api } from '../lib/api';
 import { supabase } from '../integrations/supabase/client';
 import { useAntiCheat } from '../hooks/useAntiCheat';
 import { useProctoring } from '../hooks/useProctoring';
+import { useExamTimer } from '../hooks/useExamTimer';
 
 export function StudentExamPage() {
   const navigate = useNavigate();
   const [exam, setExam] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [timeLeft, setTimeLeft] = useState(3600);
+  const [initialSeconds, setInitialSeconds] = useState(3600);
   const [currentQuestionIdx, setCurrentQuestionIdx] = useState(0);
   const [answers, setAnswers] = useState<Record<number, number>>({});
   const [flaggedQuestions, setFlaggedQuestions] = useState<number[]>([]);
@@ -29,7 +30,14 @@ export function StudentExamPage() {
   const [terminated, setTerminated] = useState(false);
   const [showViolationWarning, setShowViolationWarning] = useState(false);
   const [violationMessage, setViolationMessage] = useState('');
-  const syncTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  // Exam Timer
+  const examTimer = useExamTimer({
+    attemptId,
+    initialSeconds: initialSeconds,
+    enabled: !loading && !isSubmitting && !terminated,
+    onExpired: useCallback(() => { handleAutoFinish(); }, []),
+  });
 
   // Anti-cheat
   const antiCheat = useAntiCheat({
@@ -107,9 +115,9 @@ export function StudentExamPage() {
 
         if (parsed?.attempt) {
           setAttemptId(parsed.attempt.id);
-          setTimeLeft(parsed.remaining_seconds || 3600);
+          setInitialSeconds(parsed.remaining_seconds || 3600);
         } else {
-          setTimeLeft(60 * 60);
+          setInitialSeconds(60 * 60);
         }
       } catch (err) {
         console.error('Error starting exam:', err);
@@ -128,45 +136,7 @@ export function StudentExamPage() {
     }
   }, [loading, attemptId]);
 
-  // Timer countdown
-  useEffect(() => {
-    if (loading || isSubmitting || terminated) return;
-    const timer = setInterval(() => {
-      setTimeLeft(prev => {
-        if (prev <= 1) {
-          handleAutoFinish();
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-    return () => clearInterval(timer);
-  }, [loading, isSubmitting, terminated]);
-
-  // Sync time with backend every 30s
-  useEffect(() => {
-    if (!attemptId || isSubmitting || terminated) return;
-
-    syncTimerRef.current = setInterval(async () => {
-      try {
-        const { data } = await supabase.functions.invoke('exam-manager', {
-          body: { action: 'sync-time', attempt_id: attemptId },
-        });
-
-        let parsed = data;
-        if (typeof data === 'string') try { parsed = JSON.parse(data); } catch {}
-
-        if (parsed?.remaining_seconds !== undefined) {
-          setTimeLeft(parsed.remaining_seconds);
-          if (parsed.status === 'expired') {
-            handleAutoFinish();
-          }
-        }
-      } catch {}
-    }, 30000);
-
-    return () => { if (syncTimerRef.current) clearInterval(syncTimerRef.current); };
-  }, [attemptId, isSubmitting, terminated]);
+  // Timer and sync are now handled by useExamTimer hook
 
   // Trigger AI analysis periodically (every 60s)
   useEffect(() => {
@@ -194,11 +164,6 @@ export function StudentExamPage() {
     );
   };
 
-  const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-  };
 
   const handleNext = () => {
     if (currentQuestionIdx < totalQuestions - 1) {
@@ -353,10 +318,10 @@ export function StudentExamPage() {
           <div className="hidden sm:block h-8 w-px bg-outline" />
           <div className={cn(
             "flex items-center gap-3 px-4 py-2 rounded-2xl border transition-all duration-300",
-            timeLeft < 300 ? "bg-error/10 border-error/20 text-error animate-pulse" : "bg-surface-container-low border-outline text-on-surface"
+            examTimer.isCritical ? "bg-error/10 border-error/20 text-error animate-pulse" : "bg-surface-container-low border-outline text-on-surface"
           )}>
-            <Clock className={cn("w-4 h-4", timeLeft < 300 ? "text-error" : "text-primary")} />
-            <span className="text-lg font-mono font-bold">{formatTime(timeLeft)}</span>
+            <Clock className={cn("w-4 h-4", examTimer.isCritical ? "text-error" : "text-primary")} />
+            <span className="text-lg font-mono font-bold">{examTimer.formatted}</span>
           </div>
         </div>
 
