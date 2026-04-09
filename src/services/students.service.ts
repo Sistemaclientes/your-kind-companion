@@ -24,10 +24,34 @@ export const studentsService = {
 
     if (error || !result) throw new Error('Resultado não encontrado');
 
+    const prova = (result as any).provas;
+
+    // Build correctAlts map and normalize field names for the UI
+    const correctAlts: Record<string, string> = {};
+    const perguntas = (prova?.perguntas || []).map((p: any) => {
+      const alternativas = (p.respostas || []).map((r: any) => ({
+        ...r,
+        is_correta: !!r.correta,
+      }));
+      const correctAlt = alternativas.find((a: any) => a.correta);
+      if (correctAlt) {
+        correctAlts[p.id] = correctAlt.id;
+      }
+      return {
+        ...p,
+        enunciado: p.pergunta,
+        alternativas,
+      };
+    });
+
     return {
       ...result,
-      prova_titulo: (result as any).provas?.titulo,
-      exam: (result as any).provas,
+      prova_titulo: prova?.titulo,
+      exam: {
+        ...prova,
+        perguntas,
+        correctAlts,
+      },
     };
   },
 
