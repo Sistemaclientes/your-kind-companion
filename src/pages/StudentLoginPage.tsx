@@ -107,10 +107,17 @@ export function StudentLoginPage() {
     }
     setIsLoading(true);
     try {
-      await authService.registerStudent({ nome: regName, email: regEmail, password: regPassword });
-      setRegSuccess(true);
-      setRegisteredEmail(regEmail);
-      setRegName(''); setRegEmail(''); setRegPassword(''); setRegConfirmPassword('');
+      const result = await authService.registerStudent({ nome: regName, email: regEmail, password: regPassword });
+      if (result.autoLogin && result.user && result.aluno) {
+        // Auto-login succeeded — go straight to dashboard
+        loginStudent(result.user, result.aluno);
+        navigate(redirectUrl, { replace: true });
+      } else {
+        // Fallback: account created but auto-login failed
+        setRegSuccess(true);
+        setRegisteredEmail(regEmail);
+        setRegName(''); setRegEmail(''); setRegPassword(''); setRegConfirmPassword('');
+      }
     } catch (err: any) {
       console.error('[StudentLogin] Register error:', err);
       setRegError(err.message || 'Erro ao cadastrar.');

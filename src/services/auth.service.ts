@@ -50,6 +50,9 @@ export const authService = {
     const { data: authData, error } = await supabase.auth.signUp({
       email: normalizedEmail,
       password: data.password,
+      options: {
+        data: { nome: data.nome.trim() },
+      },
     });
 
     if (error) {
@@ -73,7 +76,26 @@ export const authService = {
       throw new Error('Conta criada, mas houve erro ao salvar perfil. Tente fazer login.');
     }
 
-    return { message: 'Cadastro realizado! Verifique seu e-mail para confirmar.' };
+    // Auto-login after signup
+    const { data: loginData, error: loginError } = await supabase.auth.signInWithPassword({
+      email: normalizedEmail,
+      password: data.password,
+    });
+
+    if (loginError) {
+      console.error('[Auth] Auto-login after signup error:', loginError);
+      // Account was created successfully, just couldn't auto-login
+      return { autoLogin: false, user: null, aluno: null };
+    }
+
+    // Fetch the student record for the auth store
+    const { data: aluno } = await supabase
+      .from('alunos')
+      .select('id, nome, avatar_url, status')
+      .eq('id', authData.user.id)
+      .single();
+
+    return { autoLogin: true, user: loginData.user, aluno };
   },
 
   async logout() {
