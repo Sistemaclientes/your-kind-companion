@@ -11,12 +11,13 @@ import { api } from '../lib/api';
 import { supabase } from '../integrations/supabase/client';
 import { useAntiCheat } from '../hooks/useAntiCheat';
 import { useProctoring } from '../hooks/useProctoring';
+import { useExamTimer } from '../hooks/useExamTimer';
 
 export function StudentExamPage() {
   const navigate = useNavigate();
   const [exam, setExam] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [timeLeft, setTimeLeft] = useState(3600);
+  const [initialSeconds, setInitialSeconds] = useState(3600);
   const [currentQuestionIdx, setCurrentQuestionIdx] = useState(0);
   const [answers, setAnswers] = useState<Record<number, number>>({});
   const [flaggedQuestions, setFlaggedQuestions] = useState<number[]>([]);
@@ -29,7 +30,6 @@ export function StudentExamPage() {
   const [terminated, setTerminated] = useState(false);
   const [showViolationWarning, setShowViolationWarning] = useState(false);
   const [violationMessage, setViolationMessage] = useState('');
-  const syncTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   // Anti-cheat
   const antiCheat = useAntiCheat({
