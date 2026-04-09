@@ -107,10 +107,17 @@ export function StudentLoginPage() {
     }
     setIsLoading(true);
     try {
-      await authService.registerStudent({ nome: regName, email: regEmail, password: regPassword });
-      setRegSuccess(true);
-      setRegisteredEmail(regEmail);
-      setRegName(''); setRegEmail(''); setRegPassword(''); setRegConfirmPassword('');
+      const result = await authService.registerStudent({ nome: regName, email: regEmail, password: regPassword });
+      if (result.autoLogin && result.user && result.aluno) {
+        // Auto-login succeeded — go straight to dashboard
+        loginStudent(result.user, result.aluno);
+        navigate(redirectUrl, { replace: true });
+      } else {
+        // Fallback: account created but auto-login failed
+        setRegSuccess(true);
+        setRegisteredEmail(regEmail);
+        setRegName(''); setRegEmail(''); setRegPassword(''); setRegConfirmPassword('');
+      }
     } catch (err: any) {
       console.error('[StudentLogin] Register error:', err);
       setRegError(err.message || 'Erro ao cadastrar.');
@@ -287,8 +294,8 @@ export function StudentLoginPage() {
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-8 space-y-3">
                   <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto"><ShieldCheck className="w-7 h-7 text-primary" /></div>
                   <p className="text-lg font-black text-on-surface font-headline">Cadastro realizado!</p>
-                  <p className="text-sm text-on-surface-variant font-medium">Verifique seu e-mail ({registeredEmail}) para confirmar sua conta.</p>
-                  <button type="button" onClick={() => { setTab('login'); setRegSuccess(false); }} className="btn-primary w-full py-3.5 rounded-xl font-bold mt-4">Voltar ao Login</button>
+                  <p className="text-sm text-on-surface-variant font-medium">Sua conta foi criada. Faça login para continuar.</p>
+                  <button type="button" onClick={() => { setTab('login'); setRegSuccess(false); setEmail(registeredEmail); }} className="btn-primary w-full py-3.5 rounded-xl font-bold mt-4">Ir para Login</button>
                 </motion.div>
               ) : (
                 <>
