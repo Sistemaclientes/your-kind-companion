@@ -2,15 +2,13 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { toast } from 'sonner';
 import { 
   Clock, ChevronLeft, ChevronRight, LayoutGrid, CheckCircle2, AlertCircle,
-  Flag, X, Send, HelpCircle, Shield, Camera, AlertTriangle, Maximize
+  Flag, X, Send, HelpCircle, AlertTriangle
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { cn } from '../lib/utils';
 import { motion, AnimatePresence } from 'motion/react';
 import { api } from '../lib/api';
 import { supabase } from '../integrations/supabase/client';
-import { useAntiCheat } from '../hooks/useAntiCheat';
-import { useProctoring } from '../hooks/useProctoring';
 import { useExamTimer } from '../hooks/useExamTimer';
 
 export function StudentExamPage() {
@@ -27,64 +25,15 @@ export function StudentExamPage() {
   const [reviewFilter, setReviewFilter] = useState(false);
   const [studentInfo, setStudentInfo] = useState<any>(null);
   const [attemptId, setAttemptId] = useState<string | null>(null);
-  const [terminated, setTerminated] = useState(false);
-  const [showViolationWarning, setShowViolationWarning] = useState(false);
-  const [violationMessage, setViolationMessage] = useState('');
 
   // Exam Timer
   const examTimer = useExamTimer({
     attemptId,
     initialSeconds: initialSeconds,
-    enabled: !loading && !isSubmitting && !terminated,
+    enabled: !loading && !isSubmitting,
     onExpired: useCallback(() => { handleAutoFinish(); }, []),
   });
 
-  // Anti-cheat
-  const antiCheat = useAntiCheat({
-    enabled: !!attemptId && !isSubmitting && !terminated,
-    maxViolations: 3,
-    attemptId,
-    onTerminate: useCallback(() => {
-      handleTerminate();
-    }, []),
-  });
-
-  // Proctoring
-  const proctoring = useProctoring({
-    enabled: !!attemptId && !isSubmitting && !terminated,
-    captureIntervalSec: 15,
-    attemptId,
-  });
-
-  // Show warning on violation
-  useEffect(() => {
-    if (antiCheat.lastViolationType && antiCheat.violations < 3) {
-      const messages: Record<string, string> = {
-        exit_fullscreen: 'Você saiu do modo tela cheia. Volte imediatamente!',
-        tab_switch: 'Troca de aba detectada! Isso é uma violação.',
-        window_blur: 'Você saiu da janela da prova!',
-        copy_attempt: 'Copiar não é permitido durante a prova.',
-        paste_attempt: 'Colar não é permitido durante a prova.',
-        right_click: 'Clique direito bloqueado durante a prova.',
-        devtools_attempt: 'Tentativa de abrir ferramentas de desenvolvedor detectada!',
-        multi_screen: 'Múltiplos monitores detectados!',
-      };
-      setViolationMessage(messages[antiCheat.lastViolationType] || 'Violação detectada!');
-      setShowViolationWarning(true);
-      setTimeout(() => setShowViolationWarning(false), 4000);
-    }
-  }, [antiCheat.violations, antiCheat.lastViolationType]);
-
-  const handleTerminate = async () => {
-    setTerminated(true);
-    if (attemptId) {
-      try {
-        await supabase.functions.invoke('exam-manager', {
-          body: { action: 'terminate', attempt_id: attemptId, reason: 'max_violations' },
-        });
-      } catch {}
-    }
-  };
 
   // Start exam attempt via edge function
   useEffect(() => {
@@ -129,29 +78,9 @@ export function StudentExamPage() {
     initExam();
   }, [navigate]);
 
-  // Request fullscreen on load
-  useEffect(() => {
-    if (!loading && attemptId) {
-      antiCheat.requestFullscreen();
-    }
-  }, [loading, attemptId]);
 
   // Timer and sync are now handled by useExamTimer hook
 
-  // Trigger AI analysis periodically (every 60s)
-  useEffect(() => {
-    if (!attemptId || isSubmitting || terminated) return;
-
-    const interval = setInterval(async () => {
-      try {
-        await supabase.functions.invoke('exam-manager', {
-          body: { action: 'analyze', attempt_id: attemptId },
-        });
-      } catch {}
-    }, 60000);
-
-    return () => clearInterval(interval);
-  }, [attemptId, isSubmitting, terminated]);
 
   const currentQuestion = exam?.perguntas[currentQuestionIdx];
   const totalQuestions = exam?.perguntas.length || 0;
@@ -197,12 +126,6 @@ export function StudentExamPage() {
         });
       }
 
-      // Exit fullscreen
-      if (document.fullscreenElement) {
-        document.exitFullscreen().catch(() => {});
-      }
-      proctoring.stopCamera();
-
       const timer = setInterval(() => {
         setCountdown(prev => {
           if (prev <= 1) { clearInterval(timer); navigate('/student/result'); return 0; }
@@ -238,25 +161,6 @@ export function StudentExamPage() {
     );
   }
 
-  if (terminated) {
-    return (
-      <div className="min-h-screen bg-surface flex flex-col items-center justify-center p-6 text-center">
-        <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="max-w-md w-full space-y-8">
-          <div className="w-24 h-24 bg-error/10 rounded-full flex items-center justify-center mx-auto">
-            <AlertTriangle className="w-12 h-12 text-error" />
-          </div>
-          <h2 className="text-3xl font-black text-on-surface font-headline">Prova Encerrada</h2>
-          <p className="text-on-surface-variant font-medium">
-            Sua prova foi encerrada automaticamente devido a múltiplas violações das regras de integridade.
-            O administrador será notificado sobre este incidente.
-          </p>
-          <button onClick={() => navigate('/student/dashboard')} className="btn-primary px-8 py-3 text-sm uppercase tracking-widest">
-            Voltar ao Painel
-          </button>
-        </motion.div>
-      </div>
-    );
-  }
 
   const progress = (Object.keys(answers).length / totalQuestions) * 100;
 
@@ -286,27 +190,6 @@ export function StudentExamPage() {
 
   return (
     <div className="min-h-screen bg-surface flex flex-col font-sans text-on-surface antialiased select-none">
-      {/* Hidden video/canvas for proctoring */}
-      <video ref={proctoring.videoRef} className="hidden" muted playsInline />
-      <canvas ref={proctoring.canvasRef} className="hidden" />
-
-      {/* Violation Warning Toast */}
-      <AnimatePresence>
-        {showViolationWarning && (
-          <motion.div
-            initial={{ opacity: 0, y: -50 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -50 }}
-            className="fixed top-4 left-1/2 -translate-x-1/2 z-[200] bg-error text-white px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-3 max-w-lg"
-          >
-            <AlertTriangle className="w-6 h-6 shrink-0" />
-            <div>
-              <p className="font-bold text-sm">{violationMessage}</p>
-              <p className="text-xs opacity-80">Violação {antiCheat.violations}/3 — Na próxima sua prova será encerrada</p>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
 
       {/* Header */}
       <header className="h-20 bg-surface-container border-b border-outline flex items-center justify-between px-6 md:px-10 sticky top-0 z-50 shadow-sm">
@@ -326,19 +209,6 @@ export function StudentExamPage() {
         </div>
 
         <div className="flex items-center gap-3">
-          {/* Security indicators */}
-          <div className="hidden md:flex items-center gap-2">
-            <div className={cn("w-2 h-2 rounded-full", antiCheat.isFullscreen ? "bg-green-500" : "bg-error animate-pulse")} />
-            <Shield className="w-4 h-4 text-on-surface-variant" />
-            {proctoring.cameraReady && <Camera className="w-4 h-4 text-green-500" />}
-          </div>
-
-          {!antiCheat.isFullscreen && (
-            <button onClick={antiCheat.requestFullscreen} className="flex items-center gap-2 px-3 py-2 rounded-xl bg-error/10 text-error border border-error/20 text-xs font-bold uppercase tracking-widest">
-              <Maximize className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">Tela Cheia</span>
-            </button>
-          )}
 
           <button className="btn-primary py-2.5 px-4 sm:px-6 text-xs uppercase tracking-widest shadow-md" onClick={handleAutoFinish}>
             <span>Finalizar</span>
@@ -373,12 +243,6 @@ export function StudentExamPage() {
               <HelpCircle className="w-3.5 h-3.5 text-primary" />
               Múltipla Escolha
             </div>
-            {antiCheat.violations > 0 && (
-              <div className="flex items-center gap-2 px-4 py-2 bg-error/10 border border-error/20 rounded-2xl text-[10px] font-bold uppercase tracking-widest text-error">
-                <AlertTriangle className="w-3.5 h-3.5" />
-                {antiCheat.violations}/3 violações
-              </div>
-            )}
           </div>
         </div>
 
