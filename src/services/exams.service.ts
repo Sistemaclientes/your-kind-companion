@@ -163,12 +163,23 @@ export const examsService = {
 
     let acertos = 0;
     const total = (prova as any).perguntas?.length || 0;
+    const answerDetails: Array<{ pergunta_id: string; resposta_id: string | null; is_correta: boolean }> = [];
+    
     for (const p of (prova as any).perguntas || []) {
       const selectedId = data.respostas?.[p.id];
       const correct = p.respostas?.find((r: any) => r.correta);
-      if (correct && selectedId === correct.id) acertos++;
+      const isCorrect = !!(correct && selectedId === correct.id);
+      if (isCorrect) acertos++;
+      answerDetails.push({
+        pergunta_id: p.id,
+        resposta_id: selectedId || null,
+        is_correta: isCorrect,
+      });
     }
     const pontuacao = total > 0 ? Math.round((acertos / total) * 100) : 0;
+
+    console.log('[submitAnswers] answers:', JSON.stringify(data.respostas));
+    console.log('[submitAnswers] acertos:', acertos, '/', total, 'pontuacao:', pontuacao);
 
     const { data: resultData } = await supabase
       .from('resultados')
@@ -182,6 +193,18 @@ export const examsService = {
       })
       .select()
       .single();
+
+    // Save individual answer records for robust result tracking
+    if (resultData) {
+      const respostasAluno = answerDetails.map(a => ({
+        resultado_id: resultData.id,
+        pergunta_id: a.pergunta_id,
+        resposta_id: a.resposta_id,
+        is_correta: a.is_correta,
+        status: 'corrigido',
+      }));
+      await supabase.from('respostas_aluno').insert(respostasAluno);
+    }
 
     return { acertos, total, pontuacao, resultId: resultData?.id };
   },

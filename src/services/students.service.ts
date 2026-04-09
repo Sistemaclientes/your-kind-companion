@@ -44,9 +44,32 @@ export const studentsService = {
       };
     });
 
+    // If result.respostas is empty, try to rebuild from respostas_aluno
+    let respostas = (result as any).respostas;
+    if (!respostas || Object.keys(respostas).length === 0) {
+      const { data: alunoAnswers } = await supabase
+        .from('respostas_aluno')
+        .select('pergunta_id, resposta_id')
+        .eq('resultado_id', id);
+      
+      if (alunoAnswers && alunoAnswers.length > 0) {
+        respostas = {};
+        for (const a of alunoAnswers) {
+          if (a.pergunta_id && a.resposta_id) {
+            respostas[a.pergunta_id] = a.resposta_id;
+          }
+        }
+      }
+    }
+
+    console.log('[getResultById] respostas:', JSON.stringify(respostas));
+    console.log('[getResultById] correctAlts:', JSON.stringify(correctAlts));
+
     return {
       ...result,
+      respostas,
       prova_titulo: prova?.titulo,
+      data: (result as any).created_at,
       exam: {
         ...prova,
         perguntas,

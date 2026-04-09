@@ -188,12 +188,15 @@ export function StudentExamPage() {
 
   const selectOption = (optionId: number) => {
     if (!currentQuestion) return;
-    setAnswers(prev => ({ ...prev, [currentQuestion.id]: optionId }));
+    const updatedAnswers = { ...answers, [currentQuestion.id]: optionId };
+    setAnswers(updatedAnswers);
+    answersRef.current = updatedAnswers;
     setTimeout(() => {
       if (currentQuestionIdx < totalQuestions - 1) {
         setCurrentQuestionIdx(prev => prev + 1);
       } else {
-        handleAutoFinish();
+        // Use stable version to avoid stale closure
+        handleAutoFinishStable();
       }
     }, 400);
   };
